@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The Weather Room: the mood of the crowd, read like a forecast, with fronts, storms, and seven kinds of feeling.">
+  <meta name="color-scheme" content="dark">
+  <title>The Weather Room | Murmuration</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../core/site.css">
+  <style>
+    /* A forecaster's studio before dawn: slate skies, one warm sun. */
+    :root{--bg:#080b12;--a:#ffd27a;--b:#8fc8ff;--dark-on-a:#2a1d04;--glow1:#1e3150;--glow2:#2b2a38;--glow3:#3a2830}
+    .fc{position:absolute;left:22px;top:18px;z-index:4;text-shadow:0 2px 18px #0009;max-width:60%}
+    .fc .d{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#f1f4fa;font-weight:700}
+    .fc .c{font:300 clamp(40px,6vw,76px)/1 var(--display);margin:6px 0 4px;letter-spacing:-.02em}
+    .fc .x{font:italic 17px var(--display);color:#f1f4fa}
+    .temp{position:absolute;right:22px;top:14px;z-index:4;font:300 clamp(46px,7vw,92px)/1 var(--display);text-shadow:0 2px 18px #0009;font-variant-numeric:tabular-nums}
+    .gauges{position:absolute;left:22px;right:22px;bottom:16px;z-index:4;display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:#f1f4fa;text-shadow:0 1px 8px #000}
+    .gauges b{font:400 22px var(--display);margin-right:5px}
+    .strip30{display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:3px;align-items:end;height:58px;min-width:700px}
+    .strip30 button{border:0;background:transparent;padding:0;height:100%;display:flex;align-items:flex-end;border-radius:4px}
+    .strip30 button i{display:block;width:100%;border-radius:3px 3px 1px 1px;transition:height .4s}
+    .strip30 button:hover{background:#ffffff12}
+    .strip30 button[aria-pressed=true]{background:#ffffff1f;box-shadow:inset 0 -2px 0 var(--a)}
+    .dials{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}
+    .verdict{font:300 42px/1.05 var(--display);margin:0 0 6px}
+    .pill{display:inline-block;padding:3px 11px;border-radius:99px;background:var(--a);color:var(--dark-on-a);font-size:11px;font-weight:700}
+    .hits{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+    .hits span{padding:2px 10px;border-radius:99px;font:italic 14px var(--display);border:1px solid var(--line)}
+    .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .front{padding:14px;border-radius:16px;background:var(--glass);border:1px solid var(--line)}
+    .front h4{font:italic 400 18px var(--display);margin:0}
+    .front .st{font-size:11px;color:var(--muted);margin:2px 0 8px}
+    .front svg{display:block;width:100%;height:46px;overflow:visible}
+    .front .go{display:flex;gap:10px;margin-top:8px;font-size:11px}.front .go a{color:var(--a);text-decoration:none}.front .go a:hover{text-decoration:underline}
+    .scrollx>.grid-h{min-width:500px}
+    .grid-h{display:grid;gap:3px;font-size:11px}
+    .grid-h .h{color:var(--muted);text-align:center;padding:3px 0}.grid-h .l{color:#dbe0ec;font-size:12px;align-self:center}
+    .grid-h .c{height:34px;border-radius:7px;display:grid;place-items:center;color:#eef1f8;font-variant-numeric:tabular-nums}
+    @media(max-width:1080px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:860px){.dials{grid-template-columns:1fr}.fc{max-width:68%}}
+    @media(max-width:560px){.cards{grid-template-columns:1fr}.gauges{gap:10px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="nav">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="11" r="5.5" fill="#ffd27a"/><path d="M11 25h13a5 5 0 0 0 .8-9.9 7 7 0 0 0-13.3-1.3A5.6 5.6 0 0 0 11 25z" fill="#8fc8ff"/></svg><div>The Weather Room<small>Chapter II &middot; How it feels</small></div></div>
+      <div id="rail"></div>
+      <a class="back" href="../index.html">&larr; Murmuration home</a>
+    </header>
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <div class="eyebrow"><i class="live"></i> Chapter II &middot; Tonight&rsquo;s outlook</div>
+        <h1 id="title">Partly <em>furious</em></h1>
+        <p class="lede">Crowds have weather. Warm fronts roll in with a launch, pressure drops at the first refund, and by Thursday somebody is shouting in the comments. We just report it, with a very straight face.</p>
+      </div>
+      <div class="kpis" aria-label="Summary">
+        <div class="kpi" style="--c:#7be08a"><span>Warm spells</span><strong id="k-w">&ndash;</strong><small>posts that read as positive</small></div>
+        <div class="kpi" style="--c:#ff7f9e"><span>Sour spells</span><strong id="k-s">&ndash;</strong><small>posts that read as negative</small></div>
+        <div class="kpi" style="--c:#8fc8ff"><span>Stormiest day</span><strong id="k-st">&ndash;</strong><small id="k-st-s">&nbsp;</small></div>
+        <div class="kpi" style="--c:#ffd27a"><span>Sunniest day</span><strong id="k-su">&ndash;</strong><small id="k-su-s">&nbsp;</small></div>
+      </div>
+    </section>
+    <section class="stage" aria-label="The forecast">
+      <div class="sky" id="sky">
+        <canvas id="scene" role="img" aria-label="An animated sky whose sun, clouds and rain follow the mood of the selected day. The same figures are written beside it."></canvas>
+        <div class="fc"><div class="d" id="fc-d"></div><div class="c" id="fc-c"></div><div class="x" id="fc-x"></div></div>
+        <div class="temp" id="temp" title="Warm posts minus sour posts, as a share of all posts"></div>
+        <div class="gauges" id="gauges"></div>
+      </div>
+      <div class="toolbar">
+        <div class="timebar" style="grid-template-columns:auto 1fr"><button type="button" class="play" id="play" aria-label="Play"></button><div class="scrollx"><div class="strip30" id="strip" role="group" aria-label="Pick a day"></div></div></div>
+        <div class="row-t"><div class="chips" id="fronts"></div></div>
+      </div>
+    </section>
+  </div>
+  <main class="shell">
+    <section class="strip" aria-label="Dataset"><div><strong>The Murmuration flock</strong><small id="meta">&nbsp;</small></div><a class="btn go" href="../data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></section>
+    <div class="banner"><b>Synthetic data</b><span>These are invented people having invented feelings. Please do not cancel your picnic.</span></div>
+
+    <div class="section-head"><h2>Shipping forecast</h2><p>Read slowly, in a calm voice.</p></div>
+    <section class="notes" id="notes" aria-label="Findings"></section>
+
+    <div class="section-head"><h2>The plates</h2><p>Instruments of the trade.</p></div>
+    <div class="plates">
+      <section class="glass plate wide" aria-labelledby="p1">
+        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="p1">The barometer</h3></div><span class="tag">Try it</span></div>
+        <p class="cap">Tap the glass. Type anything and see which way the needle swings.</p>
+        <div class="dials"><div><textarea class="box" id="b-in" aria-label="Sentence to read">Oh great, the battery is really terrible and support was slow. Not impressed!</textarea><div class="hits" id="b-hits"></div></div><div style="text-align:center"><svg class="viz" id="b-g" viewBox="0 0 320 180" style="max-width:340px;margin:auto" role="img" aria-label="Needle showing sentiment"></svg><p class="verdict" id="b-v" aria-live="polite"></p><span class="pill" id="b-f"></span></div></div>
+        <details class="how"><summary>How it is read</summary><p>A small wordlist with negation and emphasis, run on your device. It is here to show how the reading works, and it will happily miss a joke. English only.</p></details>
+      </section>
+
+      <section class="glass plate" aria-labelledby="p2">
+        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="p2">Seven kinds of air</h3></div><span class="tag">Feelings</span></div>
+        <p class="cap">Mood says warm or cold. Feeling says what is actually blowing in. Tap a petal to chart it.</p>
+        <svg class="viz" id="wheel" viewBox="-200 -200 400 400" style="max-width:420px;margin:auto" role="img" aria-label="Radial chart of seven feelings"></svg>
+        <details class="how"><summary>How it is read</summary><p>Wording rules sort each post into one feeling, across all the languages in the flock. Sarcasm is the hardest and the least reliable.</p></details>
+      </section>
+      <section class="glass plate" aria-labelledby="p3">
+        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="p3">Climate zones</h3></div><span class="tag">Feeling by group</span></div>
+        <p class="cap">Everyone is sure their own town has the worst weather.</p>
+        <div class="opts"><div class="tabs" id="z-dim"><button type="button" data-v="platform" aria-pressed="true">Platforms</button><button type="button" data-v="region" aria-pressed="false">Regions</button><button type="button" data-v="calling" aria-pressed="false">Callings</button></div></div>
+        <div class="scrollx"><div class="grid-h" id="zones"></div></div>
+        <details class="how"><summary>How it is read</summary><p>Each number is the share of that group&rsquo;s posts carrying that feeling. Groups under 5 people are left out.</p></details>
+      </section>
+
+      <section class="glass plate wide" aria-labelledby="p4">
+        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="p4">The river of feeling</h3></div><span class="tag" id="r-tag">All feelings</span></div>
+        <p class="cap">The month&rsquo;s mood as one long current, thick where the crowd was loud.</p>
+        <svg class="viz" id="river" viewBox="0 0 1000 300" role="img" aria-label="Stream of feelings per day"></svg>
+        <div class="lgd" id="r-l" style="margin-top:10px"></div>
+        <details class="how"><summary>How it is read</summary><p>Each band is one feeling, stacked by day. Tap a petal in Seven kinds of air to lift a single feeling out of the stream.</p></details>
+      </section>
+
+      <section class="glass plate wide" aria-labelledby="p5">
+        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="p5">Fronts on the map</h3></div><span class="tag">Trends</span></div>
+        <p class="cap">Every trend carries its own weather. A few of them change their mind halfway.</p>
+        <div class="cards" id="cards"></div>
+        <details class="how"><summary>How it is read</summary><p>Each line is a trend&rsquo;s mood over its active days, above the dotted line warm, below it sour. The verdict compares its first half with its second.</p></details>
+      </section>
+
+      <section class="glass plate" aria-labelledby="p6">
+        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="p6">Around the clock</h3></div><span class="tag">By hour, UTC</span></div>
+        <p class="cap">Is the crowd kinder in the morning? Consult the bars.</p>
+        <svg class="viz" id="hours" viewBox="0 0 620 260" role="img" aria-label="Mood by hour"></svg>
+        <details class="how"><summary>How it is read</summary><p>Warm minus sour as a share of posts in each UTC hour, from all time zones at once.</p></details>
+      </section>
+      <section class="glass plate" aria-labelledby="p7">
+        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="p7">Further down the thread</h3></div><span class="tag">Depth</span></div>
+        <p class="cap">Conversations have altitude. Watch the temperature as they climb.</p>
+        <svg class="viz" id="depth" viewBox="0 0 620 260" role="img" aria-label="Mood by depth in thread"></svg>
+        <details class="how"><summary>How it is read</summary><p>Mood of posts by how many hops they sit from the original post. Dots shrink when few posts reach that depth.</p></details>
+      </section>
+    </div>
+
+    <div class="section-head"><h2>How the forecast is made</h2><p>Four instruments, and a few things no forecaster should promise.</p></div>
+    <section class="pipeline" aria-label="Method">
+      <div class="stepc"><div class="n">1</div><h3>Read</h3><p>Each post arrives with a mood: warm, even or sour.</p></div>
+      <div class="stepc"><div class="n">2</div><h3>Sort</h3><p>Wording rules name the feeling, from excitement to sarcasm.</p></div>
+      <div class="stepc"><div class="n">3</div><h3>Average</h3><p>Days, trends and groups are rolled up. Warm minus sour gives the temperature.</p></div>
+      <div class="stepc"><div class="n">4</div><h3>Announce</h3><p>The numbers become weather, because nobody ever argued with a cloud.</p></div>
+    </section>
+    <div class="never"><span class="lab">Not on the chart</span><span class="x">Any one person&rsquo;s mood</span><span class="x">Diagnoses</span><span class="x">Mental health</span><span class="x">Private messages</span></div>
+    <div class="caveats">
+      <div class="caveat"><b>Sarcasm bites back</b>Rules read &ldquo;oh great&rdquo; as a compliment more often than they should.</div>
+      <div class="caveat"><b>Labels came with the flock</b>Mood here was written alongside the sample. On real posts a trained model would fill it in.</div>
+      <div class="caveat"><b>A post is not a person</b>Somebody can be sour on Tuesday and delightful by Friday.</div>
+    </div>
+    <footer><span>Chapter II of Murmuration &middot; Utsav</span><a class="nx" href="../atlas/index.html">Next: The Audience Atlas &rarr;</a><em>Every voice here is synthetic.</em></footer>
+  </main>
+  <script src="../core/profiler.js"></script>
+  <script src="../core/kit.js"></script>
+  <script src="../data/audience_sample.js"></script>
+  <script src="weather.js"></script>
+</body>
+</html>

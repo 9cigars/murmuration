@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Murmuration: how a crowd makes up its mind. Five interactive rooms on who is talking, how they feel, what is rising and how word travels.">
+  <meta name="color-scheme" content="dark">
+  <title>Murmuration</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="core/site.css">
+  <style>
+    /* Dusk over an estuary: the sky everyone looks up at when the starlings arrive. */
+    :root{--bg:#070811;--a:#ffc266;--b:#b48cff;--dark-on-a:#241603;--glow1:#32204a;--glow2:#0f2c3b;--glow3:#3d2230}
+    .sky-hero{position:relative;height:min(88vh,800px);min-height:560px;background:linear-gradient(180deg,#141a3a 0,#2b2350 44%,#8a4f5a 82%,#e7966a 100%);overflow:hidden}
+    #flock{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+    .over{position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none}
+    .over .nav,.over .chips,.over a,.over button{pointer-events:auto}
+    .nav .rail-label{display:none}
+    .hero-t{margin-top:auto;padding-bottom:30px;text-shadow:0 2px 26px #0a0a1a99}
+    .hero-t h1{font-size:clamp(58px,12vw,168px);margin:0 0 8px;line-height:.9}
+    .hero-t h1 em{background:linear-gradient(100deg,#ffe0a6,#ffc266 45%,#ff9f9f);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-t p{font:italic 400 clamp(19px,2.3vw,30px)/1.3 var(--display);margin:0;max-width:760px}
+    .flock-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;font-size:12px;color:#f3ecf6}
+    .ctas{display:flex;gap:8px;flex-wrap:wrap}
+    .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:-1px;padding-top:18px}
+    .stats .kpi strong{font-size:38px}
+    .rooms{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+    .room{display:flex;flex-direction:column;padding:18px 16px;border-radius:20px;border:1px solid var(--line);text-decoration:none;background:linear-gradient(170deg,color-mix(in srgb,var(--c) 18%,transparent),var(--glass) 66%);transition:transform .25s,border-color .25s;min-height:300px}
+    .room:hover{transform:translateY(-5px);border-color:var(--c)}
+    .room .n{font:italic 300 44px/1 var(--display);color:var(--c)}
+    .room h3{margin:12px 0 2px}
+    .room .q{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .room p{font:italic 400 15px/1.4 var(--display);color:#dfe3ee;margin:12px 0}
+    .room svg{margin-top:auto;display:block;width:100%;height:44px;overflow:visible}
+    .room .m{font-size:12px;color:var(--muted);margin-top:8px}.room .m b{color:var(--ink);font-weight:600}
+    .trail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;position:relative;margin-top:16px}
+    .trail:before{content:"";position:absolute;left:10%;right:10%;top:38px;height:1px;background:linear-gradient(90deg,#ffb454,#ffd27a,#35d0c0,#ff9270,#a3de76);opacity:.7}
+    .stop{position:relative;padding:16px;border-radius:18px;background:#10121df2;border:1px solid var(--line);text-decoration:none;display:block;transition:border-color .2s}
+    .stop:hover{border-color:var(--c)}
+    .stop .k{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#10121d;border:1px solid var(--c);color:var(--c);font:italic 18px var(--display);margin:0 auto 10px}
+    .stop .v{font:300 36px/1 var(--display);text-align:center;font-variant-numeric:tabular-nums}
+    .stop .l{font-size:12px;color:var(--muted);text-align:center;margin:4px 0 8px;min-height:36px}
+    .stop .s{font:italic 14px/1.35 var(--display);color:#dfe3ee;text-align:center}
+    .glance{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;align-items:stretch}
+    .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;font-size:12px;color:var(--muted);margin:10px 0 14px}
+    .cols code{color:var(--ink);font-size:12px}
+    @media(max-width:1080px){.glance{grid-template-columns:1fr}.stats .kpi strong{font-size:30px}}
+    @media(max-width:860px){.rooms,.stats,.trail{grid-template-columns:repeat(2,minmax(0,1fr))}.rooms>:last-child,.stats>:last-child,.trail>:last-child{grid-column:1/-1}.trail:before{display:none}.room{min-height:0}}
+    @media(max-width:620px){.rooms,.trail{grid-template-columns:1fr}.rail .step span{display:none}}
+  </style>
+</head>
+<body>
+  <section class="sky-hero" aria-labelledby="title">
+    <canvas id="flock" role="img" aria-label="A flock of starlings, one bird for each anonymous voice in the data, wheeling across a dusk sky."></canvas>
+    <div class="over"><div class="shell" style="display:flex;flex-direction:column;height:100%;width:100%">
+      <header class="nav">
+        <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="#ffc266"><path d="M4 21c6-1 8-3 11-7-1 5-4 9-10 9z"/><path d="M13 14c6-2 9-5 14-10-1 7-6 12-13 13z"/><path d="M12 24c5 0 8-1 11-5-1 5-6 7-11 7z" opacity=".7"/></g></svg><div>Murmuration<small>Audience intelligence</small></div></div>
+        <div id="rail"></div>
+      </header>
+      <div class="hero-t">
+        <h1 id="title">Murm<em>uration</em></h1>
+        <p>Nobody leads a flock of starlings, and still ten thousand of them turn at once. Crowds online do the same thing, and now you can watch.</p>
+        <div class="flock-bar"><div class="tabs" id="flock-by" style="background:#14162ab3"><button type="button" data-v="platform" aria-pressed="true">By platform</button><button type="button" data-v="mood" aria-pressed="false">By mood</button><button type="button" data-v="region" aria-pressed="false">By region</button></div><div class="tabs" id="flock-mode" style="background:#14162ab3"><button type="button" data-v="one" aria-pressed="true">One flock</button><button type="button" data-v="split" aria-pressed="false">Separate them</button></div><span id="flock-note">Each bird is one voice. Move your cursor through them and be the hawk.</span></div>
+      </div>
+    </div></div>
+  </section>
+
+  <main class="shell" style="padding-top:0">
+    <section class="stats" aria-label="The flock in numbers" id="stats"></section>
+
+    <div class="section-head"><h2>Five rooms</h2><p>One flock, five honest questions.</p></div>
+    <section class="rooms" id="rooms" aria-label="The five chapters"></section>
+
+    <div class="section-head"><h2>Follow one rumour</h2><p>Pick a hashtag and walk it through every room.</p></div>
+    <div class="chips" id="trail-tags" role="group" aria-label="Pick a trend"></div>
+    <section class="trail" id="trail" aria-label="One trend across five chapters"></section>
+
+    <div class="section-head"><h2>What you are looking at</h2><p>A short, plain confession.</p></div>
+    <section class="glance">
+      <div class="glass plate">
+        <h3>One file feeds every room</h3>
+        <p class="cap" id="data-line"></p>
+        <div class="cols"><span><code>post_id</code>, <code>platform</code>, <code>timestamp</code></span><span><code>user_id</code>, always a code</span><span><code>text</code>, with its #hashtags</span><span><code>interaction</code>, <code>ref_post_id</code></span><span><code>sentiment</code>, <code>language</code></span><span><code>user_bio</code>, <code>user_location</code></span><span><code>followers</code>, <code>joined</code></span><span><code>parent_id</code></span></div>
+        <div class="ctas" style="margin-top:auto"><a class="btn go" href="data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></div>
+      </div>
+      <div class="caveats" style="grid-template-columns:1fr;margin:0">
+        <div class="caveat"><b>The flock is invented</b>A seeded generator wrote every voice, post and quarrel. No real person is in here.</div>
+        <div class="caveat"><b>It all runs on your device</b>PageRank, Louvain, forecasts and all. Nothing you type or load is sent anywhere.</div>
+        <div class="caveat"><b>Names stay at the door</b>Bios and places are read once and never shown. Groups under five people are folded away.</div>
+      </div>
+    </section>
+    <footer><span>Murmuration &middot; Utsav</span><a class="nx" href="listen/index.html">Enter the first room &rarr;</a><em>How a crowd makes up its mind.</em></footer>
+  </main>
+  <script src="core/profiler.js"></script>
+  <script src="core/kit.js"></script>
+  <script src="data/audience_sample.js"></script>
+  <script src="core/home.js"></script>
+</body>
+</html>
