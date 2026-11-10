@@ -5,17 +5,18 @@
   $('rail').outerHTML = K.rail('listen');
   var PAL = { X: '#78c8ff', Telegram: '#7df0c3', Instagram: '#ec83e0', Facebook: '#8da2ff', YouTube: '#ff7f9e', Reddit: '#ffb454' };
   var KIND = [['post', 'Original', '#ffb454'], ['reply', 'Reply', '#7df0c3'], ['quote', 'Quote', '#b48cff'], ['repost', 'Repost', '#78c8ff'], ['share', 'Crossing', '#ff7f9e']];
+  K.fillPalette(PAL, F.platforms);
   var P = F.posts, plats = F.platforms, N = P.length, resolved = P.filter(function (p) { return p.ref >= 0; }).length;
   var byPlat = {}; plats.forEach(function (x) { byPlat[x] = P.filter(function (p) { return p.platform === x; }); });
   var hourly = new Array(24).fill(0); P.forEach(function (p) { hourly[p.hour]++; });
   var daily = new Array(F.days).fill(0); P.forEach(function (p) { daily[p.day]++; });
 
   /* ------------------ headline ------------------ */
-  $('k-posts').textContent = fmt(N); $('k-posts-s').textContent = 'over ' + F.days + ' sleepless days';
+  $('k-posts').textContent = fmt(N); $('k-posts-s').textContent = 'over ' + K.spanText(F) + ', sleepless';
   $('k-voices').textContent = fmt(F.voices.size); $('k-voices-s').textContent = 'names read: none';
   $('k-doors').textContent = plats.length; $('k-doors-s').textContent = 'all watched at once';
   $('k-links').textContent = fmt(resolved); $('k-links-s').textContent = pct(resolved, N) + '% of posts answer another';
-  $('meta').textContent = fmt(N) + ' posts · ' + fmt(F.voices.size) + ' anonymous voices · data/audience_sample.csv';
+  $('meta').textContent = fmt(N) + ' posts · ' + fmt(F.voices.size) + ' anonymous voices · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv');
 
   /* ------------------ the intake line ------------------ */
   var S = { t: 0, playing: false, dur: 15000, last: 0, ptr: 0, parts: [], cells: {}, muted: {}, gate: -1, glow: [0, 0, 0, 0], W: 0, H: 0, ctx: null, onscreen: true };
@@ -111,8 +112,22 @@
     GATES.forEach(function (g, i) { if (Math.abs(gateX(i) - x) < 26) hit = i; });
     if (hit >= 0) { openGate(hit === S.gate ? -1 : hit); return; }
     if (x < (S.W < 620 ? 62 : DOOR_X)) plats.forEach(function (n, l) { if (Math.abs(laneY(l) - y) < 16) toggleDoor(n); });
+    var cc = cellAt(x, y); if (cc && byCell[cc.l + ':' + cc.d]) window.Loupe.open({ platform: plats[cc.l], day: cc.d });
   });
-  $('sky').addEventListener('mousemove', function (e) { var r = $('sky').getBoundingClientRect(), x = e.clientX - r.left, on = false; GATES.forEach(function (g, i) { if (Math.abs(gateX(i) - x) < 26) on = true; }); $('sky').style.cursor = on ? 'pointer' : ''; });
+  var byCell = {}; P.forEach(function (p) { var k = plats.indexOf(p.platform) + ':' + p.day; byCell[k] = (byCell[k] || 0) + 1; });
+  function cellAt(x, y) { var w = wall(), d = Math.floor((x - w.x0) / w.cw), l = Math.floor((y - w.y0) / w.rh); return x >= w.x0 && y >= w.y0 && d >= 0 && d < F.days && l >= 0 && l < plats.length ? { d: d, l: l } : null; }
+  $('sky').addEventListener('pointermove', function (e) {
+    if (e.target.closest('.inspect')) { window.Loupe.tipOff(); return; }
+    var r = $('sky').getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, gate = -1, cell = cellAt(x, y), L = window.Loupe, door = null;
+    GATES.forEach(function (g, i) { if (Math.abs(gateX(i) - x) < 26 && y > 30) gate = i; });
+    if (x < (S.W < 620 ? 62 : DOOR_X)) plats.forEach(function (n, l) { if (Math.abs(laneY(l) - y) < 16) door = n; });
+    $('sky').style.cursor = gate >= 0 || cell || door ? 'pointer' : '';
+    if (cell) L.tipAt(e.clientX, e.clientY, plats[cell.l] + ', ' + K.dayName(F.dayStart(cell.d)) + '\n' + fmt(byCell[cell.l + ':' + cell.d] || 0) + ' posts filed', 'Click to open the posts');
+    else if (gate >= 0) L.tipAt(e.clientX, e.clientY, GATES[gate] + '\n' + GATE_BODY[gate]()[1], 'Click to inspect this checkpoint');
+    else if (door) L.tipAt(e.clientX, e.clientY, door + '\n' + fmt(byPlat[door].length) + ' posts', 'Click to shut this door');
+    else L.tipOff();
+  });
+  $('sky').addEventListener('pointerleave', function () { window.Loupe.tipOff(); });
 
   function toggleDoor(n) { S.muted[n] = !S.muted[n]; drawDoors(); var c = cut(); S.cells = {}; for (var i = 0; i < N && P[i].ts <= c; i++) file(P[i]); read(); }
   function drawDoors() { $('doors').innerHTML = plats.map(function (x) { return '<button type="button" class="tagc" data-p="' + esc(x) + '" aria-pressed="' + (!S.muted[x]) + '">' + esc(x) + '</button>'; }).join(''); }
@@ -120,6 +135,7 @@
   $('play').addEventListener('click', function () { if (S.t >= 0.999) { S.t = 0; reset(); } S.playing = !S.playing; S.last = performance.now(); setPlay(); });
   $('time').addEventListener('input', function () { S.playing = false; setPlay(); S.t = this.value / 1000; reset(); read(); });
   K.spark($('spark'), daily, '#ffb454');
+  window.Loupe.scrub($('time').parentElement, function (f) { var d = Math.min(F.days - 1, Math.floor(f * F.days)); return K.dayName(F.dayStart(d)) + '\n' + fmt(daily[d]) + ' posts arrived'; });
   drawDoors();
 
   /* ------------------ field notes ------------------ */
@@ -128,14 +144,14 @@
     var echoes = pct(resolved, N), counts = Array.from(F.voices.values()).map(function (v) { return v.n; }).sort(function (a, b) { return b - a; }), topN = Math.round(counts.length / 10), top = counts.slice(0, topN).reduce(function (a, b) { return a + b; }, 0);
     var noLang = P.filter(function (p) { return !p.lang; }).length, deep = Math.max.apply(null, P.map(function (p) { return p.depth; })), langs = new Set(P.map(function (p) { return p.lang; }).filter(Boolean)).size;
     K.notes($('notes'), [
-      { kick: 'Busiest door', fig: pct(byPlat[big].length, N), unit: '%', frac: pct(byPlat[big].length, N), head: 'of all traffic came through ' + big, text: 'The hinges are holding, barely.' },
-      { kick: 'Worst night', fig: fmt(daily[peakD]), unit: ' posts', head: 'landed on ' + K.dayName(F.dayStart(peakD)), text: 'A quiet day brings about ' + fmt(Math.round(N / F.days)) + '. The clerk asked for a raise.' },
-      { kick: 'Rush hour', fig: K.pad2(peakH), unit: ':00 UTC', head: 'is when the bell rings most', text: 'Silence falls near ' + K.pad2(lowH) + ':00, when somebody finally gets to make tea.' },
-      { kick: 'Second-hand', fig: Math.round(echoes), unit: '%', frac: echoes, head: 'of posts are reacting to another post', text: 'Most of this archive is people answering each other.' },
+      { kick: 'Busiest door', fig: pct(byPlat[big].length, N), unit: '%', frac: pct(byPlat[big].length, N), head: 'of all traffic came through ' + big, text: 'The hinges are holding, barely.', q: K.q({ platform: big }) },
+      { kick: 'Worst night', fig: fmt(daily[peakD]), unit: ' posts', head: 'landed on ' + K.dayName(F.dayStart(peakD)), text: 'A quiet day brings about ' + fmt(Math.round(N / F.days)) + '. The clerk asked for a raise.', q: K.q({ day: peakD }) },
+      { kick: 'Rush hour', fig: K.pad2(peakH), unit: ':00 UTC', head: 'is when the bell rings most', text: 'Silence falls near ' + K.pad2(lowH) + ':00, when somebody finally gets to make tea.', q: K.q({ hour: peakH }) },
+      { kick: 'Second-hand', fig: Math.round(echoes), unit: '%', frac: echoes, head: 'of posts are reacting to another post', text: echoes > 50 ? 'Most of this archive is people answering each other.' : 'The rest are talking into the void.', q: K.q({ reacting: 1 }) },
       { kick: 'Regulars', fig: pct(top, N), unit: '%', frac: pct(top, N), head: 'of posts come from the top tenth of voices', text: 'The same ' + fmt(topN) + ' faces keep turning up.' },
-      { kick: 'Deepest rabbit hole', fig: deep, unit: ' hops', head: 'between a post and its furthest echo', text: 'Nobody in that chain remembers how it started.' },
+      { kick: 'Deepest rabbit hole', fig: deep, unit: ' hops', head: 'between a post and its furthest echo', text: 'Nobody in that chain remembers how it started.', q: K.q({ depth: deep }) },
       { kick: 'Babel', fig: langs, unit: ' tongues', head: 'passed through the booth', text: 'One clerk, no phrasebook.' },
-      { kick: 'Smudged labels', fig: pct(noLang, N), unit: '%', frac: pct(noLang, N), head: 'of posts arrived with no language tag', text: 'We left them blank rather than guess at the desk.' }
+      { kick: 'Smudged labels', fig: pct(noLang, N), unit: '%', frac: pct(noLang, N), head: 'of posts arrived with no language tag', text: 'We left them blank rather than guess at the desk.', q: K.q({ missing: 'language' }) }
     ], ['#ffb454', '#7df0c3', '#78c8ff', '#ff7f9e', '#b48cff', '#ffd27a', '#62e0c0', '#ff9f73']);
   })();
 
@@ -159,7 +175,7 @@
   var USES = { post_id: [1, 5], platform: [1, 2, 3, 4, 5], user_id: [1, 3, 5], timestamp: [1, 2, 3, 4, 5], text: [2, 4], interaction: [1, 3, 5], ref_post_id: [1, 2, 5], sentiment: [2, 3, 5], language: [3], followers: [3], joined: [3], user_bio: [3, 5], user_location: [3, 5] };
   var pullRand = K.rngFrom(29);
   function pull(first) {
-    var pool = P.filter(function (p) { return p.ref >= 0 && p.tag; }), p = first ? pool[Math.floor(pool.length * .4)] : pool[Math.floor(pullRand() * pool.length)], r = p.raw, sealed = { user_bio: 1, user_location: 1 };
+    var pool = P.filter(function (p) { return p.ref >= 0 && p.tag; }); if (!pool.length) pool = P; var p = first ? pool[Math.floor(pool.length * .4)] : pool[Math.floor(pullRand() * pool.length)], r = p.raw, sealed = { user_bio: 1, user_location: 1 };
     $('fields').innerHTML = Object.keys(USES).map(function (f) {
       var val = sealed[f] ? '<b class="seal">Sealed</b>' : '<b>' + esc(r[f] || '(blank)') + '</b>';
       return '<div class="field"><span>' + f + '</span>' + val + '<div class="pips" aria-label="Read by chapters ' + USES[f].join(', ') + '">' + ['I', 'II', 'III', 'IV', 'V'].map(function (n, i) { return '<i class="' + (USES[f].indexOf(i + 1) >= 0 ? 'on' : '') + '">' + n + '</i>'; }).join('') + '</div></div>';
@@ -170,19 +186,20 @@
   /* ------------------ ledger + completeness ------------------ */
   $('ledger').innerHTML = '<thead><tr><th>Door</th><th>Posts</th><th>Voices</th><th>Per voice</th><th>Reacting</th></tr></thead><tbody>' + plats.map(function (x) {
     var L = byPlat[x], v = new Set(L.map(function (p) { return p.voice.id; })).size, re = L.filter(function (p) { return p.ref >= 0; }).length;
-    return '<tr><td style="color:' + (PAL[x] || '#fff') + '">' + esc(x) + '</td><td>' + fmt(L.length) + '</td><td>' + fmt(v) + '</td><td>' + (L.length / v).toFixed(1) + '</td><td>' + Math.round(pct(re, L.length)) + '%</td></tr>';
+    return '<tr data-drill="' + K.q({ platform: x }) + '" tabindex="0" role="button" data-tip="' + esc(x) + '"><td style="color:' + (PAL[x] || '#fff') + '">' + esc(x) + '</td><td>' + fmt(L.length) + '</td><td>' + fmt(v) + '</td><td>' + (L.length / v).toFixed(1) + '</td><td>' + Math.round(pct(re, L.length)) + '%</td></tr>';
   }).join('') + '</tbody>';
   (function () {
     var R = F.rows, want = R.filter(function (r) { return r.interaction && r.interaction !== 'post'; }), have = function (f, list) { return pct((list || R).filter(function (r) { return r[f] && String(r[f]).trim() && !/^not specified$/i.test(r[f]); }).length, (list || R).length); };
-    var rows = [['Timestamp', have('timestamp')], ['Author code', have('user_id')], ['Text', have('text')], ['Mood', have('sentiment')], ['Reference (reactions)', have('ref_post_id', want)], ['Language tag', have('language')], ['Bio', have('user_bio')], ['Location', have('user_location')]];
-    $('complete').innerHTML = rows.map(function (r) { return '<div class="trow"><span class="name">' + r[0] + '</span><span class="sbar"><i style="width:' + r[1] + '%;background:linear-gradient(90deg,#ffb454,#7df0c3)"></i></span><span class="v">' + r[1] + '%</span></div>'; }).join('');
+    var rows = [['Timestamp', have('timestamp'), 'timestamp'], ['Author code', have('user_id'), 'user_id'], ['Text', have('text'), 'text'], ['Mood', have('sentiment'), 'sentiment'], ['Reference (reactions)', have('ref_post_id', want), null], ['Language tag', have('language'), 'language'], ['Bio', have('user_bio'), 'user_bio'], ['Location', have('user_location'), 'user_location']];
+    $('complete').innerHTML = rows.map(function (r) { return '<div class="trow"' + (r[2] && r[1] < 100 ? ' data-drill="' + K.q({ missing: r[2], label: r[0] + ' missing' }) + '"' : '') + ' data-tip="' + r[0] + '\n' + r[1] + '% of rows have it"><span class="name">' + r[0] + '</span><span class="sbar"><i style="width:' + r[1] + '%;background:linear-gradient(90deg,#ffb454,#7df0c3)"></i></span><span class="v">' + r[1] + '%</span></div>'; }).join('');
+    $('wash').innerHTML = window.Loupe.reportHTML(window.MURMUR_UPLOAD || window.Door.audit(F.rows));
   })();
 
   /* ------------------ wall ------------------ */
   (function () {
     var g = {}, mx = 1; P.forEach(function (p) { var k = p.day + ':' + p.hour; g[k] = (g[k] || 0) + 1; if (g[k] > mx) mx = g[k]; });
     var left = 44, top = 8, cw = (1000 - left - 6) / F.days, rh = 12.4, o = '', d, h;
-    for (h = 0; h < 24; h++) { if (h % 6 === 0) o += '<text class="t f" x="36" y="' + (top + h * rh + 10) + '" text-anchor="end">' + K.pad2(h) + 'h</text>'; for (d = 0; d < F.days; d++) { var v = g[d + ':' + h] || 0; o += '<rect x="' + (left + d * cw + 1).toFixed(1) + '" y="' + (top + h * rh + 1).toFixed(1) + '" width="' + (cw - 2).toFixed(1) + '" height="' + (rh - 2) + '" rx="2" fill="' + (v ? K.hexA('#ffb454', 0.1 + 0.9 * Math.pow(v / mx, 0.65)) : 'rgba(255,255,255,.03)') + '"><title>' + K.dayName(F.dayStart(d)) + ', ' + K.pad2(h) + ':00 UTC: ' + v + ' posts</title></rect>'; } }
+    for (h = 0; h < 24; h++) { if (h % 6 === 0) o += '<text class="t f" x="36" y="' + (top + h * rh + 10) + '" text-anchor="end">' + K.pad2(h) + 'h</text>'; for (d = 0; d < F.days; d++) { var v = g[d + ':' + h] || 0; o += '<rect x="' + (left + d * cw + 1).toFixed(1) + '" y="' + (top + h * rh + 1).toFixed(1) + '" width="' + (cw - 2).toFixed(1) + '" height="' + (rh - 2) + '" rx="2"' + (v ? ' data-drill="' + K.q({ day: d, hour: h }) + '"' : '') + ' fill="' + (v ? K.hexA('#ffb454', 0.1 + 0.9 * Math.pow(v / mx, 0.65)) : 'rgba(255,255,255,.03)') + '"><title>' + K.dayName(F.dayStart(d)) + ', ' + K.pad2(h) + ':00 UTC: ' + v + ' posts</title></rect>'; } }
     for (d = 0; d < F.days; d += 5) o += '<text class="t f" x="' + (left + d * cw + cw / 2).toFixed(1) + '" y="' + (top + 24 * rh + 16) + '" text-anchor="middle">' + K.dayName(F.dayStart(d)) + '</text>';
     $('wall').innerHTML = o;
   })();
@@ -190,17 +207,17 @@
   /* ------------------ kinds + pile ------------------ */
   $('kinds-l').innerHTML = KIND.map(function (a) { return '<span><i style="background:' + a[2] + '"></i>' + a[1] + '</span>'; }).join('');
   $('kinds').innerHTML = plats.map(function (x) {
-    var L = byPlat[x], segs = KIND.map(function (a) { var w = pct(L.filter(function (p) { return p.type === a[0]; }).length, L.length); return '<i style="width:' + w + '%;background:' + a[2] + '" title="' + a[1] + ': ' + w + '%"></i>'; }).join('');
+    var L = byPlat[x], segs = KIND.map(function (a) { var w = pct(L.filter(function (p) { return p.type === a[0]; }).length, L.length); return '<i data-drill="' + K.q({ platform: x, type: a[0] }) + '" style="width:' + w + '%;background:' + a[2] + '" title="' + a[1] + ' on ' + esc(x) + ': ' + w + '%"></i>'; }).join('');
     return '<div class="trow"><span class="name">' + esc(x) + '</span><span class="sbar">' + segs + '</span><span class="v">' + Math.round(pct(L.filter(function (p) { return p.type === 'post'; }).length, L.length)) + '% own</span></div>';
   }).join('');
   (function () {
     var svg = $('pile'), mx = Math.max.apply(null, plats.map(function (x) { return byPlat[x].length; })), X = function (d) { return 40 + d / (F.days - 1) * 470; }, Y = function (v) { return 266 - v / mx * 248; };
     var o = '<line x1="40" x2="510" y1="266" y2="266" stroke="rgba(255,255,255,.12)"/>', ends = [];
     [0, .5, 1].forEach(function (f) { o += '<text class="t f" x="34" y="' + (Y(mx * f) + 4) + '" text-anchor="end">' + fmt(Math.round(mx * f)) + '</text>'; });
-    plats.forEach(function (x) { var c = new Array(F.days).fill(0); byPlat[x].forEach(function (p) { c[p.day]++; }); var s = 0, d = c.map(function (v, i) { s += v; return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(s).toFixed(1); }).join(' '); o += '<path d="' + d + '" fill="none" stroke="' + (PAL[x] || '#fff') + '" stroke-width="2"/>'; ends.push({ x: x, y: Y(s) }); });
+    plats.forEach(function (x) { var c = new Array(F.days).fill(0); byPlat[x].forEach(function (p) { c[p.day]++; }); var s = 0, d = c.map(function (v, i) { s += v; return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(s).toFixed(1); }).join(' '); o += '<path d="' + d + '" fill="none" stroke="' + (PAL[x] || '#fff') + '" stroke-width="2"/>'; ends.push({ x: x, y: Y(s) }); var run = 0; c.forEach(function (v, i) { run += v; o += '<circle class="hitd" cx="' + X(i).toFixed(1) + '" cy="' + Y(run).toFixed(1) + '" r="6" fill="' + (PAL[x] || '#fff') + '" data-drill="' + K.q({ platform: x, day: i }) + '"><title>' + esc(x) + ', ' + K.dayName(F.dayStart(i)) + '\n' + fmt(run) + ' on file, ' + fmt(v) + ' that day</title></circle>'; }); });
     ends.sort(function (a, b) { return a.y - b.y; }); var last = -99;
     ends.forEach(function (e) { var y = Math.max(e.y + 4, last + 14); last = y; o += '<text class="t" x="518" y="' + y.toFixed(1) + '" style="fill:' + (PAL[e.x] || '#fff') + '">' + esc(e.x) + '</text>'; });
-    [0, 10, 20].forEach(function (d) { o += '<text class="t f" x="' + X(d) + '" y="286" text-anchor="middle">' + K.dayName(F.dayStart(d)) + '</text>'; });
+    K.ticks(F.days, 3).forEach(function (d) { o += '<text class="t f" x="' + X(d) + '" y="286" text-anchor="middle">' + K.dayName(F.dayStart(d)) + '</text>'; });
     svg.innerHTML = o;
   })();
 
@@ -212,12 +229,13 @@
   $('thread-l').innerHTML = KIND.map(function (a) { return '<span><i style="background:' + a[2] + '"></i>' + a[1] + '</span>'; }).join('');
   function drawPicks() { $('thread-picks').innerHTML = picks.map(function (r, i) { return '<button type="button" class="tagc" data-i="' + i + '" aria-pressed="' + (i === cur) + '">' + esc(P[r.i].tag || 'Untagged thread') + ' &middot; ' + r.list.length + '</button>'; }).join(''); }
   function drawThread() {
+    if (!picks.length) { $('thread').innerHTML = '<text class="t d" x="500" y="150" text-anchor="middle">No conversations in this file to unspool.</text>'; $('thread-stats').innerHTML = ''; return; }
     var r = picks[cur], list = r.list, t0 = P[r.i].ts, span = Math.max.apply(null, list.map(function (i) { return P[i].ts - t0; })) || 1, depth = Math.max.apply(null, list.map(function (i) { return P[i].depth; })) || 1;
     var X = function (t) { return 30 + Math.sqrt((t - t0) / span) * 940; }, Y = function (d) { return 26 + d / Math.max(1, depth) * 236; }, C = {}, o = '';
     KIND.forEach(function (a) { C[a[0]] = a[2]; });
     [0.05, .25, .5, 1].forEach(function (f) { var ms = span * f, x = X(t0 + ms); o += '<line x1="' + x + '" x2="' + x + '" y1="16" y2="272" stroke="rgba(255,255,255,.05)"/><text class="t f" x="' + x + '" y="292" text-anchor="middle">+' + (ms / 3600000 < 48 ? Math.round(ms / 3600000) + 'h' : Math.round(ms / 86400000) + 'd') + '</text>'; });
     list.forEach(function (i) { var p = P[i]; if (p.ref < 0) return; var q = P[p.ref], x0 = X(q.ts), y0 = Y(q.depth), x1 = X(p.ts), y1 = Y(p.depth); o += '<path d="M' + x0.toFixed(1) + ' ' + y0.toFixed(1) + 'C' + ((x0 + x1) / 2).toFixed(1) + ' ' + y0.toFixed(1) + ' ' + ((x0 + x1) / 2).toFixed(1) + ' ' + y1.toFixed(1) + ' ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + '" fill="none" stroke="' + C[p.type] + '" stroke-opacity=".45"/>'; });
-    list.forEach(function (i) { var p = P[i]; o += '<circle cx="' + X(p.ts).toFixed(1) + '" cy="' + Y(p.depth).toFixed(1) + '" r="' + (p.ref < 0 ? 8 : 3.6) + '" fill="' + C[p.type] + '"><title>' + esc(p.type) + ' on ' + esc(p.platform) + ', ' + K.dayName(p.ts) + '</title></circle>'; });
+    list.forEach(function (i) { var p = P[i]; o += '<circle cx="' + X(p.ts).toFixed(1) + '" cy="' + Y(p.depth).toFixed(1) + '" r="' + (p.ref < 0 ? 8 : 3.6) + '" fill="' + (C[p.type] || '#ffb454') + '" data-drill="' + K.q({ chain: p.id }) + '"><title>' + esc(p.type) + ' on ' + esc(p.platform) + ', ' + K.dayName(p.ts) + '\n' + esc(p.text.slice(0, 80)) + '</title></circle>'; });
     $('thread').innerHTML = o;
     var pl = new Set(list.map(function (i) { return P[i].platform; })).size, v = new Set(list.map(function (i) { return P[i].voice.id; })).size;
     $('thread-stats').innerHTML = [['Posts', list.length], ['Voices', v], ['Doors', pl], ['Hops deep', depth], ['Lasted', span / 86400000 >= 1 ? (span / 86400000).toFixed(1) + ' days' : Math.round(span / 3600000) + ' hours']].map(function (x) { return '<div><b>' + x[1] + '</b>' + x[0] + '</div>'; }).join('');

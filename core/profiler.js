@@ -262,7 +262,7 @@
       var id = r.user_id || ('post:' + r.post_id);
       var u = users.get(id);
       if (!u) {
-        u = { platform: r.platform || 'Unknown', bio: '', loc: '', langs: new Map(), scripts: new Map(), first: Infinity, posts: 0, hours: emptyHours(), followers: NaN, joined: NaN, acts: {}, moods: [0, 0, 0], tags: new Set(), received: 0 };
+        u = { uid: id, platform: r.platform || 'Unknown', bio: '', loc: '', langs: new Map(), scripts: new Map(), first: Infinity, posts: 0, hours: emptyHours(), followers: NaN, joined: NaN, acts: {}, moods: [0, 0, 0], tags: new Set(), received: 0 };
         users.set(id, u);
       }
       u.posts++;
@@ -296,6 +296,7 @@
       var code = u.langs.size ? modeOf(u.langs) : modeOf(u.scripts);
       var interests = classifyInterests(u.bio);
       out.push({
+        uid: u.uid,
         platform: u.platform,
         first: isFinite(u.first) ? u.first : NaN,
         posts: u.posts,

@@ -47,7 +47,7 @@
       <div>
         <div class="eyebrow"><i class="live"></i> Chapter I &middot; The night shift</div>
         <h1 id="title">Every voice, <em>logged</em></h1>
-        <p class="lede">Six doors, one archive, and a clerk who never sleeps. Each post is stamped, stripped of its owner&rsquo;s name and tied to whatever it was answering, all before anyone gets to read it.</p>
+        <p class="lede">Every door, one archive, and a clerk who never sleeps. Each post is stamped, stripped of its owner&rsquo;s name and tied to whatever it was answering, all before anyone gets to read it.</p>
       </div>
       <div class="kpis" aria-label="Summary">
         <div class="kpi" style="--c:#ffb454"><span>Posts on file</span><strong id="k-posts">&ndash;</strong><small id="k-posts-s">&nbsp;</small></div>
@@ -107,9 +107,15 @@
         <details class="how"><summary>How it is read</summary><p>Share of rows with a usable value in each field. Reference is only expected on posts that react to something, so it is measured against those.</p></details>
       </section>
 
+      <section class="glass plate wide" aria-labelledby="hwash" id="wash-plate">
+        <div class="plate-head"><div><span class="plate-no">Plate IV&frac12;</span><h3 id="hwash">The wash</h3></div><span class="tag">Paper &sect;5</span></div>
+        <p class="cap">Garbage in, garbage out. What the door found in this file, under the paper&rsquo;s own three headings.</p>
+        <div id="wash"></div>
+      </section>
+
       <section class="glass plate wide" aria-labelledby="h5p">
         <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h5p">The wall of hours</h3></div><span class="tag">Day by hour, UTC</span></div>
-        <p class="cap">Thirty days, twenty-four hours, one lit window for each. The bright columns are launch days.</p>
+        <p class="cap">Days across, hours down, one lit window for each. Click a window to read who was up.</p>
         <div class="scrollx"><svg class="viz" id="wall" viewBox="0 0 1000 330" role="img" aria-label="Heat map of posts by day and hour"></svg></div>
         <details class="how"><summary>How it is read</summary><p>Brighter means more posts arrived in that hour. Times are UTC, so a lit band at night here is somebody&rsquo;s lunchtime elsewhere.</p></details>
       </section>
@@ -122,7 +128,7 @@
       </section>
       <section class="glass plate" aria-labelledby="h7p">
         <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h7p">The pile grows</h3></div><span class="tag">Cumulative</span></div>
-        <p class="cap">A month of filing, door by door.</p>
+        <p class="cap">The whole run of filing, door by door.</p>
         <svg class="viz" id="pile" viewBox="0 0 620 300" role="img" aria-label="Cumulative posts per platform"></svg>
         <details class="how"><summary>How it is read</summary><p>Running total of posts per platform across the month.</p></details>
       </section>
@@ -149,13 +155,15 @@
     <div class="caveats">
       <div class="caveat"><b>No live wires here</b>This page reads a finished file. Connecting real platforms needs their permission and their keys.</div>
       <div class="caveat"><b>A log is not the world</b>Only what came through the doors is on file. Silence outside them leaves no trace.</div>
-      <div class="caveat"><b>The month is invented</b>The dates are real calendar days. The events on them never happened.</div>
+      <div class="caveat" data-sample="1"><b>The month is invented</b>The dates are real calendar days. The events on them never happened.</div>
     </div>
     <footer><span>Chapter I of Murmuration &middot; Utsav</span><a class="nx" href="../weather/index.html">Next: The Weather Room &rarr;</a><em>Every voice here is synthetic.</em></footer>
   </main>
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
   <script src="../data/audience_sample.js"></script>
+  <script src="../core/door.js"></script>
+  <script src="../core/loupe.js"></script>
   <script src="listen.js"></script>
 </body>
 </html>

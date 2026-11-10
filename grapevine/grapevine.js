@@ -59,7 +59,7 @@
       });
     }).then(function (found) {
       if (found) return found;
-      return loadSample().then(function (t) { return { rows: P.parseCSV(t), title: 'The Murmuration flock', meta: 'data/audience_sample.csv', demo: true }; });
+      return loadSample().then(function (t) { return { rows: P.parseCSV(t), title: window.MURMUR_UPLOAD ? window.MURMUR_UPLOAD.name : 'The Murmuration flock', meta: window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv', demo: !window.MURMUR_UPLOAD }; });
     }).then(function (d) { if (!S.manual) setData(d.rows, d.title, d.meta, d.demo); }).catch(function () {
       if (S.manual) return;
       $('dataset-title').textContent = 'Nothing to listen to yet';
@@ -69,6 +69,7 @@
   }
 
   function setData(rows, title, meta, demo) {
+    window.Kit.fillPalette(PLAT, Array.from(new Set(rows.map(function (r) { return r.platform; }))));
     var G = N.build(rows, P);
     S.G = G;
     S.V = G.nodes.filter(function (n) { return n.linked; }).map(function (n) { return n.i; });
@@ -640,7 +641,7 @@
     T.nodes.forEach(function (n) {
       var x = X(n).toFixed(1), y = Y(n).toFixed(1), col = MOOD_COL[String(n.mood === null ? 0 : n.mood)], d = delay(n).toFixed(2);
       if (!n.kids && n.parent) o += '<g transform="translate(' + x + ' ' + y + ') rotate(' + ((N.hash(String(n.post)) % 60) - 30) + ')"><path class="vine-l" style="animation-delay:' + d + 's" d="M0 0C4 -5 10 -4 13 0C10 4 4 5 0 0Z"/></g>';
-      o += '<circle class="vine-n" style="animation-delay:' + d + 's" cx="' + x + '" cy="' + y + '" r="' + (n.parent ? (n.kids ? 3.6 : 2.6) : 8) + '" fill="' + col + '"><title>' + esc(n.type) + ' on ' + esc(n.platform) + ', ' + Math.round(n.hours) + ' hours in</title></circle>';
+      o += '<circle class="vine-n" style="animation-delay:' + d + 's" cx="' + x + '" cy="' + y + '" r="' + (n.parent ? (n.kids ? 3.6 : 2.6) : 8) + '" fill="' + col + '" data-drill="' + window.Kit.q({ chain: n.id }) + '"><title>' + esc(n.type) + ' on ' + esc(n.platform) + ', ' + Math.round(n.hours) + ' hours in</title></circle>';
     });
     svg.innerHTML = o;
     var days = (c.end - c.start) / 86400000;
@@ -665,7 +666,7 @@
       o += '<text class="t" x="' + (left - 12) + '" y="' + (y + rh / 2 + 4) + '" text-anchor="end">' + esc(s.label.length > 24 ? s.label.slice(0, 23) + '…' : s.label) + '</text>';
       s.cells.forEach(function (c, j) {
         var fill = !c.n ? 'rgba(255,255,255,.03)' : S.relayView === 'mood' ? moodFill(c.count ? c.sum / c.count : 0, 0.3 + 0.7 * Math.min(1, Math.abs(c.count ? c.sum / c.count : 0) + 0.15)) : hexA('#a3de76', 0.12 + 0.88 * Math.pow(c.n / mx, 0.6));
-        o += '<rect x="' + (left + cw * j + 1).toFixed(1) + '" y="' + (y + 2) + '" width="' + Math.max(1, cw - 2).toFixed(1) + '" height="' + (rh - 4) + '" rx="4" fill="' + fill + '"><title>' + esc(s.label) + ': ' + c.n + ' posts</title></rect>';
+        o += '<rect x="' + (left + cw * j + 1).toFixed(1) + '" y="' + (y + 2) + '" width="' + Math.max(1, cw - 2).toFixed(1) + '" height="' + (rh - 4) + '" rx="4" fill="' + fill + '"' + (c.n && s.label !== 'Other groups' && S.relayDim !== 'circle' ? ' data-drill="' + (function () { var q = { tag: S.relayTag, from: (r.d0 + j) * 86400000, to: (r.d0 + j + 1) * 86400000 }; q[S.relayDim] = s.label; return window.Kit.q(q); })() + '"' : '') + '><title>' + esc(s.label) + ', ' + new Date((r.d0 + j) * 86400000).toUTCString().slice(5, 11) + '\n' + c.n + ' posts</title></rect>';
       });
       var day = Math.floor(s.first / 86400000) - r.d0, frac = (s.first / 86400000 - r.d0 - day);
       if (s.label !== 'Other groups') pts.push([left + cw * (day + frac), y + rh / 2]);
@@ -743,7 +744,7 @@
     b.matrix.forEach(function (r, i) { r.forEach(function (v, j) {
       if (!v || i === j) return;
       var x1 = x(i), x2 = x(j), h = Math.min(135, Math.abs(x2 - x1) * 0.42) * (i < j ? -1 : 1) * 1.35, c = PLAT[b.names[i]] || '#ffc266';
-      o += '<path d="M' + x1 + ' ' + mid + 'C' + x1 + ' ' + (mid + h) + ' ' + x2 + ' ' + (mid + h) + ' ' + x2 + ' ' + mid + '" fill="none" stroke="' + c + '" stroke-opacity=".62" stroke-width="' + (1 + 7 * v / mx).toFixed(1) + '" stroke-linecap="round"><title>' + esc(b.names[i]) + ' to ' + esc(b.names[j]) + ': ' + v + ' shares</title></path>';
+      o += '<path d="M' + x1 + ' ' + mid + 'C' + x1 + ' ' + (mid + h) + ' ' + x2 + ' ' + (mid + h) + ' ' + x2 + ' ' + mid + '" fill="none" stroke="' + c + '" stroke-opacity=".62" stroke-width="' + (1 + 7 * v / mx).toFixed(1) + '" stroke-linecap="round" data-drill="' + window.Kit.q({ platform: b.names[j], type: 'share' }) + '"><title>' + esc(b.names[i]) + ' to ' + esc(b.names[j]) + ': ' + v + ' shares</title></path>';
     }); });
     b.names.forEach(function (p, i) { o += '<circle cx="' + x(i) + '" cy="' + mid + '" r="13" fill="' + (PLAT[p] || GREY) + '"/><circle cx="' + x(i) + '" cy="' + mid + '" r="19" fill="none" stroke="' + (PLAT[p] || GREY) + '" stroke-opacity=".3"/><text class="t d" x="' + x(i) + '" y="' + (mid + 6) + '" text-anchor="middle" style="fill:#120b20;font-size:15px;font-style:normal;font-weight:700">' + esc(p.charAt(0)) + '</text><text class="t b" x="' + x(i) + '" y="330" text-anchor="middle">' + esc(p) + '</text>'; });
     svg.innerHTML = o;
@@ -764,7 +765,7 @@
   $('speed-type').addEventListener('click', function (e) { var b = e.target.closest('button[data-t]'); if (!b) return; S.speedType = b.getAttribute('data-t'); press($('speed-type'), 'data-t', S.speedType); renderSpeed(); });
   function renderSpeed() {
     var s = N.replySpeed(S.G), v = s.byType[S.speedType], mx = Math.max.apply(null, v) || 1, svg = $('speed'), bw = 560 / v.length, o = '<line x1="30" x2="600" y1="236" y2="236" stroke="rgba(255,255,255,.12)"/>';
-    v.forEach(function (c, i) { var h = 200 * c / mx, x = 34 + i * bw; o += '<rect x="' + (x + 4).toFixed(1) + '" y="' + (236 - h).toFixed(1) + '" width="' + (bw - 8).toFixed(1) + '" height="' + h.toFixed(1) + '" rx="5" fill="' + hexA('#b48cff', 0.35 + 0.65 * c / mx) + '"/><text class="t b" x="' + (x + bw / 2).toFixed(1) + '" y="' + (230 - h).toFixed(1) + '" text-anchor="middle">' + (c ? fmt(c) : '') + '</text><text class="t f" x="' + (x + bw / 2).toFixed(1) + '" y="256" text-anchor="middle">' + s.labels[i] + '</text>'; });
+    v.forEach(function (c, i) { var h = 200 * c / mx, x = 34 + i * bw; o += '<rect x="' + (x + 4).toFixed(1) + '" y="' + (236 - h).toFixed(1) + '" width="' + (bw - 8).toFixed(1) + '" height="' + h.toFixed(1) + '" rx="5" fill="' + hexA('#b48cff', 0.35 + 0.65 * c / mx) + '"><title>Answered within ' + s.labels[i] + '\n' + fmt(c) + ' reactions</title></rect><text class="t b" x="' + (x + bw / 2).toFixed(1) + '" y="' + (230 - h).toFixed(1) + '" text-anchor="middle">' + (c ? fmt(c) : '') + '</text><text class="t f" x="' + (x + bw / 2).toFixed(1) + '" y="256" text-anchor="middle">' + s.labels[i] + '</text>'; });
     o += '<text class="t d" x="600" y="24" text-anchor="end" style="font-size:16px">median wait ' + (s.medians[S.speedType] < 1 ? Math.round(s.medians[S.speedType] * 60) + ' minutes' : s.medians[S.speedType].toFixed(1) + ' hours') + '</text>';
     svg.innerHTML = o;
   }
@@ -790,6 +791,7 @@
     [['random', '#8d84a0', 'At random'], ['loud', '#a3de76', 'Loudest first'], ['bridge', '#ffc266', 'Bridges first']].forEach(function (s, i) {
       var v = r[s[0]];
       o += '<path d="' + r.steps.map(function (f, j) { return (j ? 'L' : 'M') + X(f).toFixed(1) + ' ' + Y(v[j]).toFixed(1); }).join(' ') + '" fill="none" stroke="' + s[1] + '" stroke-width="2.4"/>';
+      r.steps.forEach(function (f, j) { o += '<circle class="hitd" cx="' + X(f).toFixed(1) + '" cy="' + Y(v[j]).toFixed(1) + '" r="7" fill="' + s[1] + '"><title>' + s[2] + ', ' + Math.round(f * 100) + '% removed\nLargest group keeps ' + Math.round(v[j] * 100) + '% of voices</title></circle>'; });
       o += '<circle cx="' + (440 + 0) + '" cy="' + (26 + i * 20) + '" r="5" fill="' + s[1] + '"/><text class="t" x="452" y="' + (30 + i * 20) + '">' + s[2] + '</text>';
     });
     o += '<text class="t f" x="328" y="292" text-anchor="middle">share of voices removed</text>';

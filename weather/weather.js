@@ -9,10 +9,10 @@
   function deg(v) { var d = Math.round(v * 40); return (d > 0 ? '+' : '') + d + '°'; }
   function days(list) { var o = []; for (var d = 0; d < F.days; d++) o.push([]); list.forEach(function (p) { o[p.day].push(p); }); return o; }
   function topFeeling(list) { var c = {}; list.forEach(function (p) { if (p.emotion !== 'Plain') c[p.emotion] = (c[p.emotion] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; })[0] || 'Plain'; }
-  $('meta').textContent = fmt(P.length) + ' posts read · ' + F.tags.length + ' fronts tracked · data/audience_sample.csv';
+  $('meta').textContent = fmt(P.length) + ' posts read · ' + F.tags.length + ' fronts tracked · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv');
 
   /* headline */
-  var dayAll = days(P).map(K.moodStats), solid = dayAll.map(function (s, d) { return { d: d, s: s }; }).filter(function (x) { return x.s.n >= 50; });
+  var dayAll = days(P).map(K.moodStats), solid = dayAll.map(function (s, d) { return { d: d, s: s }; }).filter(function (x) { return x.s.n >= Math.min(50, Math.max(1, Math.round(P.length / F.days / 3))); });
   var storm = solid.slice().sort(function (a, b) { return a.s.net - b.s.net; })[0], sunny = solid.slice().sort(function (a, b) { return b.s.net - a.s.net; })[0];
   $('k-w').textContent = ALL.posShare + '%'; $('k-s').textContent = ALL.negShare + '%';
   $('k-st').textContent = K.dayName(F.dayStart(storm.d)); $('k-st-s').textContent = deg(storm.s.net) + ', and bring a coat';
@@ -66,6 +66,7 @@
   function filterList() { var v = S.front; S.list = v === 'all' ? P : v.charAt(0) === '#' ? P.filter(function (p) { return p.tag === v; }) : P.filter(function (p) { return p.platform === v; }); S.perDay = days(S.list); }
   function drawStrip() {
     var mx = Math.max.apply(null, S.perDay.map(function (l) { return l.length; })) || 1;
+    $('strip').style.gridTemplateColumns = 'repeat(' + F.days + ',minmax(0,1fr))';
     $('strip').innerHTML = S.perDay.map(function (l, d) { var st = K.moodStats(l), h = l.length ? Math.max(10, 100 * l.length / mx) : 3; return '<button type="button" data-d="' + d + '" aria-pressed="' + (d === S.day) + '" title="' + K.dayName(F.dayStart(d)) + ': ' + (st.n ? K.condition(st.net) : 'no reports') + '"><i style="height:' + h + '%;background:' + (st.n ? netCol(st.net) : 'rgba(255,255,255,.1)') + '"></i></button>'; }).join('');
   }
   function setDay(d) {
@@ -91,25 +92,27 @@
   /* ------------------ forecast notes ------------------ */
   (function () {
     var c = {}; P.forEach(function (p) { c[p.emotion] = (c[p.emotion] || 0) + 1; });
-    var feel = Object.keys(c).filter(function (k) { return k !== 'Plain'; }).sort(function (a, b) { return c[b] - c[a]; })[0];
+    var feel = Object.keys(c).filter(function (k) { return k !== 'Plain'; }).sort(function (a, b) { return c[b] - c[a]; })[0] || 'Plain';
+    var AIR = { Anxiety: 'Nerves are the local climate.', Excitement: 'The air is positively fizzing.', Support: 'A surprisingly civil front.', Curiosity: 'Everybody has a question.', Opposition: 'Expect objections from the west.', Sarcasm: 'The forecast is, of course, wonderful.', Plain: 'Barely a breeze of feeling.' };
     var swings = F.tags.map(function (t) { var half = Math.ceil(t.n / 2), a = K.moodStats(t.posts.slice(0, half)), b = K.moodStats(t.posts.slice(half)); return { t: t, a: a.net, b: b.net, d: b.net - a.net }; }).sort(function (x, y) { return Math.abs(y.d) - Math.abs(x.d); });
     var plats = F.platforms.map(function (x) { return { x: x, s: K.moodStats(P.filter(function (p) { return p.platform === x; })) }; }).sort(function (a, b) { return b.s.net - a.s.net; });
     var hrs = []; for (var h = 0; h < 24; h++) hrs.push(K.moodStats(P.filter(function (p) { return p.hour === h; })));
-    var bestH = hrs.map(function (s, i) { return { i: i, s: s }; }).filter(function (x) { return x.s.n >= 50; }).sort(function (a, b) { return b.s.net - a.s.net; })[0];
+    var bestH = hrs.map(function (s, i) { return { i: i, s: s }; }).filter(function (x) { return x.s.n >= Math.min(50, Math.max(1, Math.round(P.length / 72))); }).sort(function (a, b) { return b.s.net - a.s.net; })[0];
     var mc = P.filter(function (p) { return p.ref >= 0 && p.type !== 'repost' && p.mood === -1 && P[p.ref].mood === -1; }).length, mcD = P.filter(function (p) { return p.ref >= 0 && p.type !== 'repost' && P[p.ref].mood === -1 && p.mood !== null; }).length;
     K.notes($('notes'), [
-      { kick: 'Sea level', fig: deg(ALL.net), unit: '', head: 'is the average mood of the whole month', text: 'Warm and sour very nearly cancel out. Nobody is happy about that.' },
-      { kick: 'Prevailing air', fig: pct(c[feel], P.length), unit: '%', frac: pct(c[feel], P.length), head: 'of posts carry ' + feel.toLowerCase(), text: 'Nerves are the local climate.' },
-      { kick: 'Dry wit', fig: pct(c.Sarcasm, P.length), unit: '%', frac: pct(c.Sarcasm, P.length), head: 'of posts lean sarcastic', text: 'A generous estimate. Sarcasm rarely files a report.' },
-      { kick: 'Change of heart', fig: deg(swings[0].d), unit: '', head: swings[0].t.tag + ' swung this far', text: 'From ' + deg(swings[0].a) + ' at the start to ' + deg(swings[0].b) + ' by the end.' },
-      { kick: 'Mildest climate', fig: deg(plats[0].s.net), unit: '', head: 'on ' + plats[0].x, text: 'Sourest conditions are on ' + plats[plats.length - 1].x + ', at ' + deg(plats[plats.length - 1].s.net) + '.' },
-      { kick: 'Golden hour', fig: K.pad2(bestH.i), unit: ':00 UTC', head: 'is when the crowd is kindest', text: 'Sitting at ' + deg(bestH.s.net) + '. Schedule your apology accordingly.' },
-      { kick: 'Catching', fig: pct(mc, mcD), unit: '%', frac: pct(mc, mcD), head: 'of answers to a sour post are sour too', text: 'Across all posts the rate is ' + ALL.negShare + '%. Bad weather spreads.' },
-      { kick: 'Worst front', fig: deg(F.tags.slice().sort(function (a, b) { return a.net - b.net; })[0].net), unit: '', head: F.tags.slice().sort(function (a, b) { return a.net - b.net; })[0].tag, text: 'Warmest of all: ' + F.tags.slice().sort(function (a, b) { return b.net - a.net; })[0].tag + '.' }
+      { kick: 'Sea level', fig: deg(ALL.net), unit: '', head: 'is the average mood of the whole record', text: Math.abs(ALL.net) < .08 ? 'Warm and sour very nearly cancel out. Nobody is happy about that.' : ALL.net > 0 ? 'The warm side is winning, for now.' : 'The sour side is winning, for now.' },
+      { kick: 'Prevailing air', fig: pct(c[feel], P.length), unit: '%', frac: pct(c[feel], P.length), head: 'of posts carry ' + feel.toLowerCase(), text: AIR[feel], q: K.q({ emotion: feel }) },
+      { kick: 'Dry wit', fig: pct(c.Sarcasm || 0, P.length), unit: '%', frac: pct(c.Sarcasm || 0, P.length), head: 'of posts lean sarcastic', text: 'A generous estimate. Sarcasm rarely files a report.', q: K.q({ emotion: 'Sarcasm' }) },
+      { kick: 'Change of heart', fig: deg(swings[0].d), unit: '', head: swings[0].t.tag + ' swung this far', text: 'From ' + deg(swings[0].a) + ' at the start to ' + deg(swings[0].b) + ' by the end.', q: K.q({ tag: swings[0].t.tag }) },
+      { kick: 'Mildest climate', fig: deg(plats[0].s.net), unit: '', head: 'on ' + plats[0].x, text: 'Sourest conditions are on ' + plats[plats.length - 1].x + ', at ' + deg(plats[plats.length - 1].s.net) + '.', q: K.q({ platform: plats[0].x }) },
+      { kick: 'Golden hour', fig: K.pad2(bestH.i), unit: ':00 UTC', head: 'is when the crowd is kindest', text: 'Sitting at ' + deg(bestH.s.net) + '. Schedule your apology accordingly.', q: K.q({ hour: bestH.i }) },
+      { kick: 'Catching', fig: pct(mc, mcD), unit: '%', frac: pct(mc, mcD), head: 'of answers to a sour post are sour too', text: 'Across all posts the rate is ' + ALL.negShare + '%.' + (pct(mc, mcD) > ALL.negShare ? ' Bad weather spreads.' : ' This crowd does not catch it.') },
+      { kick: 'Worst front', fig: deg(F.tags.slice().sort(function (a, b) { return a.net - b.net; })[0].net), unit: '', head: F.tags.slice().sort(function (a, b) { return a.net - b.net; })[0].tag, text: 'Warmest of all: ' + F.tags.slice().sort(function (a, b) { return b.net - a.net; })[0].tag + '.', q: K.q({ tag: F.tags.slice().sort(function (a, b) { return a.net - b.net; })[0].tag }) }
     ], ['#ffd27a', '#b48cff', '#ff9f73', '#ff7f9e', '#7be08a', '#8fc8ff', '#62e0c0', '#ec83e0']);
   })();
 
   /* ------------------ barometer ------------------ */
+  $('b-hits').insertAdjacentHTML('afterend', '<div id="b-parts"></div>');
   function reading() {
     var r = K.readSentence($('b-in').value), a = Math.PI * (1 - (r.score + 1) / 2), cx = 160, cy = 150, R = 118, o = '', i;
     function p(ang, rad) { return (cx + Math.cos(ang) * rad).toFixed(1) + ' ' + (cy - Math.sin(ang) * rad).toFixed(1); }
@@ -118,14 +121,16 @@
     $('b-g').innerHTML = o;
     $('b-v').textContent = r.words ? K.condition(r.score * .6) : 'Waiting for weather';
     $('b-f').textContent = r.words ? r.feeling : 'Say something';
-    $('b-hits').innerHTML = r.hits.map(function (h) { return '<span style="color:' + (h.value > 0 ? '#7be08a' : '#ff7f9e') + '">' + esc(h.word) + '</span>'; }).join('');
+    $('b-hits').innerHTML = r.hits.map(function (h) { return '<span data-tip="' + esc(h.word) + '\nscored ' + (h.value > 0 ? '+' : '') + h.value.toFixed(1) + '" style="color:' + (h.value > 0 ? '#7be08a' : '#ff7f9e') + '">' + esc(h.word) + '</span>'; }).join('');
+    var parts = K.readParts($('b-in').value), a2 = Math.abs(r.score), side = $('b-parts');
+    side.innerHTML = r.words ? '<div class="statchips"><div><b>' + (r.hits.length ? (a2 >= .6 ? 'Strong' : a2 >= .35 ? 'Mild' : 'Weak') : 'None') + '</b>strength</div><div><b>' + (r.hits.length ? 'Opinion' : 'Plain fact') + '</b>kind</div><div><b>' + (r.score > 0 ? '+' : '') + r.score.toFixed(2) + '</b>score</div></div>' + (parts.length > 1 ? '<div class="chips" style="margin-top:8px">' + parts.map(function (x) { return '<span class="tagc" style="color:' + (x.r.mood === 'warm' ? '#7be08a' : x.r.mood === 'sour' ? '#ff7f9e' : '#ffd27a') + '" data-tip="Sentence reading\n' + x.r.mood + ', score ' + x.r.score.toFixed(2) + '">' + esc(x.text.slice(0, 46)) + '</span>'; }).join('') + '</div>' : '') : '';
   }
   $('b-in').addEventListener('input', reading); reading();
 
   /* ------------------ wheel + river ------------------ */
   var picked = null, E = K.EMOTIONS.filter(function (e) { return e !== 'Plain'; }), eCount = {}; P.forEach(function (p) { eCount[p.emotion] = (eCount[p.emotion] || 0) + 1; });
   function wheel() {
-    var mx = Math.max.apply(null, E.map(function (e) { return eCount[e] || 0; })), o = '', n = E.length, r0 = 46;
+    var mx = Math.max.apply(null, E.map(function (e) { return eCount[e] || 0; })) || 1, o = '', n = E.length, r0 = 46;
     E.forEach(function (e, i) {
       var a0 = i / n * 6.2832 - 1.5708 + .05, a1 = (i + 1) / n * 6.2832 - 1.5708 - .05, r = r0 + 92 * Math.sqrt((eCount[e] || 0) / mx), m = (a0 + a1) / 2, on = picked === e;
       function pt(a, q) { return (Math.cos(a) * q).toFixed(1) + ' ' + (Math.sin(a) * q).toFixed(1); }
@@ -143,13 +148,17 @@
     list.forEach(function (e) {
       var top = cur.map(function (y, d) { return [X(d), y]; }), next = cur.map(function (y, d) { return y + (stack[d][e] || 0) / mx * (H - 24); }), bottom = next.map(function (y, d) { return [X(d), y]; }).reverse();
       var d = smooth(top) + ' L' + bottom[0][0].toFixed(1) + ' ' + bottom[0][1].toFixed(1) + smooth(bottom).replace(/^M[^C]*/, '') + ' Z';
-      o += '<path d="' + d + '" fill="' + COL[e] + '" fill-opacity=".85"><title>' + e + '</title></path>'; cur = next;
+      o += '<path d="' + d + '" fill="' + COL[e] + '" fill-opacity=".85"></path>'; cur = next;
     });
-    [0, 5, 10, 15, 20, 25].forEach(function (d) { o += '<text class="t f" x="' + X(d) + '" y="292" text-anchor="middle">' + K.dayName(F.dayStart(d)) + '</text>'; });
+    var colW = 940 / Math.max(1, F.days - 1);
+    D.forEach(function (l, d) { var bits = list.map(function (e) { return e + ': ' + (stack[d][e] || 0); }).join(', '); o += '<rect class="hit" x="' + (X(d) - colW / 2).toFixed(1) + '" y="0" width="' + colW.toFixed(1) + '" height="' + H + '"' + (l.length ? ' data-drill="' + K.q(picked ? { day: d, emotion: picked } : { day: d }) + '"' : '') + '><title>' + K.dayName(F.dayStart(d)) + '\n' + fmt(l.length) + ' posts. ' + esc(bits) + '</title></rect>'; });
+    K.ticks(F.days, 6).forEach(function (d) { o += '<text class="t f" x="' + X(d) + '" y="292" text-anchor="middle">' + K.dayName(F.dayStart(d)) + '</text>'; });
     $('river').innerHTML = o; $('r-tag').textContent = picked || 'All feelings';
-    $('r-l').innerHTML = E.map(function (e) { return '<span><i style="background:' + COL[e] + '"></i>' + e + '</span>'; }).join('');
+    $('r-l').innerHTML = E.map(function (e) { return '<span data-pick="' + e + '" style="cursor:pointer;opacity:' + (picked && picked !== e ? .4 : 1) + '"><i style="background:' + COL[e] + '"></i>' + e + '</span>'; }).join('');
   }
-  $('wheel').addEventListener('click', function (e) { var p = e.target.closest('path[data-e]'); if (!p) return; var v = p.getAttribute('data-e'); picked = picked === v ? null : v; wheel(); river(); });
+  $('wheel').addEventListener('click', function (e) { var p = e.target.closest('path[data-e]'); if (!p) return; var v = p.getAttribute('data-e'); pick(picked === v ? null : v); });
+  function pick(v) { picked = v; wheel(); river(); var b = $('wheel-read'); b.hidden = !v; if (v) { b.textContent = 'Read every post carrying ' + v.toLowerCase(); b.setAttribute('data-drill', K.q({ emotion: v }).replace(/&amp;/g, '&')); } }
+  $('r-l').addEventListener('click', function (e) { var s = e.target.closest('[data-pick]'); if (s) { var v = s.getAttribute('data-pick'); pick(picked === v ? null : v); } });
 
   /* ------------------ zones ------------------ */
   function zones(dim) {
@@ -158,7 +167,7 @@
     var names = Object.keys(g).filter(function (k) { return Object.keys(g[k].v).length >= K.K_MIN; }).sort(function (a, b) { return g[b].posts.length - g[a].posts.length; }).slice(0, 8), host = $('zones');
     host.style.gridTemplateColumns = '132px repeat(' + E.length + ',minmax(0,1fr))';
     host.innerHTML = '<div></div>' + E.map(function (e) { return '<div class="h">' + e + '</div>'; }).join('') + names.map(function (n) {
-      return '<div class="l">' + esc(n.replace(/ &.*| \(.*/, '')) + '</div>' + E.map(function (e) { var v = pct(g[n].posts.filter(function (p) { return p.emotion === e; }).length, g[n].posts.length); return '<div class="c" style="background:' + K.hexA(COL[e], Math.min(.95, .08 + v / 38)) + '">' + Math.round(v) + '</div>'; }).join('');
+      return '<div class="l">' + esc(n.replace(/ &.*| \(.*/, '')) + '</div>' + E.map(function (e) { var v = pct(g[n].posts.filter(function (p) { return p.emotion === e; }).length, g[n].posts.length); var fld = {}; fld[dim === 'platform' ? 'platform' : dim === 'region' ? 'region' : 'calling'] = n; fld.emotion = e; fld.audience = 1; return '<div class="c" data-drill="' + K.q(fld) + '" data-tip="' + esc(n) + '\n' + v + '% carry ' + e.toLowerCase() + '" style="background:' + K.hexA(COL[e], Math.min(.95, .08 + v / 38)) + '">' + Math.round(v) + '</div>'; }).join('');
     }).join('');
   }
   K.bindTabs('z-dim', zones); zones('platform');
@@ -168,23 +177,44 @@
     var half = Math.ceil(t.n / 2), a = K.moodStats(t.posts.slice(0, half)), b = K.moodStats(t.posts.slice(half)), diff = b.net - a.net, verdict = diff < -.15 ? 'Turned sour' : diff > .15 ? 'Warmed up' : 'Held steady';
     var act = t.daily.map(function (v, d) { return { v: v, d: d }; }).filter(function (x) { return x.v >= 3; }), pts = act.map(function (x, i) { return [act.length > 1 ? i / (act.length - 1) * 200 : 100, 23 - (t.moodSum[x.d] / Math.max(1, t.moodCnt[x.d])) * 20]; });
     var path = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
-    return '<article class="front"><h4>' + esc(t.tag) + '</h4><div class="st">' + K.condition(t.net) + ' &middot; ' + deg(t.net) + ' &middot; ' + verdict + '</div><svg viewBox="0 0 200 46" preserveAspectRatio="none" role="img" aria-label="Mood over time"><line x1="0" x2="200" y1="23" y2="23" stroke="rgba(255,255,255,.2)" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/><path d="' + path + '" fill="none" stroke="' + netCol(t.net) + '" stroke-width="2" vector-effect="non-scaling-stroke"/></svg><div class="go"><a href="../swell/index.html#tag=' + encodeURIComponent(t.tag) + '">Ride it</a><a href="../atlas/index.html#tag=' + encodeURIComponent(t.tag) + '">Who wore it</a><a href="../grapevine/index.html#tag=' + encodeURIComponent(t.tag) + '">Trace it</a></div></article>';
+    return '<article class="front"><h4 data-drill="' + K.q({ tag: t.tag }) + '" data-tip="' + esc(t.tag) + '\n' + fmt(t.n) + ' posts from ' + fmt(t.voices) + ' voices">' + esc(t.tag) + '</h4><div class="st">' + K.condition(t.net) + ' &middot; ' + deg(t.net) + ' &middot; ' + verdict + '</div><svg viewBox="0 0 200 46" preserveAspectRatio="none" role="img" aria-label="Mood over time"><line x1="0" x2="200" y1="23" y2="23" stroke="rgba(255,255,255,.2)" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/><path d="' + path + '" fill="none" stroke="' + netCol(t.net) + '" stroke-width="2" vector-effect="non-scaling-stroke"/>' + pts.map(function (p, i) { var d = act[i].d, m = t.moodSum[d] / Math.max(1, t.moodCnt[d]); return '<rect class="hit" x="' + (p[0] - 200 / Math.max(2, pts.length) / 2).toFixed(1) + '" y="0" width="' + (200 / Math.max(2, pts.length)).toFixed(1) + '" height="46" data-drill="' + K.q({ tag: t.tag, day: d }) + '"><title>' + K.dayName(F.dayStart(d)) + '\n' + deg(m) + ', ' + act[i].v + ' posts</title></rect>'; }).join('') + '</svg><div class="go"><a href="../swell/index.html#tag=' + encodeURIComponent(t.tag) + '">Ride it</a><a href="../atlas/index.html#tag=' + encodeURIComponent(t.tag) + '">Who wore it</a><a href="../grapevine/index.html#tag=' + encodeURIComponent(t.tag) + '">Trace it</a></div></article>';
   }).join('');
 
   /* ------------------ hours + depth ------------------ */
   (function () {
     var hrs = []; for (var h = 0; h < 24; h++) hrs.push(K.moodStats(P.filter(function (p) { return p.hour === h; })));
     var mx = Math.max.apply(null, hrs.map(function (s) { return Math.abs(s.net); })) || .1, mid = 118, bw = 560 / 24, o = '<line x1="34" x2="600" y1="' + mid + '" y2="' + mid + '" stroke="rgba(255,255,255,.14)"/>';
-    hrs.forEach(function (s, h) { var bh = Math.abs(s.net) / mx * 96, x = 36 + h * bw; o += '<rect x="' + (x + 2).toFixed(1) + '" y="' + (s.net > 0 ? mid - bh : mid).toFixed(1) + '" width="' + (bw - 4).toFixed(1) + '" height="' + Math.max(1, bh).toFixed(1) + '" rx="3" fill="' + netCol(s.net) + '"><title>' + K.pad2(h) + ':00 UTC ' + deg(s.net) + '</title></rect>'; if (h % 6 === 0) o += '<text class="t f" x="' + (x + bw / 2).toFixed(1) + '" y="244" text-anchor="middle">' + K.pad2(h) + 'h</text>'; });
+    hrs.forEach(function (s, h) { var bh = Math.abs(s.net) / mx * 96, x = 36 + h * bw; o += '<rect x="' + (x + 2).toFixed(1) + '" y="' + (s.net > 0 ? mid - bh : mid).toFixed(1) + '" width="' + (bw - 4).toFixed(1) + '" height="' + Math.max(1, bh).toFixed(1) + '" rx="3" fill="' + netCol(s.net) + '" data-drill="' + K.q({ hour: h }) + '"><title>' + K.pad2(h) + ':00 UTC\n' + deg(s.net) + ', ' + fmt(s.n) + ' posts</title></rect>'; if (h % 6 === 0) o += '<text class="t f" x="' + (x + bw / 2).toFixed(1) + '" y="244" text-anchor="middle">' + K.pad2(h) + 'h</text>'; });
     o += '<text class="t f" x="30" y="26" text-anchor="end">' + deg(mx) + '</text><text class="t f" x="30" y="218" text-anchor="end">' + deg(-mx) + '</text>';
     $('hours').innerHTML = o;
     var maxD = 6, lv = []; for (var d = 0; d <= maxD; d++) lv.push(K.moodStats(P.filter(function (p) { return (d === maxD ? p.depth >= d : p.depth === d) && p.type !== 'repost'; })));
     var X = function (i) { return 60 + i / maxD * 510; }, Y = function (v) { return 120 - v * 240; }, pts = lv.map(function (s, i) { return [X(i), Y(s.net), s]; }).filter(function (p) { return p[2].n >= K.K_MIN; });
     var q = '<line x1="50" x2="590" y1="' + Y(0) + '" y2="' + Y(0) + '" stroke="rgba(255,255,255,.14)" stroke-dasharray="2 4"/><path d="' + pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ') + '" fill="none" stroke="#8fc8ff" stroke-width="2"/>';
-    pts.forEach(function (p, i) { q += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (3 + 9 * Math.sqrt(p[2].n / lv[0].n)).toFixed(1) + '" fill="' + netCol(p[2].net) + '"><title>' + fmt(p[2].n) + ' posts</title></circle><text class="t b" x="' + p[0].toFixed(1) + '" y="' + (p[1] - 16).toFixed(1) + '" text-anchor="middle">' + deg(p[2].net) + '</text>'; });
+    pts.forEach(function (p, i) { q += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (3 + 9 * Math.sqrt(p[2].n / Math.max(1, lv[0].n))).toFixed(1) + '" fill="' + netCol(p[2].net) + '" data-drill="' + K.q({ depth: lv.indexOf(p[2]) === maxD ? maxD + '+' : lv.indexOf(p[2]), norepost: 1 }) + '"><title>' + (lv.indexOf(p[2]) === 0 ? 'Original posts' : 'Hop ' + lv.indexOf(p[2])) + '\n' + fmt(p[2].n) + ' posts, ' + deg(p[2].net) + '</title></circle><text class="t b" x="' + p[0].toFixed(1) + '" y="' + (p[1] - 16).toFixed(1) + '" text-anchor="middle">' + deg(p[2].net) + '</text>'; });
     for (var j = 0; j <= maxD; j++) q += '<text class="t f" x="' + X(j) + '" y="244" text-anchor="middle">' + (j === 0 ? 'origin' : j === maxD ? maxD + '+' : j) + '</text>';
     $('depth').innerHTML = q;
   })();
+
+  /* ------------------ naive bayes ------------------ */
+  var NB = K.trainNB(P), NAME = { '1': 'Warm', '0': 'Even', '-1': 'Sour' }, NC = { '1': '#7be08a', '0': '#ffd27a', '-1': '#ff7f9e' };
+  function nbRead() {
+    var v = $('nb-in').value, r = NB.predict(v);
+    $('nb-out').innerHTML = !v.trim() ? '<div class="empty">Say something to the clerk.</div>' : (r.known ? '' : '<div class="hint" style="margin-bottom:8px">The clerk has seen none of these words, so this is only a guess from how common each mood is.</div>') + ['1', '0', '-1'].map(function (c) { var p = Math.round(1000 * r.probs[c]) / 10; return '<div class="trow"><span class="name">' + NAME[c] + (r.label === c ? ' &larr;' : '') + '</span><span class="sbar" data-tip="' + NAME[c] + '\n' + p + '% probability"><i style="width:' + p + '%;background:' + NC[c] + '"></i></span><span class="v">' + p + '%</span></div>'; }).join('') + (r.why.length ? '<div class="chips" style="margin-top:8px">' + r.why.map(function (w) { return '<span class="tagc" style="color:' + NC[w.c] + '" data-tip="' + esc(w.word) + '\nleans ' + NAME[w.c].toLowerCase() + '">' + esc(w.word) + '</span>'; }).join('') + '</div>' : '');
+  }
+  $('nb-in').addEventListener('input', nbRead); nbRead();
+  $('nb-score').innerHTML = F.labelled && NB.tested ? [[NB.accuracy + '%', 'on posts it never saw'], [NB.unseenWording + '%', 'on wordings it never saw'], [NB.lexicon + '%', 'word list alone'], [NB.baseline + '%', 'always guess the commonest']].map(function (x) { return '<div data-tip="' + x[1] + '"><b>' + x[0] + '</b>' + x[1] + '</div>'; }).join('') : '<div style="text-transform:none;letter-spacing:0;font-size:12px">This file has no human mood labels, so there is nothing fair to score the clerk against. It is learning the word list.</div>';
+
+  /* ------------------ strength and subjectivity ------------------ */
+  (function () {
+    var read = P.filter(function (p) { return K.lexOf(p); }), B = [['Plain statement', { subj: 'fact' }], ['Weak opinion', { strength: 'weak' }], ['Mild opinion', { strength: 'mild' }], ['Strong opinion', { strength: 'strong' }]];
+    var counts = B.map(function (b) { return read.filter(function (p) { var r = K.lexOf(p); return b[1].subj ? r.subj === b[1].subj : r.strength === b[1].strength; }); }), mx = Math.max.apply(null, counts.map(function (l) { return l.length; })) || 1;
+    $('str').innerHTML = B.map(function (b, i) { var L = counts[i], s = K.moodStats(L.map(function (p) { var r = K.lexOf(p); return { mood: r.mood === 'warm' ? 1 : r.mood === 'sour' ? -1 : 0 }; })), w = 100 * L.length / mx; return '<div class="trow"' + (L.length ? ' data-drill="' + K.q(b[1]) + '"' : '') + ' data-tip="' + b[0] + '\n' + fmt(L.length) + ' posts, ' + pct(L.length, read.length) + '% of those read"><span class="name" style="font:italic 15px var(--display)">' + b[0] + '</span><span class="sbar" style="width:' + Math.max(1, w).toFixed(1) + '%"><i style="width:' + s.posShare + '%;background:#7be08a"></i><i style="width:' + s.neuShare + '%;background:#ffd27a"></i><i style="width:' + s.negShare + '%;background:#ff7f9e"></i></span><span class="v">' + fmt(L.length) + '</span></div>'; }).join('') + '<div class="hint" style="margin-top:10px">' + fmt(read.length) + ' of ' + fmt(P.length) + ' posts could be read.</div>';
+  })();
+
+  /* sky readout */
+  $('sky').addEventListener('pointermove', function (e) { if (e.target !== $('scene')) { window.Loupe.tipOff(); return; } var st = K.moodStats(S.perDay[S.day]); $('scene').style.cursor = st.n ? 'pointer' : ''; window.Loupe.tipAt(e.clientX, e.clientY, K.dayName(F.dayStart(S.day)) + ', ' + (st.n >= K.K_MIN ? K.condition(st.net) : 'dead calm') + '\n' + st.posShare + '% warm, ' + st.negShare + '% sour, ' + fmt(st.n) + ' reports', 'Click to read the reports'); });
+  $('sky').addEventListener('pointerleave', function () { window.Loupe.tipOff(); });
+  $('scene').addEventListener('click', function () { var q = { day: S.day }; if (S.front !== 'all') { if (S.front.charAt(0) === '#') q.tag = S.front; else q.platform = S.front; } if (S.perDay[S.day].length) window.Loupe.open(q); });
 
   /* start */
   wheel(); river(); filterList(); drawStrip(); setDay(S.day);

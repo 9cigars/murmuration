@@ -56,7 +56,7 @@
       if (mood !== null) { n.moodSum += mood; n.moodN++; }
       var type = r.interaction || (r.parent_id ? 'reply' : 'post');
       if (r.post_id) idx.set(r.post_id, posts.length);
-      posts.push({ a: n.i, ts: ts, type: type, refId: r.ref_post_id || r.parent_id || '', ref: -1, tag: tag ? tag[0] : null, mood: mood, kids: [], platform: n.platform });
+      posts.push({ id: r.post_id, a: n.i, ts: ts, type: type, refId: r.ref_post_id || r.parent_id || '', ref: -1, tag: tag ? tag[0] : null, mood: mood, kids: [], platform: n.platform });
     });
 
     var used = {};
@@ -263,7 +263,7 @@
     var P_ = G.posts, nodes = [], leaf = 0;
     (function walk(i, depth, parent) {
       var kids = P_[i].kids.slice().sort(function (a, b) { return P_[a].ts - P_[b].ts; });
-      var me = { post: i, depth: depth, parent: parent, hours: (P_[i].ts - c.start) / 3600000, mood: P_[i].mood, type: P_[i].type, platform: P_[i].platform, kids: kids.length, y: 0 };
+      var me = { id: P_[i].id, post: i, depth: depth, parent: parent, hours: (P_[i].ts - c.start) / 3600000, mood: P_[i].mood, type: P_[i].type, platform: P_[i].platform, kids: kids.length, y: 0 };
       nodes.push(me);
       if (!kids.length) { me.y = leaf++; return me; }
       var ys = kids.map(function (k) { return walk(k, depth + 1, me).y; });

@@ -50,7 +50,7 @@
       <div>
         <div class="eyebrow"><i class="live"></i> Chapter IV &middot; Surf report</div>
         <h1 id="title">Catch the <em>swell</em></h1>
-        <p class="lede">Every trend starts as a ripple nobody bothered to look at. Roll the clock back to any morning this month, see only what was known that day, and decide which one you would have paddled for.</p>
+        <p class="lede">Every trend starts as a ripple nobody bothered to look at. Roll the clock back to any morning on file, see only what was known that day, and decide which one you would have paddled for.</p>
       </div>
       <div class="kpis" aria-label="Summary">
         <div class="kpi" style="--c:#ff9270"><span>Waves on the chart</span><strong id="k-n">&ndash;</strong><small id="k-n-s">&nbsp;</small></div>
@@ -74,7 +74,7 @@
     <section class="strip" aria-label="Dataset"><div><strong>The Murmuration flock</strong><small id="meta">&nbsp;</small></div><a class="btn go" href="../data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></section>
     <div class="banner"><b>Synthetic data</b><span>Invented waves on an invented sea. The scoring is real, though, and the forecaster cannot peek.</span></div>
 
-    <div class="section-head"><h2>Surf report</h2><p>Conditions at the end of the month.</p></div>
+    <div class="section-head"><h2>Surf report</h2><p>Conditions at the end of the record.</p></div>
     <section class="notes" id="notes" aria-label="Findings"></section>
 
     <div class="section-head"><h2>The plates</h2><p>Charts for people who check the tide twice.</p></div>
@@ -94,7 +94,7 @@
       </section>
       <section class="glass plate wide" aria-labelledby="p3">
         <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="p3">The tide table</h3></div><span class="tag">Trend by day</span></div>
-        <p class="cap">Thirty days of water. Each bright patch is a set rolling through.</p>
+        <p class="cap">All the water on file. Each bright patch is a set rolling through. Click one.</p>
         <div class="scrollx"><div class="tide" id="tide"></div></div>
         <details class="how"><summary>How it is read</summary><p>Brighter means more posts carrying that hashtag on that day. Trends are ordered by total size.</p></details>
       </section>
@@ -135,14 +135,16 @@
     <div class="never"><span class="lab">House rules</span><span class="x">Peeking at tomorrow</span><span class="x">Deleting bad guesses</span><span class="x">Calling a ripple a tsunami</span></div>
     <div class="caveats">
       <div class="caveat"><b>Launches come from nowhere</b>No model can see a hashtag that does not exist yet.</div>
-      <div class="caveat"><b>Waves are short here</b>With only a few active days each, forecasts have little to learn from.</div>
-      <div class="caveat"><b>One month, one sea</b>A good score on this sample promises nothing about the next one.</div>
+      <div class="caveat" data-sample="1"><b>Waves are short here</b>With only a few active days each, forecasts have little to learn from.</div>
+      <div class="caveat" data-sample="1"><b>One month, one sea</b>A good score on this sample promises nothing about the next one.</div>
     </div>
     <footer><span>Chapter IV of Murmuration &middot; Utsav</span><a class="nx" href="../grapevine/index.html">Next: The Grapevine &rarr;</a><em>Every voice here is synthetic.</em></footer>
   </main>
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
   <script src="../data/audience_sample.js"></script>
+  <script src="../core/door.js"></script>
+  <script src="../core/loupe.js"></script>
   <script src="swell.js"></script>
 </body>
 </html>

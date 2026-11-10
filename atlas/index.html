@@ -474,6 +474,10 @@
   </main>
 
   <script src="../core/profiler.js"></script>
+  <script src="../core/kit.js"></script>
+  <script src="../data/audience_sample.js"></script>
+  <script src="../core/door.js"></script>
+  <script src="../core/loupe.js"></script>
   <script>
   (function () {
     'use strict';
@@ -578,7 +582,7 @@
       }).then(function (found) {
         if (found) return found;
         return loadSampleText().then(function (t) {
-          return { rows: P.parseCSV(t), title: 'The Murmuration flock', meta: 'data/audience_sample.csv', demo: true };
+          return { rows: P.parseCSV(t), title: window.MURMUR_UPLOAD ? window.MURMUR_UPLOAD.name : 'The Murmuration flock', meta: window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv', demo: !window.MURMUR_UPLOAD };
         });
       }).then(function (d) {
         if (S.manual) return;
@@ -913,12 +917,14 @@
         if (!r) {
           var el = document.createElement('div'); el.className = 'row';
           el.innerHTML = '<span class="name"></span><span class="track"><i class="fill"></i></span><span class="val"></span>';
+          el.setAttribute('data-lens', key); el.setAttribute('data-label', it.label); el.style.cursor = 'pointer';
           r = rows[it.label] = { el: el, name: el.children[0], fill: el.children[1].firstChild, val: el.children[2] };
           r.name.textContent = it.label; host.appendChild(el);
         }
         r.fill.style.width = Math.max(2, Math.round(100 * it.share / max)) + '%';
         r.fill.style.background = it.grouped ? C_OTHER : bg;
         r.val.textContent = it.share + '% · ' + nText(it);
+        r.el.setAttribute('data-tip', it.label + '\n' + it.share + '% of profiles, ' + nText(it) + ' people\nClick to read what they posted');
         r.el.style.order = idx;
       });
       Object.keys(rows).forEach(function (l) { if (!seen[l]) { rows[l].el.remove(); delete rows[l]; } });
@@ -985,7 +991,7 @@
       for (i = 0; i < 24; i++) {
         var a0 = (i * 15 - 90 + 0.7) * Math.PI / 180, a1 = ((i + 1) * 15 - 90 - 0.7) * Math.PI / 180;
         var r1 = r0 + (R - r0) * Math.sqrt(hours[i] / max);
-        out += '<path class="wedge" d="M' + pt(r0, a0) + ' L' + pt(r1, a0) + ' A' + r1.toFixed(2) + ' ' + r1.toFixed(2) + ' 0 0 1 ' + pt(r1, a1) + ' L' + pt(r0, a1) + ' A' + r0 + ' ' + r0 + ' 0 0 0 ' + pt(r0, a0) + ' Z" fill="' + hourColor(i, 0.92) + '"><title>' + pad2(i) + ':00 UTC, ' + fmt(hours[i]) + ' posts</title></path>';
+        out += '<path class="wedge" d="M' + pt(r0, a0) + ' L' + pt(r1, a0) + ' A' + r1.toFixed(2) + ' ' + r1.toFixed(2) + ' 0 0 1 ' + pt(r1, a1) + ' L' + pt(r0, a1) + ' A' + r0 + ' ' + r0 + ' 0 0 0 ' + pt(r0, a0) + ' Z" fill="' + hourColor(i, 0.92) + '" style="cursor:pointer" data-hour="' + i + '"><title>' + pad2(i) + ':00 UTC, ' + fmt(hours[i]) + ' posts</title></path>';
       }
       [[0, '00'], [6, '06'], [12, '12'], [18, '18']].forEach(function (l) {
         var a = (l[0] * 15 - 90) * Math.PI / 180;
@@ -1022,7 +1028,7 @@
       var max = Math.max.apply(null, dist.items.map(function (i) { return i.n; })) || 1, cols = ['#5cd1ff', '#35d0c0', '#7be08a', '#ffc15e', '#ff7a90'], out = '';
       dist.items.forEach(function (it, i) {
         var x = 50 + i * 100, r = it.n ? 8 + 32 * Math.sqrt(it.n / max) : 3, c = cols[i];
-        out += '<circle cx="' + x + '" cy="72" r="' + (r + 9).toFixed(1) + '" fill="' + hexA(c, 0.08) + '"/><circle cx="' + x + '" cy="72" r="' + r.toFixed(1) + '" fill="' + hexA(c, 0.5) + '" stroke="' + c + '" stroke-width="1.2"/>';
+        out += '<circle cx="' + x + '" cy="72" r="' + (r + 9).toFixed(1) + '" fill="' + hexA(c, 0.08) + '"/><circle cx="' + x + '" cy="72" r="' + r.toFixed(1) + '" fill="' + hexA(c, 0.5) + '" stroke="' + c + '" stroke-width="1.2" style="cursor:pointer" data-tier="' + esc(it.label) + '" data-tip="' + esc(it.label) + '\n' + (it.hidden ? 'Fewer than ' + K : fmt(it.n)) + ' profiles' + (it.n ? ', ' + it.share + '%' : '') + '\nClick to read what they posted"/>';
         out += '<text class="svgt b" x="' + x + '" y="76" text-anchor="middle" style="font-size:13px">' + (it.hidden ? '&lt;' + K : fmt(it.n)) + '</text>';
         out += '<text class="svgt" x="' + x + '" y="145" text-anchor="middle">' + esc(it.label) + '</text><text class="svgt f" x="' + x + '" y="160" text-anchor="middle">' + (it.n ? it.share + '%' : '') + '</text>';
       });
@@ -1039,7 +1045,7 @@
       out += '<line x1="10" x2="490" y1="118" y2="118" stroke="rgba(255,255,255,.1)"/>';
       dist.items.forEach(function (it, i) {
         var x = 22 + i * 78, h = it.n ? Math.max(4, 98 * it.share / max) : 0;
-        out += '<rect x="' + x + '" y="' + (118 - h).toFixed(1) + '" width="52" height="' + h.toFixed(1) + '" rx="6" fill="url(#tg)"><title>' + esc(it.label) + ': ' + (it.hidden ? '<' + K : fmt(it.n)) + ' profiles</title></rect>';
+        out += '<rect x="' + x + '" y="' + (118 - h).toFixed(1) + '" width="52" height="' + h.toFixed(1) + '" rx="6" fill="url(#tg)" style="cursor:pointer" data-cohort="' + esc(it.label) + '"><title>' + esc(it.label) + '\n' + (it.hidden ? '<' + K : fmt(it.n)) + ' profiles\nClick to read what they posted</title></rect>';
         out += '<text class="svgt b" x="' + (x + 26) + '" y="' + (112 - h).toFixed(1) + '" text-anchor="middle">' + (it.n ? it.share + '%' : '') + '</text>';
         out += '<text class="svgt" x="' + (x + 26) + '" y="138" text-anchor="middle" style="font-size:10.5px">' + short[i] + '</text>';
       });
@@ -1259,6 +1265,14 @@
       if (gi >= 0) select(gi); else if (S.selIdx >= 0) { S.selIdx = -1; updateChips(); queueRefresh(true); }
     });
 
+    function drillBy(test, label, e, hour) { var set = new Set(visible().filter(test).map(function (p) { return p.uid; })), q = { voices: set, label: label }; if (hour !== undefined) q.hour = hour; window.Loupe.open(q, { at: { x: e.clientX, y: e.clientY } }); }
+    document.addEventListener('click', function (e) {
+      var r = e.target.closest && e.target.closest('.bars .row[data-lens]'), t = e.target.getAttribute && e.target.getAttribute('data-tier'), c = e.target.getAttribute && e.target.getAttribute('data-cohort');
+      if (r) { var lens = r.getAttribute('data-lens'), label = r.getAttribute('data-label'); drillBy(function (p) { return P.groupValue(p, lens) === label; }, label, e); }
+      else if (t) drillBy(function (p) { return p.tier === t; }, t + ' followers', e);
+      else if (c) drillBy(function (p) { return p.cohort === c; }, 'Joined ' + c, e);
+      else if (e.target.getAttribute && e.target.getAttribute('data-hour') !== null) { var h = +e.target.getAttribute('data-hour'); drillBy(function () { return true; }, pad2(h) + ':00 UTC', e, h); }
+    });
     $('csv-file').addEventListener('change', function (e) {
       var f = e.target.files && e.target.files[0]; if (!f) return;
       var reader = new FileReader();

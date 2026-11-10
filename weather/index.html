@@ -20,6 +20,7 @@
     .temp{position:absolute;right:22px;top:14px;z-index:4;font:300 clamp(46px,7vw,92px)/1 var(--display);text-shadow:0 2px 18px #0009;font-variant-numeric:tabular-nums}
     .gauges{position:absolute;left:22px;right:22px;bottom:16px;z-index:4;display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:#f1f4fa;text-shadow:0 1px 8px #000}
     .gauges b{font:400 22px var(--display);margin-right:5px}
+    #str.roomy .trow{margin-bottom:26px}#str.roomy .sbar{height:20px}
     .strip30{display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:3px;align-items:end;height:58px;min-width:700px}
     .strip30 button{border:0;background:transparent;padding:0;height:100%;display:flex;align-items:flex-end;border-radius:4px}
     .strip30 button i{display:block;width:100%;border-radius:3px 3px 1px 1px;transition:height .4s}
@@ -98,6 +99,7 @@
         <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="p2">Seven kinds of air</h3></div><span class="tag">Feelings</span></div>
         <p class="cap">Mood says warm or cold. Feeling says what is actually blowing in. Tap a petal to chart it.</p>
         <svg class="viz" id="wheel" viewBox="-200 -200 400 400" style="max-width:420px;margin:auto" role="img" aria-label="Radial chart of seven feelings"></svg>
+        <button type="button" class="btn" id="wheel-read" hidden style="align-self:center;margin-top:8px"></button>
         <details class="how"><summary>How it is read</summary><p>Wording rules sort each post into one feeling, across all the languages in the flock. Sarcasm is the hardest and the least reliable.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="p3">
@@ -110,7 +112,7 @@
 
       <section class="glass plate wide" aria-labelledby="p4">
         <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="p4">The river of feeling</h3></div><span class="tag" id="r-tag">All feelings</span></div>
-        <p class="cap">The month&rsquo;s mood as one long current, thick where the crowd was loud.</p>
+        <p class="cap">The mood as one long current, thick where the crowd was loud. Click a day to read it.</p>
         <svg class="viz" id="river" viewBox="0 0 1000 300" role="img" aria-label="Stream of feelings per day"></svg>
         <div class="lgd" id="r-l" style="margin-top:10px"></div>
         <details class="how"><summary>How it is read</summary><p>Each band is one feeling, stacked by day. Tap a petal in Seven kinds of air to lift a single feeling out of the stream.</p></details>
@@ -137,6 +139,24 @@
       </section>
     </div>
 
+    <div class="plates" style="margin-top:14px">
+      <section class="glass plate" aria-labelledby="p8" id="nb">
+        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="p8">The Bayes clerk</h3></div><span class="tag">Paper &sect;6.2.2</span></div>
+        <p class="cap">A clerk who has only ever read the labelled posts, and now has opinions about yours.</p>
+        <textarea class="box" id="nb-in" aria-label="Sentence for the classifier">Honestly the support team was quick and lovely</textarea>
+        <div id="nb-out" style="margin-top:12px"></div>
+        <div class="statchips" id="nb-score" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px"></div>
+        <details class="how"><summary>How it is read</summary><p>A multinomial Naive Bayes over a bag of words, trained in your browser. It sits two exams. The first holds back a fifth of the posts. The second holds back a fifth of the distinct wordings, so every question is new. The demo flock is written from only a few dozen phrases, so the clerk can memorise them but learns little it can carry to a fresh sentence, and the second score shows it. Real files tend to bring the two scores closer.</p></details>
+      </section>
+      <section class="glass plate" aria-labelledby="p9" id="strength">
+        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="p9">How hard it blows</h3></div><span class="tag">Paper &sect;6.2.1</span></div>
+        <p class="cap">First, is it an opinion at all? Then, how firmly was it meant? Click a band to read it.</p>
+        <div id="str" class="roomy"></div>
+        <div class="lgd" style="margin-top:10px"><span><i style="background:#7be08a"></i>warm</span><span><i style="background:#ffd27a"></i>even</span><span><i style="background:#ff7f9e"></i>sour</span></div>
+        <details class="how"><summary>How it is read</summary><p>The word list scores opinion words +1 or -1, flips them after a negation and boosts them after "very" or an exclamation mark. No opinion words means a plain statement. Only posts in English or with no language tag are read.</p></details>
+      </section>
+    </div>
+
     <div class="section-head"><h2>How the forecast is made</h2><p>Four instruments, and a few things no forecaster should promise.</p></div>
     <section class="pipeline" aria-label="Method">
       <div class="stepc"><div class="n">1</div><h3>Read</h3><p>Each post arrives with a mood: warm, even or sour.</p></div>
@@ -147,7 +167,7 @@
     <div class="never"><span class="lab">Not on the chart</span><span class="x">Any one person&rsquo;s mood</span><span class="x">Diagnoses</span><span class="x">Mental health</span><span class="x">Private messages</span></div>
     <div class="caveats">
       <div class="caveat"><b>Sarcasm bites back</b>Rules read &ldquo;oh great&rdquo; as a compliment more often than they should.</div>
-      <div class="caveat"><b>Labels came with the flock</b>Mood here was written alongside the sample. On real posts a trained model would fill it in.</div>
+      <div class="caveat" data-sample="1"><b>Labels came with the flock</b>Mood here was written alongside the sample. On real posts a trained model would fill it in.</div>
       <div class="caveat"><b>A post is not a person</b>Somebody can be sour on Tuesday and delightful by Friday.</div>
     </div>
     <footer><span>Chapter II of Murmuration &middot; Utsav</span><a class="nx" href="../atlas/index.html">Next: The Audience Atlas &rarr;</a><em>Every voice here is synthetic.</em></footer>
@@ -155,6 +175,8 @@
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
   <script src="../data/audience_sample.js"></script>
+  <script src="../core/door.js"></script>
+  <script src="../core/loupe.js"></script>
   <script src="weather.js"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@
   $('rail').outerHTML = K.rail('home').replace(/\.\.\//g, '');
   var ALL = K.moodStats(P), V = Array.from(F.voices.values());
   var ROOMS = [
-    { id: 'listen', n: 'I', name: 'The Listening Post', q: 'How did it get here?', c: '#ffb454', line: 'Six doors, four checkpoints and a clerk who shreds your name on arrival.' },
+    { id: 'listen', n: 'I', name: 'The Listening Post', q: 'How did it get here?', c: '#ffb454', line: 'Every door, four checkpoints and a clerk who shreds your name on arrival.' },
     { id: 'weather', n: 'II', name: 'The Weather Room', q: 'How does it feel?', c: '#8fc8ff', line: 'The crowd&rsquo;s mood, delivered by a forecaster who has stopped being surprised.' },
     { id: 'atlas', n: 'III', name: 'The Audience Atlas', q: 'Who are they?', c: '#35d0c0', line: 'A field guide to the people behind the posts, with their names politely removed.' },
     { id: 'swell', n: 'IV', name: 'The Swell', q: 'What is rising?', c: '#ff9270', line: 'Roll back to any morning and bet against a machine that cannot peek.' },
@@ -13,14 +13,16 @@
   ];
   var links = P.filter(function (p) { return p.ref >= 0; }).length;
 
-  $('stats').innerHTML = [['Voices in the flock', fmt(V.length), 'every one invented', '#ffc266'], ['Posts on file', fmt(P.length), 'over ' + F.days + ' days', '#ffb454'], ['Threads tied', fmt(links), pct(links, P.length) + '% answer another', '#a3de76'], ['Rumours tracked', F.tags.length, fmt(F.tags.reduce(function (s, t) { return s + t.n; }, 0)) + ' posts carry one', '#ff9270'], ['Doors watched', F.platforms.length, 'one archive', '#8fc8ff']].map(function (x) { return '<div class="kpi" style="--c:' + x[3] + '"><span>' + x[0] + '</span><strong>' + x[1] + '</strong><small>' + x[2] + '</small></div>'; }).join('');
-  $('data-line').textContent = fmt(P.length) + ' posts, ' + fmt(V.length) + ' voices, ' + F.days + ' days and ' + F.platforms.length + ' platforms, in a single CSV that all five rooms read.';
+  var UP = window.MURMUR_UPLOAD;
+  $('stats').innerHTML = [['Voices in the flock', fmt(V.length), UP ? 'names left at the door' : 'every one invented', '#ffc266', 'href="atlas/index.html"'], ['Posts on file', fmt(P.length), 'over ' + K.spanText(F), '#ffb454', 'data-drill="label=Everything%20on%20file" data-tip="Every post on file"'], ['Threads tied', fmt(links), pct(links, P.length) + '% answer another', '#a3de76', 'data-drill="reacting=1" data-tip="Posts answering another post"'], ['Rumours tracked', F.tags.length, fmt(F.tags.reduce(function (s, t) { return s + t.n; }, 0)) + ' posts carry one', '#ff9270', 'href="swell/index.html"'], ['Doors watched', F.platforms.length, 'one archive', '#8fc8ff', 'href="listen/index.html"']].map(function (x) { var tag = /^href/.test(x[4]) ? 'a' : 'div'; return '<' + tag + ' class="kpi" ' + x[4] + ' style="--c:' + x[3] + '"><span>' + x[0] + '</span><strong>' + x[1] + '</strong><small>' + x[2] + '</small></' + tag + '>'; }).join('');
+  $('data-line').textContent = fmt(P.length) + ' posts, ' + fmt(V.length) + ' voices, ' + K.spanText(F) + ' and ' + F.platforms.length + ' platforms, in a single CSV that all five rooms read.';
 
   /* ------------- room glyphs ------------- */
+  var TIP = { listen: 'Posts per day\nThe archive filling up.', weather: 'Mood per day\nAbove the line is warm, below is sour.', atlas: 'One dot per kind of voice\nStep inside for the constellation.', swell: 'The five biggest trends\nEach ridge is a wave of posts.', grapevine: 'Who answers whom\nEvery line is a thread.' };
   var daily = new Array(F.days).fill(0), net = []; P.forEach(function (p) { daily[p.day]++; });
   for (var d = 0; d < F.days; d++) net.push(K.moodStats(P.filter(function (p) { return p.day === d; })).net);
   function glyph(id, c) {
-    var o = '<svg viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true">', mx, i;
+    var o = '<svg viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true" data-tip="' + esc(TIP[id]) + '">', mx, i;
     if (id === 'listen') { mx = Math.max.apply(null, daily); daily.forEach(function (v, j) { o += '<rect x="' + (j * 200 / F.days + 1).toFixed(1) + '" y="' + (44 - v / mx * 42).toFixed(1) + '" width="' + (200 / F.days - 2).toFixed(1) + '" height="' + (v / mx * 42).toFixed(1) + '" fill="' + c + '" opacity=".8"/>'; }); }
     if (id === 'weather') { o += '<line x1="0" x2="200" y1="22" y2="22" stroke="rgba(255,255,255,.2)" vector-effect="non-scaling-stroke"/><path d="' + net.map(function (v, j) { return (j ? 'L' : 'M') + (j * 200 / (F.days - 1)).toFixed(1) + ' ' + (22 - v * 70).toFixed(1); }).join(' ') + '" fill="none" stroke="' + c + '" stroke-width="2" vector-effect="non-scaling-stroke"/>'; }
     if (id === 'atlas') { var r = K.rngFrom(3); for (i = 0; i < 60; i++) { var a = i * 2.4, q = 2.4 * Math.sqrt(i); o += '<circle cx="' + (100 + Math.cos(a) * q * 3).toFixed(1) + '" cy="' + (22 + Math.sin(a) * q).toFixed(1) + '" r="1.1" fill="' + c + '" opacity="' + (.5 + r() * .5).toFixed(2) + '"/>'; } }
@@ -41,7 +43,7 @@
     t.posts.forEach(function (p) { if (seen[p.voice.id]) return; seen[p.voice.id] = 1; if (p.voice.org) return; if (p.voice.region) reg[p.voice.region] = (reg[p.voice.region] || 0) + 1; if (p.voice.calling) cal[p.voice.calling] = (cal[p.voice.calling] || 0) + 1; });
     var m = Math.max.apply(null, t.daily), peak = t.daily.indexOf(m), depth = Math.max.apply(null, t.posts.map(function (p) { return p.depth; })), cross = t.posts.filter(function (p) { return p.type === 'share'; }).length, half = Math.ceil(t.n / 2), a = K.moodStats(t.posts.slice(0, half)).net, b = K.moodStats(t.posts.slice(half)).net;
     var S = [
-      [ROOMS[0], fmt(t.n), 'posts filed under it', 'First heard on ' + first + ', ' + K.dayName(t.posts[0].ts) + '.', 'listen/index.html'],
+      [ROOMS[0], fmt(t.n), 'posts filed under it', 'First heard on ' + esc(first) + ', ' + K.dayName(t.posts[0].ts) + '.', 'listen/index.html'],
       [ROOMS[1], deg(t.net), K.condition(t.net), b - a < -.15 ? 'It started warmer than it ended.' : b - a > .15 ? 'It warmed up as it went.' : 'The mood barely moved.', 'weather/index.html'],
       [ROOMS[2], fmt(t.voices), 'voices wore it', 'Mostly ' + esc((mode(cal) || 'unknown').replace(/ &.*/, '')) + ', in ' + esc(mode(reg) || 'parts unknown') + '.', 'atlas/index.html#tag=' + enc],
       [ROOMS[3], m, 'posts at the crest', 'Broke on ' + K.dayName(F.dayStart(peak)) + '.', 'swell/index.html#tag=' + enc],
@@ -55,14 +57,15 @@
   trail();
 
   /* ------------- the flock ------------- */
-  var PL = { X: '#bfe3ff', Telegram: '#9df0d6', Instagram: '#f5a8ea', Facebook: '#b6c3ff', YouTube: '#ffa3b8', Reddit: '#ffd08a' };
+  var PL = K.fillPalette({ X: '#bfe3ff', Telegram: '#9df0d6', Instagram: '#f5a8ea', Facebook: '#b6c3ff', YouTube: '#ffa3b8', Reddit: '#ffd08a' }, F.platforms);
   var MC = { warm: '#a9f0a0', even: '#fff0c4', sour: '#ff8ea6' }, RC = { 'North America': '#bfe3ff', Europe: '#9df0d6', 'South Asia': '#ffd08a', 'Latin America': '#ffa3b8', 'East Asia & Pacific': '#d4b8ff', 'Middle East & Africa': '#c9e38a' };
   var moodOf = {}; (function () { var s = {}; P.forEach(function (p) { if (p.mood === null) return; s[p.voice.id] = (s[p.voice.id] || 0) + p.mood; }); V.forEach(function (v) { var x = s[v.id] || 0; moodOf[v.id] = x > 0 ? 'warm' : x < 0 ? 'sour' : 'even'; }); })();
-  var cv = $('flock'), host = cv.parentElement, B = { W: 0, H: 0, ctx: null, by: 'platform', mode: 'one', mouse: null, on: true }, N = V.length, x = new Float32Array(N), y = new Float32Array(N), vx = new Float32Array(N), vy = new Float32Array(N), rnd = K.rngFrom(5);
+  var FLOCK_MAX = 1500, BV = V.length > FLOCK_MAX ? V.filter(function (_, i) { return i % Math.ceil(V.length / FLOCK_MAX) === 0; }) : V;
+  var cv = $('flock'), host = cv.parentElement, B = { W: 0, H: 0, ctx: null, by: 'platform', mode: 'one', mouse: null, on: true }, N = BV.length, x = new Float32Array(N), y = new Float32Array(N), vx = new Float32Array(N), vy = new Float32Array(N), rnd = K.rngFrom(5);
   function keyOf(v) { return B.by === 'platform' ? v.platform : B.by === 'mood' ? moodOf[v.id] : (v.region || 'Elsewhere'); }
   function colOf(v) { return B.by === 'platform' ? PL[v.platform] : B.by === 'mood' ? MC[moodOf[v.id]] : (RC[v.region] || '#e5e0ea'); }
   var groupIdx = [], groups = [];
-  function regroup() { var names = Array.from(new Set(V.map(keyOf))).sort(); groups = names; groupIdx = V.map(function (v) { return names.indexOf(keyOf(v)); }); colours = V.map(colOf); }
+  function regroup() { var names = Array.from(new Set(BV.map(keyOf))).sort(); groups = names; groupIdx = BV.map(function (v) { return names.indexOf(keyOf(v)); }); colours = BV.map(colOf); }
   var colours = [];
   function resize() { var f = K.fitCanvas(cv, host); B.ctx = f.ctx; B.W = f.W; B.H = f.H; }
   resize();
@@ -107,7 +110,10 @@
   }
   function frame(t) { requestAnimationFrame(frame); if (!B.on) return; step(t); paint(); }
   host.addEventListener('pointermove', function (e) { var r = cv.getBoundingClientRect(); B.mouse = { x: e.clientX - r.left, y: e.clientY - r.top }; });
-  host.addEventListener('pointerleave', function () { B.mouse = null; });
+  host.addEventListener('pointerleave', function () { B.mouse = null; window.Loupe.tipOff(); });
+  function birdAt(e) { var r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top, reach = e.type === 'click' ? 60 : 26, best = -1, bd = reach * reach, i; for (i = 0; i < N; i++) { var a = x[i] - px, b = y[i] - py, s = a * a + b * b; if (s < bd) { bd = s; best = i; } } return best; }
+  cv.addEventListener('pointermove', function (e) { if (e.pointerType === 'touch') return; var i = birdAt(e); if (i < 0) { window.Loupe.tipOff(); return; } var v = BV[i]; window.Loupe.tipAt(e.clientX, e.clientY, 'A ' + moodOf[v.id] + ' voice on ' + v.platform + '\n' + v.n + ' post' + (v.n === 1 ? '' : 's') + (v.region ? ', ' + v.region : ''), 'Click to read this bird'); });
+  cv.addEventListener('click', function (e) { var i = birdAt(e); if (i >= 0) window.Loupe.open({ voice: BV[i].id, label: 'One bird' }); });
   K.bindTabs('flock-by', function (v) { B.by = v; regroup(); $('flock-note').textContent = v === 'mood' ? 'Green birds run warm, rose birds run sour.' : v === 'region' ? 'Each colour is a corner of the world. Pale birds did not say where.' : 'Each colour is a platform. Be the hawk.'; });
   K.bindTabs('flock-mode', function (v) { B.mode = v; });
   if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { B.on = en[0].isIntersecting; }).observe(host);

@@ -12,7 +12,21 @@ Nobody leads a flock of starlings, and still ten thousand of them turn at once. 
 | **IV. The Swell** | What is rising? | A time machine that hides the future, a forecaster you can try to beat |
 | **V. The Grapevine** | Who told whom? | A living network, trend replays, rumour simulation, cut the wires, six degrees |
 
-The home page has one bird for every voice in the data. Move your cursor through them and be the hawk.
+The home page has one bird for every voice in the data. Move your cursor through them and be the hawk, or click one to read what it said.
+
+Hover a chart for its numbers, and click a mark to open the real posts behind it. Charts of model results, such as the Grapevine's breaking point, give the readout only.
+
+## Bring your own CSV
+
+Every page has a **Bring your CSV** button. Any file with a column of text works, split by commas, semicolons, tabs or pipes, with or without a header row. The door guesses the columns and lets you correct them, cleans the file, then rebuilds all five rooms around it.
+
+- Dates, authors, moods, hashtags and reply links make the rooms richer, and each has a fallback when missing. Every fallback is stated on the report.
+- Authors become one-way codes. Handles, emails, phone numbers and links are struck from the text.
+- Files stay in the visitor's browser, up to 20,000 rows, until they choose to forget them.
+
+## The research behind it
+
+The site is built against Batrinca & Treleaven (2015), *Social media analytics: a survey of techniques, tools and platforms*, AI & Society 30, 89-116. The [Blueprint](blueprint/index.html) page lists each part of the paper, what the site does about it, and what it leaves out, with live figures.
 
 ## Running it
 

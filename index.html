@@ -20,7 +20,11 @@
     .nav .rail-label{display:none}
     .hero-t{margin-top:auto;padding-bottom:30px;text-shadow:0 2px 26px #0a0a1a99}
     .hero-t h1{font-size:clamp(58px,12vw,168px);margin:0 0 8px;line-height:.9}
-    .hero-t h1 em{background:linear-gradient(100deg,#ffe0a6,#ffc266 45%,#ff9f9f);-webkit-background-clip:text;background-clip:text;color:transparent}
+    /* The five room colours, carried through the word on a slow loop. */
+    .hero-t h1 em{background:linear-gradient(90deg,#ffc266,#ffb454,#ff9270,#ff9f9f,#b48cff,#8fc8ff,#35d0c0,#a3de76,#ffe0a6,#ffc266);background-size:400% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:drift 12s linear infinite}
+    @keyframes drift{to{background-position:-133.333% 0}}
+    .byo{display:grid;grid-template-columns:1.25fr 1fr;gap:14px}.byo-drop{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:200px;padding:30px 24px;border-radius:22px;border:1.5px dashed rgba(255,255,255,.28);background:linear-gradient(120deg,#ffc2661a,#b48cff1a);color:var(--ink);cursor:pointer;transition:border-color .2s,transform .2s}.byo-drop:hover{border-color:var(--a);transform:translateY(-3px)}.byo-drop b{font:400 34px/1.1 var(--display);margin:0 0 8px}.byo-drop span{color:var(--muted);font-size:13px;max-width:52ch}.byo-paper{display:flex;flex-direction:column;justify-content:center;padding:24px 26px;border-radius:22px;border:1px solid var(--line);background:var(--glass);text-decoration:none;transition:border-color .2s,transform .2s}.byo-paper:hover{border-color:#8fd0ff;transform:translateY(-3px)}.byo-paper small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8fd0ff;font-weight:700}.byo-paper b{font:400 26px/1.15 var(--display);margin:8px 0}.byo-paper span{color:var(--muted);font-size:13px}a.kpi{text-decoration:none;display:block;transition:transform .2s,border-color .2s}a.kpi:hover,.kpi[data-drill]:hover{transform:translateY(-3px);border-color:var(--c)}
+    @media(max-width:860px){.byo{grid-template-columns:1fr}}
     .hero-t p{font:italic 400 clamp(19px,2.3vw,30px)/1.3 var(--display);margin:0;max-width:760px}
     .flock-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;font-size:12px;color:#f3ecf6}
     .ctas{display:flex;gap:8px;flex-wrap:wrap}
@@ -77,6 +81,9 @@
     <div class="chips" id="trail-tags" role="group" aria-label="Pick a trend"></div>
     <section class="trail" id="trail" aria-label="One trend across five chapters"></section>
 
+    <div class="section-head"><h2>Bring your own flock</h2><p>The rooms do not care whose crowd it is.</p></div>
+    <section class="byo"><button type="button" class="byo-drop" data-door="drop"><b>Drop in your own CSV</b><span>Any spreadsheet of posts. Five rooms rearrange themselves around it, and nothing leaves this device.</span></button><a class="byo-paper" href="blueprint/index.html"><small>The blueprint</small><b>Built section by section from a research paper</b><span>See which parts of the Batrinca &amp; Treleaven survey each room answers, and where it stops.</span></a></section>
+
     <div class="section-head"><h2>What you are looking at</h2><p>A short, plain confession.</p></div>
     <section class="glance">
       <div class="glass plate">
@@ -86,7 +93,7 @@
         <div class="ctas" style="margin-top:auto"><a class="btn go" href="data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></div>
       </div>
       <div class="caveats" style="grid-template-columns:1fr;margin:0">
-        <div class="caveat"><b>The flock is invented</b>A seeded generator wrote every voice, post and quarrel. No real person is in here.</div>
+        <div class="caveat" data-sample="1"><b>The flock is invented</b>A seeded generator wrote every voice, post and quarrel. No real person is in here.</div>
         <div class="caveat"><b>It all runs on your device</b>PageRank, Louvain, forecasts and all. Nothing you type or load is sent anywhere.</div>
         <div class="caveat"><b>Names stay at the door</b>Bios and places are read once and never shown. Groups under five people are folded away.</div>
       </div>
@@ -96,6 +103,8 @@
   <script src="core/profiler.js"></script>
   <script src="core/kit.js"></script>
   <script src="data/audience_sample.js"></script>
+  <script src="core/door.js"></script>
+  <script src="core/loupe.js"></script>
   <script src="core/home.js"></script>
 </body>
 </html>
