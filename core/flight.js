@@ -1,0 +1,206 @@
+/* Murmuration: the flight path.
+   Every page gets a rail of perches, one for each section and plate. A small bird rides the rail as you scroll.
+   Click a perch, use the arrows at either end, or press J and K, and a flock carries you there. On phones the
+   rail folds into a compass beside the dock. Sections rise into place as they arrive. */
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var css = '.fl{position:fixed;z-index:58;top:50%;right:max(3px,calc((100vw - 1320px)/2 - 34px));transform:translateY(-50%);width:24px;font:500 12px/1.2 var(--sans,Manrope,system-ui,sans-serif);color:var(--ink,#eef1f8)}'
+    + ':where(.fl) button,:where(.fl) a{all:unset;box-sizing:border-box;cursor:pointer;display:block}'
+    + '.fl-arrow{width:24px;height:24px;display:grid!important;place-items:center;border-radius:50%;color:var(--muted,#a3abbd);transition:color .15s,background .15s}.fl-arrow:hover,.fl-arrow:focus-visible{color:var(--dark-on-a,#231602);background:var(--a,#ffc266)}.fl-arrow svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
+    + '.fl-track{position:relative;margin:6px 0}'
+    + '.fl-line{position:absolute;left:50%;top:0;bottom:0;width:1px;margin-left:-.5px;background:rgba(255,255,255,.18)}.fl-fill{position:absolute;left:0;top:0;width:1px;height:100%;transform-origin:top;background:var(--a,#ffc266);transform:scaleY(0)}'
+    + '.fl-s{position:absolute;left:0;width:24px;height:22px;margin-top:-11px}'
+    + '.fl-dot{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:#6e778c;transition:transform .18s,background .18s}.fl-s.l1 .fl-dot{width:9px;height:9px;margin:-4.5px;background:#0d0f19;border:1.5px solid var(--a,#ffc266);box-sizing:border-box}'
+    + '.fl-s:hover .fl-dot,.fl-s:focus-visible .fl-dot{transform:scale(1.5);background:var(--a,#ffc266)}.fl-s[aria-current=true] .fl-dot{background:var(--a,#ffc266)}.fl-s.past.l2 .fl-dot{background:var(--a,#ffc266)}'
+    + '.fl-lab{position:absolute;right:30px;top:50%;translate:10px -50%;opacity:0;visibility:hidden;white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis;padding:2px 10px;border-radius:99px;background:#10121d;border:1px solid rgba(255,255,255,.14);font-size:11.5px;color:#a3abbd;transition:opacity .16s,translate .16s,visibility .16s;transition-delay:calc(var(--i)*9ms)}.fl-s.l1 .fl-lab{font:italic 400 13.5px var(--display,Georgia,serif);color:#eef1f8}.fl-s:hover .fl-lab,.fl-s[aria-current=true] .fl-lab{color:var(--a,#ffc266);border-color:var(--a,#ffc266)}'
+    + '.fl.open .fl-lab{opacity:1;visibility:visible;translate:0 -50%}'
+    + '.fl-bird{position:absolute;left:50%;top:0;width:20px;height:20px;margin:-10px;pointer-events:none;fill:var(--a,#ffc266);will-change:transform}.fl-bird path{transform-origin:10px 11px}.fl.fly .fl-bird .w1{animation:fl-flap .22s ease-in-out infinite alternate}.fl.fly .fl-bird .w2{animation:fl-flap2 .22s ease-in-out infinite alternate}@keyframes fl-flap{to{transform:rotate(26deg)}}@keyframes fl-flap2{to{transform:rotate(-26deg)}}'
+    + '.fl-keys{position:absolute;right:30px;top:-27px;opacity:0;visibility:hidden;white-space:nowrap;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint,#6e778c);transition:opacity .16s,visibility .16s}.fl.open .fl-keys{opacity:1;visibility:visible}.fl-keys kbd{font:inherit;padding:0 5px;border:1px solid rgba(255,255,255,.2);border-radius:4px}'
+    + '.fl-compass{display:none;position:fixed;z-index:60;left:10px;bottom:10px;align-items:center;height:38px;padding:0 2px;border-radius:99px;background:#141724;border:1px solid rgba(255,255,255,.16);color:#eef1f8;font:600 12px var(--sans,Manrope,system-ui,sans-serif)}.fl-compass button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;min-width:34px;height:34px;border-radius:99px;font-variant-numeric:tabular-nums}.fl-compass .c{padding:0 4px;color:var(--a,#ffc266)}.fl-compass svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
+    + '.fl-sheet{display:none;position:fixed;z-index:61;left:10px;right:10px;bottom:56px;max-height:62vh;overflow:auto;padding:8px;border-radius:18px;background:#141724;border:1px solid rgba(255,255,255,.16);font:13px/1.3 var(--sans,Manrope,system-ui,sans-serif);color:#eef1f8}.fl-sheet.on{display:block}.fl-sheet button{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:9px 12px;border-radius:10px}.fl-sheet button.l1{font:italic 400 16px var(--display,Georgia,serif)}.fl-sheet button.l2{padding-left:26px;color:#a3abbd}.fl-sheet button[aria-current=true]{color:var(--a,#ffc266);background:rgba(255,255,255,.07)}'
+    + '@media(max-width:860px){.fl{display:none}.fl-compass{display:flex}}'
+    + '.fl-wait{opacity:0}.fl-rise{animation:fl-rise .62s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:var(--d,0ms)}@keyframes fl-rise{from{opacity:0;translate:0 28px}}'
+    + '.fl-here{animation:fl-here 1.2s ease-out}@keyframes fl-here{0%{outline:2px solid var(--a,#ffc266);outline-offset:6px}100%{outline:2px solid transparent;outline-offset:14px}}'
+    + '.fl-sweep{position:fixed;inset:0;width:100%;height:100%;z-index:57;pointer-events:none}'
+    + '@media print{.fl,.fl-compass,.fl-sheet,.fl-sweep{display:none}.fl-wait{opacity:1}}';
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  var CHEV_UP = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 8l4-4 4 4"/></svg>', CHEV_DOWN = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg>';
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var shown = function (e) { return !!(e && e.getClientRects().length); };
+  function pageY(e) { var y = 0; while (e) { y += e.offsetTop; e = e.offsetParent; } return y; }
+  function textOf(e) { return e ? e.textContent.replace(/\s+/g, ' ').trim() : ''; }
+
+  /* ---- the perches, read from the page itself ---- */
+  function collect() {
+    var lastSec = null, out = [], hero = document.querySelector('.sky-hero') || document.querySelector('.hero');
+    var brand = document.querySelector('.brand div');
+    out.push({ el: hero, label: brand ? textOf(brand.firstChild) : document.title, lv: 1, top: true });
+    document.querySelectorAll('.stage[aria-label],.section-head,.plate,.faceoff,.sec').forEach(function (e) {
+      if (!shown(e)) return;
+      if (e.classList.contains('stage')) out.push({ el: e, label: e.getAttribute('aria-label'), lv: 1 });
+      else if (e.classList.contains('section-head')) out.push({ el: e, label: textOf(e.querySelector('h2')), lv: 1 });
+      else if (e.classList.contains('plate') && e.previousElementSibling && e.previousElementSibling.classList.contains('section-head') && !e.parentElement.classList.contains('plates')) return;
+      else if (e.classList.contains('sec')) { var no = textOf(e.querySelector('.no')).split('.')[0]; if (no !== lastSec) { lastSec = no; out.push({ el: e, label: no + ' \u00b7 ' + textOf(e.querySelector('h3')), lv: 2 }); } }
+      else if (e.classList.contains('plate')) { var id = e.getAttribute('aria-labelledby'), h = id ? document.getElementById(id) : e.querySelector('h3'); if (h) out.push({ el: e, label: textOf(h), lv: 2 }); }
+    });
+    var next = document.querySelector('footer a.nx') || document.querySelector('footer a[href]');
+    if (next) out.push({ link: next.getAttribute('href'), label: textOf(next).replace(/\s*[→]\s*$/, ''), lv: 1, el: document.querySelector('footer') });
+    return out.filter(function (s) { return s.el && s.label; });
+  }
+
+  var pin = null;
+  function pinned() { return pin && Math.abs(scrollY - pin.y) < 3; }
+  var stops = [], nav, track, fill, bird, compass, count, sheet, current = -1, ys = [];
+  function sig(a) { return a.map(function (s) { return s.label; }).join('|'); }
+
+  function build() {
+    var found = collect(); if (sig(found) === sig(stops) && nav) return;
+    stops = found;
+    if (nav) nav.remove(); if (compass) compass.remove(); if (sheet) sheet.remove();
+    nav = document.createElement('nav'); nav.className = 'fl'; nav.setAttribute('aria-label', 'Sections on this page');
+    nav.innerHTML = '<div class="fl-keys">press <kbd>J</kbd> <kbd>K</kbd> to fly</div><button type="button" class="fl-arrow" data-go="-1" aria-label="Previous section">' + CHEV_UP + '</button><div class="fl-track"><div class="fl-line"><i class="fl-fill"></i></div>'
+      + stops.map(function (s, i) { return '<a class="fl-s l' + s.lv + '" href="' + (s.link ? esc(s.link) : '#') + '" data-i="' + i + '" style="--i:' + i + '" aria-label="' + esc(s.label) + '"><span class="fl-dot"></span><span class="fl-lab">' + esc(s.label) + '</span></a>'; }).join('')
+      + '<svg class="fl-bird" viewBox="0 0 20 20" aria-hidden="true"><path class="w1" d="M10 11C7 6 4 5 1 5c2 3 4 6 9 8z"/><path class="w2" d="M10 11c3-5 6-6 9-6-2 3-4 6-9 8z"/></svg></div><button type="button" class="fl-arrow" data-go="1" aria-label="Next section">' + CHEV_DOWN + '</button>';
+    document.body.appendChild(nav);
+    track = nav.querySelector('.fl-track'); fill = nav.querySelector('.fl-fill'); bird = nav.querySelector('.fl-bird');
+    compass = document.createElement('div'); compass.className = 'fl-compass';
+    compass.innerHTML = '<button type="button" data-go="-1" aria-label="Previous section">' + CHEV_UP + '</button><button type="button" class="c" aria-label="All sections" aria-expanded="false"></button><button type="button" data-go="1" aria-label="Next section">' + CHEV_DOWN + '</button>';
+    document.body.appendChild(compass); count = compass.querySelector('.c');
+    sheet = document.createElement('div'); sheet.className = 'fl-sheet';
+    sheet.innerHTML = stops.map(function (s, i) { return '<button type="button" class="l' + s.lv + '" data-i="' + i + '">' + esc(s.label) + '</button>'; }).join('');
+    document.body.appendChild(sheet);
+    nav.addEventListener('click', onClick); compass.addEventListener('click', onClick); sheet.addEventListener('click', onClick);
+    nav.addEventListener('pointerenter', function () { nav.classList.add('open'); });
+    nav.addEventListener('pointerleave', function () { nav.classList.remove('open'); });
+    nav.addEventListener('focusin', function () { nav.classList.add('open'); });
+    nav.addEventListener('focusout', function (e) { if (!nav.contains(e.relatedTarget)) nav.classList.remove('open'); });
+    current = -1; layout();
+  }
+
+  function targetOf(i) {
+    var s = stops[i]; if (s.top) return 0;
+    var max = document.documentElement.scrollHeight - innerHeight;
+    var isHead = s.el.classList.contains('section-head');
+    return Math.max(0, Math.min(max, pageY(s.el) - (isHead ? 8 : 24)));
+  }
+  function layout() {
+    if (!nav) return;
+    var avail = Math.max(120, innerHeight - 230), gap = Math.max(16, Math.min(30, avail / Math.max(1, stops.length - 1))), h = gap * (stops.length - 1);
+    track.style.height = h + 'px';
+    nav.querySelectorAll('.fl-s').forEach(function (a, i) { a.style.top = (i * gap) + 'px'; });
+    ys = stops.map(function (_, i) { return targetOf(i); });
+    spy();
+  }
+
+  /* ---- the bird rides between perches ---- */
+  var ticking = false;
+  function spy() {
+    ticking = false; if (!nav || !ys.length) return;
+    var y = scrollY, max = document.documentElement.scrollHeight - innerHeight, n = ys.length, last = n - 1, stopsOnly = n, i = 0;
+    if (stops[last].link) stopsOnly = n - 1;           // the last perch leaves the page, so the bird lands one before it
+    for (var k = 0; k < stopsOnly; k++) if (ys[k] <= y + 40) i = k;
+    var nextY = i + 1 < stopsOnly ? ys[i + 1] : Math.max(max, ys[i] + 1), f = Math.max(0, Math.min(1, (y - ys[i]) / Math.max(1, nextY - ys[i])));
+    if (i === stopsOnly - 1 || y >= max - 2) { i = stopsOnly - 1; f = 0; }
+    if (pinned()) { i = pin.i; f = 0; }
+    var h = track.offsetHeight, step = n > 1 ? h / (n - 1) : 0, py = (i + f) * step;
+    bird.style.transform = 'translateY(' + py.toFixed(1) + 'px)';
+    fill.style.transform = 'scaleY(' + (h ? (py / h).toFixed(4) : 0) + ')';
+    if (i !== current) {
+      current = i;
+      nav.querySelectorAll('.fl-s').forEach(function (a, j) { if (j === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); a.classList.toggle('past', j < i); });
+      sheet.querySelectorAll('button').forEach(function (b, j) { if (j === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+      count.textContent = (i + 1) + ' / ' + stopsOnly;
+    }
+  }
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+
+  /* ---- the glide, and the flock that goes with it ---- */
+  var glide = null;
+  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function stopGlide() { if (glide) { cancelAnimationFrame(glide.raf); glide = null; nav.classList.remove('fly'); } }
+  ['wheel', 'touchstart'].forEach(function (ev) { addEventListener(ev, stopGlide, { passive: true }); });
+  function flyTo(i) {
+    var s = stops[i]; if (!s) return;
+    if (s.link) { location.href = s.link; return; }
+    stopGlide();
+    var from = scrollY, to = targetOf(i), dist = Math.abs(to - from);
+    function land() { pin = { i: i, y: scrollY }; spy(); if (s.top) return; s.el.classList.remove('fl-here'); void s.el.offsetWidth; s.el.classList.add('fl-here'); setTimeout(function () { s.el.classList.remove('fl-here'); }, 1300); if (!s.el.hasAttribute('tabindex')) s.el.setAttribute('tabindex', '-1'); s.el.focus({ preventScroll: true }); s.el.style.outline = 'none'; setTimeout(function () { s.el.style.outline = ''; }, 1250); }
+    if (reduce || dist < 2) { window.scrollTo({ top: to, behavior: 'instant' }); land(); return; }
+    var dur = Math.min(1250, 560 + dist / 5), t0 = performance.now();
+    nav.classList.add('fly'); sweep(to > from ? 1 : -1, dur);
+    glide = { raf: 0 };
+    (function frame(now) {
+      if (!glide) return;
+      var p = Math.min(1, (now - t0) / dur), goal = targetOf(i);
+      window.scrollTo({ top: from + (goal - from) * ease(p), behavior: 'instant' });
+      if (p < 1) glide.raf = requestAnimationFrame(frame); else { glide = null; nav.classList.remove('fly'); land(); }
+    })(t0);
+  }
+  function sweep(dir, dur) {
+    var old = document.querySelector('.fl-sweep'); if (old) old.remove();
+    var c = document.createElement('canvas'); c.className = 'fl-sweep'; document.body.appendChild(c);
+    var dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight; c.width = W * dpr; c.height = H * dpr;
+    var g = c.getContext('2d'); g.scale(dpr, dpr);
+    var cs = getComputedStyle(document.documentElement), A = cs.getPropertyValue('--a').trim() || '#ffc266', B = cs.getPropertyValue('--b').trim() || A, n = Math.round(Math.min(70, W / 16)), birds = [], i;
+    for (i = 0; i < n; i++) birds.push({ x: W * (.08 + .84 * Math.random()), lag: Math.random() * .36, off: Math.random() * 6.28, s: .7 + Math.random() * .9, col: i % 3 ? A : B });
+    var t0 = performance.now(), life = dur + 280;
+    (function frame(now) {
+      var p = (now - t0) / life; g.clearRect(0, 0, W, H);
+      if (p >= 1) { c.remove(); return; }
+      birds.forEach(function (b) {
+        var q = (p * 1.36 - b.lag); if (q <= 0 || q >= 1) return;
+        var e = ease(q), y = dir > 0 ? -40 + e * (H + 80) : H + 40 - e * (H + 80), x = b.x + Math.sin(q * 6 + b.off) * 46 + (W / 2 - b.x) * .35 * Math.sin(q * Math.PI);
+        var vx = Math.cos(q * 6 + b.off) * .55, vy = dir, m = Math.sqrt(vx * vx + vy * vy), ux = vx / m, uy = vy / m, sz = 5 * b.s;
+        g.globalAlpha = Math.sin(q * Math.PI) * .95; g.fillStyle = b.col; g.beginPath(); g.moveTo(x + ux * sz * 1.4, y + uy * sz * 1.4); g.lineTo(x - ux * sz - uy * sz * .9, y - uy * sz + ux * sz * .9); g.lineTo(x - ux * sz + uy * sz * .9, y - uy * sz - ux * sz * .9); g.fill();
+      });
+      requestAnimationFrame(frame);
+    })(t0);
+  }
+
+  function step(d) { var last = stops[stops.length - 1].link ? stops.length - 2 : stops.length - 1, p = pinned(), base = p ? ys[pin.i] : scrollY, room = p ? 4 : 40, i; if (d > 0) { for (i = 0; i <= last; i++) if (ys[i] > base + room) return flyTo(i); } else { for (i = last; i >= 0; i--) if (ys[i] < base - room) return flyTo(i); } }
+  function onClick(e) {
+    var go = e.target.closest('[data-go]'), s = e.target.closest('[data-i]');
+    if (go) { e.preventDefault(); step(+go.getAttribute('data-go')); return; }
+    if (e.target.closest('.c')) { var on = sheet.classList.toggle('on'); count.setAttribute('aria-expanded', on); return; }
+    if (s) { e.preventDefault(); sheet.classList.remove('on'); count.setAttribute('aria-expanded', 'false'); flyTo(+s.getAttribute('data-i')); }
+  }
+  addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var k = e.key.toLowerCase(); if (k !== 'j' && k !== 'k') return;
+    var t = e.target; if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
+    if (document.querySelector('.lp-drawer.on,.lp-door.on')) return;
+    e.preventDefault(); step(k === 'j' ? 1 : -1);
+  });
+  document.addEventListener('click', function (e) { if (sheet && sheet.classList.contains('on') && !e.target.closest('.fl-sheet,.fl-compass')) { sheet.classList.remove('on'); count.setAttribute('aria-expanded', 'false'); } });
+
+  /* ---- sections rise as they arrive ---- */
+  function rise() {
+    if (reduce || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (x) {
+        if (!x.isIntersecting) return; var e = x.target; io.unobserve(e);
+        e.classList.remove('fl-wait'); e.classList.add('fl-rise');
+        e.addEventListener('animationend', function done(a) { if (a.animationName !== 'fl-rise') return; e.classList.remove('fl-rise'); e.style.removeProperty('--d'); e.removeEventListener('animationend', done); });
+      });
+    }, { rootMargin: '0px 0px -6% 0px' });
+    var seen = new Set();
+    document.querySelectorAll('.section-head,.plate,.pipeline>*,.notes>*,.caveats>*,.rooms>*,.trail>*,.personas>*,.voices>*,.roles>*,.byo>*,.glance>*,.faceoff,.grid>.sec,.strip').forEach(function (e) {
+      if (seen.has(e) || !shown(e)) return; seen.add(e);
+      if (e.getBoundingClientRect().top < innerHeight * .94) return;
+      var sibs = e.parentElement ? Array.prototype.indexOf.call(e.parentElement.children, e) : 0;
+      if (!e.classList.contains('plate') && !e.classList.contains('section-head')) e.style.setProperty('--d', Math.min(5, sibs) * 70 + 'ms');
+      e.classList.add('fl-wait'); io.observe(e);
+    });
+  }
+
+  function init() {
+    build(); rise();
+    var pending = 0;
+    function later() { clearTimeout(pending); pending = setTimeout(function () { build(); layout(); }, 120); }
+    addEventListener('resize', later);
+    if ('ResizeObserver' in window) new ResizeObserver(later).observe(document.body);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  window.Flight = { fly: flyTo, step: step, get stops() { return stops; }, get current() { return current; } };
+})();

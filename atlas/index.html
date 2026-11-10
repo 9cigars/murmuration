@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script src="../core/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Audience Atlas: a field guide to the people behind the posts. An interactive constellation of anonymous profiles, with language, region, calling, rhythm, reach and vocabulary plates.">
   <meta name="color-scheme" content="dark">
@@ -263,6 +264,7 @@
     @media(max-width:560px){.personas{grid-template-columns:1fr}.row{grid-template-columns:1fr 78px;grid-template-areas:"n v" "t t"}.row .name{grid-area:n}.row .val{grid-area:v}.row .track{grid-area:t}.stack-row{grid-template-columns:1fr}.stage{height:680px}.step span{display:none}.timebar{grid-template-columns:auto 1fr}.date{grid-column:1/-1;text-align:left}.lens button{padding:6px 10px}.pipeline{grid-template-columns:1fr}.hrow,.haxis{grid-template-columns:84px 1fr 34px}.note .fig{font-size:54px}}
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
+  <link rel="stylesheet" href="../core/balance.css">
 </head>
 <body>
   <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -697,12 +699,13 @@
     /* ============================== canvas ============================== */
     var SPRITES = {};
     function sprite(color) {
-      if (SPRITES[color]) return SPRITES[color];
+      var flat = window.Theme && Theme.light, sk = (flat ? 'L' : 'D') + color; if (SPRITES[sk]) return SPRITES[sk];
       var c = document.createElement('canvas'); c.width = c.height = 48;
+      if (flat) { var d2 = c.getContext('2d'); d2.fillStyle = color; d2.beginPath(); d2.arc(24, 24, 9, 0, 6.2832); d2.fill(); return (SPRITES[sk] = c); }
       var g = c.getContext('2d'), gr = g.createRadialGradient(24, 24, 0, 24, 24, 24);
       gr.addColorStop(0, 'rgba(255,255,255,.95)'); gr.addColorStop(0.13, color); gr.addColorStop(0.38, hexA(color, 0.3)); gr.addColorStop(1, hexA(color, 0));
       g.fillStyle = gr; g.fillRect(0, 0, 48, 48);
-      return (SPRITES[color] = c);
+      return (SPRITES[sk] = c);
     }
 
     function resize() {
@@ -1303,5 +1306,6 @@
     loadDefault();
   })();
   </script>
+  <script src="../core/flight.js"></script>
 </body>
 </html>

@@ -16,6 +16,8 @@ The home page has one bird for every voice in the data. Move your cursor through
 
 Hover a chart for its numbers, and click a mark to open the real posts behind it. Charts of model results, such as the Grapevine's breaking point, give the readout only.
 
+Every page has a flight path on its right edge. Click a perch, use its arrows, or press J and K, and a flock carries you to that section. On phones it folds into a compass by the dock. The Light button switches to a solid, gradient-free theme and the site remembers the choice.
+
 ## Bring your own CSV
 
 Every page has a **Bring your CSV** button. Any file with a column of text works, split by commas, semicolons, tabs or pipes, with or without a header row. The door guesses the columns and lets you correct them, cleans the file, then rebuilds all five rooms around it.

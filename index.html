@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script src="core/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Murmuration: how a crowd makes up its mind. Five interactive rooms on who is talking, how they feel, what is rising and how word travels.">
   <meta name="color-scheme" content="dark">
@@ -54,6 +55,7 @@
     @media(max-width:860px){.rooms,.stats,.trail{grid-template-columns:repeat(2,minmax(0,1fr))}.rooms>:last-child,.stats>:last-child,.trail>:last-child{grid-column:1/-1}.trail:before{display:none}.room{min-height:0}}
     @media(max-width:620px){.rooms,.trail{grid-template-columns:1fr}.rail .step span{display:none}}
   </style>
+  <link rel="stylesheet" href="core/balance.css">
 </head>
 <body>
   <section class="sky-hero" aria-labelledby="title">
@@ -106,5 +108,6 @@
   <script src="core/door.js"></script>
   <script src="core/loupe.js"></script>
   <script src="core/home.js"></script>
+  <script src="core/flight.js"></script>
 </body>
 </html>

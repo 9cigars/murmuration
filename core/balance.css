@@ -1,0 +1,41 @@
+/* Murmuration: the balance sheet. One page width, one centre line, equal halves. Layout only, no colour.
+   Loaded after each page's own styles so every room keeps to the same proportions. */
+.shell{max-width:1320px}
+
+/* Section titles sit on the centre line, and whatever belongs to them follows. */
+.section-head{flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.section-head+.chips,.never,.lp-paper{justify-content:center}
+.section-head+.tabs,#metric-tabs,.gate{display:flex;width:fit-content;margin-left:auto;margin-right:auto}
+
+/* The landing page and the Blueprint are single columns, so they centre. */
+.hero-t{text-align:center}
+.hero-t .lede,.hero-t p{margin-left:auto;margin-right:auto}
+.hero-t .flock-bar{justify-content:center}
+.hero[style]{text-align:center}
+.hero[style] .lede,.hero[style] .cite{margin-left:auto;margin-right:auto}
+
+/* Every room's opening is two equal halves. */
+@media(min-width:1081px){
+  .hero:not([style]){grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+  .hero:not([style])>:first-child{display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+  .hero:not([style])>.kpis{grid-auto-rows:1fr}
+  .glance{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .room h3{min-height:2.2em;display:flex;align-items:flex-end}
+}
+@media(min-width:861px){.byo{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* The footer's middle item is truly in the middle. */
+footer{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:baseline}
+footer>:nth-child(2){text-align:center}
+footer>:last-child{text-align:right}
+@media(max-width:720px){footer{grid-template-columns:1fr;text-align:center}footer>:last-child{text-align:center}}
+
+/* Grids whose count depends on the data: a short last row is centred, never left hanging. */
+.cards,#grid{display:flex;flex-wrap:wrap;justify-content:center}
+.cards{gap:10px}#grid{gap:12px}
+.cards>*{flex:0 0 calc((100% - 30px)/4);min-width:0}
+#grid>*{flex:0 0 calc((100% - 24px)/3);min-width:0}
+@media(max-width:1080px){.cards>*{flex-basis:calc((100% - 10px)/2)}}
+@media(max-width:1000px){#grid>*{flex-basis:calc((100% - 12px)/2)}}
+@media(max-width:620px){#grid>*{flex-basis:100%}}
+@media(max-width:560px){.cards>*{flex-basis:100%}}
