@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <script src="../core/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="The Listening Post: how every post in Murmuration arrives, gets stamped, masked and threaded.">
+  <meta name="description" content="Data Ingestion &amp; Timeline: how every post in Murmuration arrives, gets stamped, masked and threaded.">
   <meta name="color-scheme" content="dark">
-  <title>The Listening Post | Murmuration</title>
+  <title>Data Ingestion &amp; Timeline | Murmuration</title>
   <link rel="icon" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,15 +41,15 @@
 <body>
   <div class="shell">
     <header class="nav">
-      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#ffb454" stroke-width="1.5" stroke-linecap="round"><path d="M16 17v12M11 29h10"/><path d="M11 12a7 7 0 0 1 10 0" stroke="#7df0c3"/><path d="M7 8a13 13 0 0 1 18 0"/></g><circle cx="16" cy="15" r="2.6" fill="#ffb454"/></svg><div>The Listening Post<small>Chapter I &middot; How it arrives</small></div></div>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="#ffb454" stroke-width="1.5" stroke-linecap="round"><path d="M16 17v12M11 29h10"/><path d="M11 12a7 7 0 0 1 10 0" stroke="#7df0c3"/><path d="M7 8a13 13 0 0 1 18 0"/></g><circle cx="16" cy="15" r="2.6" fill="#ffb454"/></svg><div>Data Ingestion &amp; Timeline<small>Data ingestion and timeline management</small></div></div>
       <div id="rail"></div>
       <a class="back" href="../index.html">&larr; Murmuration home</a>
     </header>
     <section class="hero" aria-labelledby="title">
       <div>
-        <div class="eyebrow"><i class="live"></i> Chapter I &middot; The night shift</div>
-        <h1 id="title">Every voice, <em>logged</em></h1>
-        <p class="lede">Every door, one archive, and a clerk who never sleeps. Each post is stamped, stripped of its owner&rsquo;s name and tied to whatever it was answering, all before anyone gets to read it.</p>
+        <div class="eyebrow"><i class="live"></i> Chapter I &middot; Ingestion workflow</div>
+        <h1 id="title">Every post, <em>timestamped</em></h1>
+        <p class="lede">Posts from each platform are timestamped, anonymized, and linked to the conversations they respond to.</p>
       </div>
       <div class="kpis" aria-label="Summary">
         <div class="kpi" style="--c:#ffb454"><span>Posts on file</span><strong id="k-posts">&ndash;</strong><small id="k-posts-s">&nbsp;</small></div>
@@ -71,72 +71,72 @@
   </div>
   <main class="shell">
     <section class="strip" aria-label="Dataset">
-      <div><strong>The Murmuration flock</strong><small id="meta">&nbsp;</small></div>
+      <div><strong>The Murmuration dataset</strong><small id="meta">&nbsp;</small></div>
       <a class="btn go" href="../data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a>
     </section>
     <div class="banner"><b>Synthetic data</b><span>No platform was contacted to make this page. Every post was written by a generator, and it says so on the tin.</span></div>
 
-    <div class="section-head"><h2>From the duty log</h2><p>What the night shift wrote down.</p></div>
+    <div class="section-head"><h2>Ingestion overview</h2><p>What the night shift wrote down.</p></div>
     <section class="notes" id="notes" aria-label="Findings"></section>
 
-    <div class="section-head"><h2>The plates</h2><p>The archive, drawer by drawer.</p></div>
+    <div class="section-head"><h2>Analysis</h2><p>The archive, drawer by drawer.</p></div>
     <div class="plates">
       <section class="glass plate wide" aria-labelledby="h1p">
-        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="h1p">The masking booth</h3></div><span class="tag">Try it</span></div>
-        <p class="cap">Hand the clerk something with a name on it, and watch the name leave the building.</p>
+        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="h1p">Anonymization preview</h3></div><span class="tag">Try it</span></div>
+        <p class="cap">Preview how personal identifiers are removed before analysis.</p>
         <div class="two"><textarea class="box" id="mask-in" aria-label="Text to mask">Ring Priya on +91 98765 43210 or write to priya@example.com. @priya_k says the #LumenLaunch was rushed.</textarea><div class="out" id="mask-out" aria-live="polite"></div></div>
         <div class="statchips" id="mask-stats"></div>
         <details class="how"><summary>How it is read</summary><p>Patterns catch email addresses, phone numbers and @handles and replace them. The author is then swapped for a one-way code, so the same person keeps the same code without anyone being able to read a name back out of it. Everything happens on your own device.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="h2p">
-        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="h2p">Anatomy of a record</h3></div><button type="button" class="btn" id="pull">Pull another file</button></div>
+        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="h2p">Post record details</h3></div><button type="button" class="btn" id="pull">Pull another file</button></div>
         <p class="cap">One post, opened on the desk. The little numerals show which chapters read each field.</p>
         <div class="fields" id="fields"></div>
         <details class="how"><summary>How it is read</summary><p>A real row from the dataset. Bio and location are read by the software but sealed here, because no chapter ever shows them to a visitor.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="h3p">
-        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="h3p">The ledger</h3></div><span class="tag">By door</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="h3p">Records by platform</h3></div><span class="tag">By door</span></div>
         <p class="cap">Who came through which door, and how often they brought company.</p>
         <table id="ledger"></table>
         <details class="how"><summary>How it is read</summary><p>Posts, unique anonymous voices, posts per voice, and the share of posts that react to an earlier post.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h4p">
-        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="h4p">Ink on the page</h3></div><span class="tag">Completeness</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="h4p">Field completeness</h3></div><span class="tag">Completeness</span></div>
         <p class="cap">No archive is perfect. Here is exactly how many blanks this one holds.</p>
         <div id="complete"></div>
         <details class="how"><summary>How it is read</summary><p>Share of rows with a usable value in each field. Reference is only expected on posts that react to something, so it is measured against those.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="hwash" id="wash-plate">
-        <div class="plate-head"><div><span class="plate-no">Plate IV&frac12;</span><h3 id="hwash">The wash</h3></div><span class="tag">Paper &sect;5</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IV&frac12;</span><h3 id="hwash">Data cleaning</h3></div><span class="tag">Paper &sect;5</span></div>
         <p class="cap">Garbage in, garbage out. What the door found in this file, under the paper&rsquo;s own three headings.</p>
         <div id="wash"></div>
       </section>
 
       <section class="glass plate wide" aria-labelledby="h5p">
-        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h5p">The wall of hours</h3></div><span class="tag">Day by hour, UTC</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h5p">Activity by hour</h3></div><span class="tag">Day by hour, UTC</span></div>
         <p class="cap">Days across, hours down, one lit window for each. Click a window to read who was up.</p>
         <div class="scrollx"><svg class="viz" id="wall" viewBox="0 0 1000 330" role="img" aria-label="Heat map of posts by day and hour"></svg></div>
         <details class="how"><summary>How it is read</summary><p>Brighter means more posts arrived in that hour. Times are UTC, so a lit band at night here is somebody&rsquo;s lunchtime elsewhere.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="h6p">
-        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="h6p">Manners at the door</h3></div><span class="tag">Kinds of post</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="h6p">Interaction types</h3></div><span class="tag">Kinds of post</span></div>
         <p class="cap">Some arrive with something to say. Others arrive holding somebody else&rsquo;s.</p>
         <div class="lgd" id="kinds-l"></div><div id="kinds"></div>
         <details class="how"><summary>How it is read</summary><p>Original posts, replies, quotes, reposts and cross-platform shares as a share of each door&rsquo;s traffic.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h7p">
-        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h7p">The pile grows</h3></div><span class="tag">Cumulative</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h7p">Cumulative post volume</h3></div><span class="tag">Cumulative</span></div>
         <p class="cap">The whole run of filing, door by door.</p>
         <svg class="viz" id="pile" viewBox="0 0 620 300" role="img" aria-label="Cumulative posts per platform"></svg>
         <details class="how"><summary>How it is read</summary><p>Running total of posts per platform across the month.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="h8p">
-        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="h8p">A thread, unspooled</h3></div><span class="tag">Chronology</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="h8p">Conversation timeline</h3></div><span class="tag">Chronology</span></div>
         <p class="cap">Pull one conversation out of the pile and lay it along the clock.</p>
         <div class="opts"><div class="chips" id="thread-picks"></div></div>
         <div class="lgd" id="thread-l"></div>
@@ -146,20 +146,20 @@
       </section>
     </div>
 
-    <div class="section-head"><h2>Rules of the post</h2><p>Four checkpoints, and a few things the clerk is forbidden to keep.</p></div>
+    <div class="section-head"><h2>Ingestion and privacy workflow</h2><p>Four processing steps and the data protection controls applied.</p></div>
     <section class="pipeline" aria-label="Method">
       <div class="stepc"><div class="n">1</div><h3>Hear</h3><p>Each post is taken in from its door and tagged with where it came from.</p></div>
       <div class="stepc"><div class="n">2</div><h3>Stamp</h3><p>One clock for everybody. Every time is rewritten in UTC so the month reads in order.</p></div>
       <div class="stepc"><div class="n">3</div><h3>Mask</h3><p>Authors become codes. Emails, numbers and handles are struck out of the text.</p></div>
       <div class="stepc"><div class="n">4</div><h3>Thread</h3><p>Every reply, quote, repost and share is tied to the post that set it off.</p></div>
     </section>
-    <div class="never"><span class="lab">Forbidden in the archive</span><span class="x">Real names</span><span class="x">Handles</span><span class="x">Phone numbers</span><span class="x">Emails</span><span class="x">Private messages</span></div>
+    <div class="never"><span class="lab">Data excluded from storage</span><span class="x">Real names</span><span class="x">Handles</span><span class="x">Phone numbers</span><span class="x">Emails</span><span class="x">Private messages</span></div>
     <div class="caveats">
-      <div class="caveat"><b>No live wires here</b>This page reads a finished file. Connecting real platforms needs their permission and their keys.</div>
-      <div class="caveat"><b>A log is not the world</b>Only what came through the doors is on file. Silence outside them leaves no trace.</div>
+      <div class="caveat"><b>Sample data mode</b>This page reads a finished file. Connecting real platforms needs their permission and their keys.</div>
+      <div class="caveat"><b>Dataset coverage</b>Only what came through the doors is on file. Silence outside them leaves no trace.</div>
       <div class="caveat" data-sample="1"><b>The month is invented</b>The dates are real calendar days. The events on them never happened.</div>
     </div>
-    <footer><span>Chapter I of Murmuration &middot; Utsav</span><a class="nx" href="../weather/index.html">Next: The Weather Room &rarr;</a><em>Every voice here is synthetic.</em></footer>
+    <footer><span>Chapter I of Murmuration &middot; Utsav</span><a class="nx" href="../weather/index.html">Next: Sentiment Analysis &rarr;</a><em>Every voice here is synthetic.</em></footer>
   </main>
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
