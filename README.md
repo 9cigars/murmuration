@@ -16,7 +16,7 @@ The home page has one bird for every voice in the data. Move your cursor through
 
 Hover a chart for its numbers, and click a mark to open the real posts behind it. Charts of model results, such as the Grapevine's breaking point, give the readout only.
 
-Every page has a flight path on its right edge. Click a perch, use its arrows, or press J and K, and a flock carries you to that section. On phones it folds into a compass by the dock. The Light button switches to a solid, gradient-free theme and the site remembers the choice.
+Scroll to the end of a section and the page holds at a divide. Keep scrolling and the next section opens. At the end of a page the next room opens the same way. A bar at the foot of every page names what comes next, and clicking it or pressing the space bar goes there too. Every page also has a flight path on its right edge: click a perch, use its arrows, or press J and K. On phones it folds into a compass by the dock. The Light button switches to a solid, gradient-free theme and the site remembers the choice.
 
 ## Bring your own CSV
 

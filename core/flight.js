@@ -1,7 +1,8 @@
 /* Murmuration: the flight path.
    Every page gets a rail of perches, one for each section and plate. A small bird rides the rail as you scroll.
    Click a perch, use the arrows at either end, or press J and K, and a flock carries you there. On phones the
-   rail folds into a compass beside the dock. Sections rise into place as they arrive. */
+   rail folds into a compass beside the dock. A bar at the foot of the screen always names the next section and
+   the next room, one click or the space bar away. Sections rise into place as they arrive. */
 (function () {
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = '.fl{position:fixed;z-index:58;top:50%;right:max(3px,calc((100vw - 1320px)/2 - 34px));transform:translateY(-50%);width:24px;font:500 12px/1.2 var(--sans,Manrope,system-ui,sans-serif);color:var(--ink,#eef1f8)}'
@@ -22,7 +23,17 @@
     + '.fl-wait{opacity:0}.fl-rise{animation:fl-rise .62s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:var(--d,0ms)}@keyframes fl-rise{from{opacity:0;translate:0 28px}}'
     + '.fl-here{animation:fl-here 1.2s ease-out}@keyframes fl-here{0%{outline:2px solid var(--a,#ffc266);outline-offset:6px}100%{outline:2px solid transparent;outline-offset:14px}}'
     + '.fl-sweep{position:fixed;inset:0;width:100%;height:100%;z-index:57;pointer-events:none}'
-    + '@media print{.fl,.fl-compass,.fl-sheet,.fl-sweep{display:none}.fl-wait{opacity:1}}';
+    + 'body{padding-bottom:72px}.fl-next{--ac:var(--a,var(--teal,var(--vine,#ffc266)));position:fixed;z-index:58;left:0;right:0;bottom:14px;margin-inline:auto;width:fit-content;max-width:calc(100vw - 20px);height:44px;display:flex;align-items:stretch;border-radius:99px;background:#141724;border:1px solid rgba(255,255,255,.16);color:#eef1f8;font:500 12px/1.2 var(--sans,Manrope,system-ui,sans-serif);white-space:nowrap}'
+    + '.fl-go{all:unset;box-sizing:border-box;cursor:pointer;flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;padding:0 15px 0 5px;border-radius:99px;transition:background .22s,color .22s}.fl-go:hover,.fl-go:focus-visible,.fl-next.ripe .fl-go{background:var(--ac);color:var(--dark-on-a,#231602)}'
+    + '.fl-ring{flex:none;width:32px;height:32px;fill:none;stroke-linecap:round}.fl-ring .bg{stroke:currentColor;opacity:.2;stroke-width:2}.fl-ring .pg{stroke:var(--ac);stroke-width:2.4;transform:rotate(-90deg);transform-origin:16px 16px}.fl-go:hover .pg,.fl-go:focus-visible .pg,.fl-next.ripe .pg{stroke:currentColor}.fl-ring .ch{stroke:currentColor;stroke-width:2;stroke-linejoin:round;transform-origin:16px 16px;transition:transform .22s}.fl-next.to-room .ch{transform:rotate(-90deg)}.fl-next.to-top .ch{transform:rotate(180deg)}'
+    + '.fl-t{display:flex;align-items:baseline;gap:7px;min-width:0}.fl-t small{flex:none;font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.72}.fl-t b{display:block;min-width:0;max-width:280px;overflow:hidden;text-overflow:ellipsis;font:italic 400 15.5px/1.3 var(--display,Georgia,serif)}.fl-t b.swap{animation:fl-swap .3s ease-out}@keyframes fl-swap{from{opacity:0;translate:0 7px}}'
+    + '.fl-go kbd{flex:none;margin-left:3px;padding:1px 6px;font:inherit;font-size:10px;letter-spacing:.04em;border:1px solid currentColor;border-radius:5px;opacity:.6}'
+    + '.fl-room{flex:none;display:flex;align-items:center;gap:6px;padding:0 15px 0 11px;margin-left:2px;border-left:1px solid rgba(255,255,255,.14);color:var(--muted,#a3abbd);font-size:12px;text-decoration:none;transition:color .15s}.fl-room:hover,.fl-room:focus-visible{color:var(--ac)}.fl-room[hidden]{display:none}.fl-room span{max-width:170px;overflow:hidden;text-overflow:ellipsis}'
+    + '.fl-divide,.fl-curtain{--ac:var(--a,var(--teal,var(--vine,#ffc266)))}.fl-divide{--p:0;display:flex;align-items:center;gap:14px;width:100%;height:30px;margin:56px 0 12px;color:var(--faint,#6e778c);font:600 10.5px/1 var(--sans,Manrope,system-ui,sans-serif);letter-spacing:.11em;text-transform:uppercase}.fl-divide i{flex:1;position:relative;height:1px;background:rgba(255,255,255,.17);overflow:hidden}.fl-divide i::after{content:"";position:absolute;inset:0;background:var(--ac);transform:scaleX(var(--p));transition:transform .18s}.fl-divide i:first-child::after{transform-origin:right}.fl-divide i:last-child::after{transform-origin:left}'
+    + '.fl-mid{flex:none;display:flex;align-items:center;gap:0;white-space:nowrap;transition:gap .2s}.fl-mid svg{width:20px;height:20px;fill:currentColor;transform:translateY(calc(var(--p)*-5px)) scale(calc(1 + var(--p)*.4));transition:transform .18s}.fl-mid em{font-style:normal;max-width:0;opacity:0;overflow:hidden;transition:max-width .24s,opacity .2s}.fl-divide.held{color:var(--ac)}.fl-divide.held .fl-mid,.fl-divide.end .fl-mid{gap:9px}.fl-divide.held .fl-mid em,.fl-divide.end .fl-mid em{max-width:320px;opacity:1}'
+    + '.fl-curtain{position:fixed;inset:0;z-index:90;display:grid;place-content:center;justify-items:center;gap:8px;padding:20px;text-align:center;background:var(--bg,#0d0f19);color:var(--ink,#eef1f8);animation:fl-up .44s cubic-bezier(.7,0,.2,1) both}@keyframes fl-up{from{transform:translateY(100%)}}.fl-curtain small{font:600 11px var(--sans,Manrope,system-ui,sans-serif);letter-spacing:.14em;text-transform:uppercase;color:var(--ac)}.fl-curtain b{font:italic 400 clamp(38px,7vw,84px)/1.1 var(--display,Georgia,serif)}'
+    + '@media(max-width:1180px){body{padding-bottom:118px}.fl-next{bottom:58px}.fl-go kbd{display:none}}@media(max-width:620px){.fl-t b{max-width:none}.fl-room span{display:none}.fl-room::before{content:"Room"}}'
+    + '@media print{.fl,.fl-compass,.fl-sheet,.fl-sweep,.fl-next,.fl-divide,.fl-curtain{display:none}.fl-wait{opacity:1}body{padding-bottom:0}}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
   var CHEV_UP = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 8l4-4 4 4"/></svg>', CHEV_DOWN = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg>';
@@ -52,12 +63,22 @@
   var pin = null;
   function pinned() { return pin && Math.abs(scrollY - pin.y) < 3; }
   var stops = [], nav, track, fill, bird, compass, count, sheet, current = -1, ys = [];
+  var bar, barGo, barSmall, barName, barRing, barRoom, barRoomName, barKey = '';
+  var gates = [], hold = null, holdT = 0, PULL = 260, coolUntil = 0, hardCool = 0, pred = 0, predAt = 0, leaving = false;
+  var BIRD = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 11C7 6 4 5 1 5c2 3 4 6 9 8z"/><path d="M10 11c3-5 6-6 9-6-2 3-4 6-9 8z"/></svg>';
   function sig(a) { return a.map(function (s) { return s.label; }).join('|'); }
 
   function build() {
     var found = collect(); if (sig(found) === sig(stops) && nav) return;
-    stops = found;
-    if (nav) nav.remove(); if (compass) compass.remove(); if (sheet) sheet.remove();
+    clearHold(); stops = found;
+    document.querySelectorAll('.fl-divide').forEach(function (d) { d.remove(); });
+    stops.forEach(function (s) {
+      if (s.top || s.lv !== 1) return;
+      var d = document.createElement('div'); d.className = 'fl-divide' + (s.link ? ' end' : ''); d.setAttribute('aria-hidden', 'true');
+      d.innerHTML = '<i></i><span class="fl-mid">' + BIRD + '<em>' + (s.link ? 'Keep scrolling for ' + esc(roomName(s)) : 'Keep scrolling') + '</em></span><i></i>';
+      s.el.parentNode.insertBefore(d, s.el); s.div = d;
+    });
+    if (nav) nav.remove(); if (compass) compass.remove(); if (sheet) sheet.remove(); if (bar) bar.remove();
     nav = document.createElement('nav'); nav.className = 'fl'; nav.setAttribute('aria-label', 'Sections on this page');
     nav.innerHTML = '<div class="fl-keys">press <kbd>J</kbd> <kbd>K</kbd> to fly</div><button type="button" class="fl-arrow" data-go="-1" aria-label="Previous section">' + CHEV_UP + '</button><div class="fl-track"><div class="fl-line"><i class="fl-fill"></i></div>'
       + stops.map(function (s, i) { return '<a class="fl-s l' + s.lv + '" href="' + (s.link ? esc(s.link) : '#') + '" data-i="' + i + '" style="--i:' + i + '" aria-label="' + esc(s.label) + '"><span class="fl-dot"></span><span class="fl-lab">' + esc(s.label) + '</span></a>'; }).join('')
@@ -70,6 +91,11 @@
     sheet = document.createElement('div'); sheet.className = 'fl-sheet';
     sheet.innerHTML = stops.map(function (s, i) { return '<button type="button" class="l' + s.lv + '" data-i="' + i + '">' + esc(s.label) + '</button>'; }).join('');
     document.body.appendChild(sheet);
+    bar = document.createElement('div'); bar.className = 'fl-next';
+    bar.innerHTML = '<button type="button" class="fl-go"><svg class="fl-ring" viewBox="0 0 32 32" aria-hidden="true"><circle class="bg" cx="16" cy="16" r="13"/><circle class="pg" cx="16" cy="16" r="13" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/><path class="ch" d="M11.5 14l4.5 4.5 4.5-4.5"/></svg><span class="fl-t"><small></small><b></b></span><kbd>Space</kbd></button><a class="fl-room" hidden><span></span><svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3"/></svg></a>';
+    document.body.appendChild(bar);
+    barGo = bar.querySelector('.fl-go'); barSmall = bar.querySelector('small'); barName = bar.querySelector('b'); barRing = bar.querySelector('.pg'); barRoom = bar.querySelector('.fl-room'); barRoomName = barRoom.querySelector('span'); barKey = '';
+    barGo.addEventListener('click', goNext);
     nav.addEventListener('click', onClick); compass.addEventListener('click', onClick); sheet.addEventListener('click', onClick);
     nav.addEventListener('pointerenter', function () { nav.classList.add('open'); });
     nav.addEventListener('pointerleave', function () { nav.classList.remove('open'); });
@@ -90,6 +116,11 @@
     track.style.height = h + 'px';
     nav.querySelectorAll('.fl-s').forEach(function (a, i) { a.style.top = (i * gap) + 'px'; });
     ys = stops.map(function (_, i) { return targetOf(i); });
+    // A gate is the place where a section has run out: the divide is on screen and the next section just peeks in.
+    var max = document.documentElement.scrollHeight - innerHeight, peek = innerWidth <= 1180 ? 150 : 96, prev = 0;
+    gates = [];
+    for (var i = 1; i <= lastStop(); i++) { var s = stops[i]; if (s.lv !== 1 || s.top) continue; var g = Math.max(prev, Math.min(max, pageY(s.el) - innerHeight + peek)); if (ys[i] > g + 8) gates.push({ y: g, i: i, div: s.div }); prev = ys[i]; }
+    var out = exitStop(); if (out) gates.push({ y: max, end: true, out: out, div: out.div });
     spy();
   }
 
@@ -112,24 +143,117 @@
       sheet.querySelectorAll('button').forEach(function (b, j) { if (j === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
       count.textContent = (i + 1) + ' / ' + stopsOnly;
     }
+    paintBar();
   }
-  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(spy); } clearTimeout(settleT); settleT = setTimeout(settle, 140); }, { passive: true });
+
+  /* ---- the bar at the foot of the screen: what comes next, and how close it is ---- */
+  function lastStop() { return stops[stops.length - 1].link ? stops.length - 2 : stops.length - 1; }
+  function nextIndex() { var p = pinned(), base = p ? ys[pin.i] : scrollY, room = p ? 4 : 40; for (var i = 0; i <= lastStop(); i++) if (ys[i] > base + room) return i; return -1; }
+  function exitStop() { var s = stops[stops.length - 1]; return s.link ? s : null; }
+  function roomName(s) { return s.label.replace(/^Next:\s*/, ''); }
+  function goNext() { var k = nextIndex(), out = exitStop(); if (k >= 0) flyTo(k); else if (out) leave(out); else flyTo(0); }
+  function leave(s) {
+    if (leaving) return;
+    if (reduce) { location.href = s.link; return; }
+    leaving = true;
+    var c = document.createElement('div'); c.className = 'fl-curtain'; c.innerHTML = '<small>Now entering</small><b>' + esc(roomName(s)) + '</b>'; document.body.appendChild(c);
+    setTimeout(function () { location.href = s.link; }, 470);
+  }
+  addEventListener('pageshow', function () { leaving = false; document.querySelectorAll('.fl-curtain').forEach(function (c) { c.remove(); }); clearHold(); });
+
+  /* ---- the divides: scroll to the end of a section and it holds; keep scrolling and the next one opens ---- */
+  function clearHold() { clearTimeout(holdT); if (!hold) return; var d = hold.g.div; if (d) { d.classList.remove('held'); d.style.setProperty('--p', 0); } hold = null; barKey = ''; paintBar(); }
+  function showPull(g, pull) {
+    if (!hold || hold.g !== g) { clearHold(); hold = { g: g, pull: 0, t0: performance.now() }; if (g.div) g.div.classList.add('held'); barKey = ''; }
+    hold.pull = pull; if (g.div) g.div.style.setProperty('--p', Math.min(1, pull / PULL).toFixed(3)); paintBar();
+  }
+  function openGate(g) { clearHold(); if (g.end) leave(g.out); else flyTo(g.i, true); }
+  function addPull(g, n) {
+    showPull(g, (hold && hold.g === g ? hold.pull : 0) + n);
+    clearTimeout(holdT); holdT = setTimeout(clearHold, 420);
+    if (hold.pull >= PULL && performance.now() - hold.t0 >= 260) openGate(g);
+  }
+  function scrollsInside(t) { for (; t && t.nodeType === 1 && t !== document.body && t !== document.documentElement; t = t.parentElement) { if (t.scrollHeight > t.clientHeight + 1) { var o = getComputedStyle(t).overflowY; if ((o === 'auto' || o === 'scroll') && t.scrollTop + t.clientHeight < t.scrollHeight - 1) return true; } } return false; }
+  addEventListener('wheel', function (e) {
+    if (e.defaultPrevented || e.ctrlKey || !gates.length || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (leaving) { e.preventDefault(); return; }
+    if (document.querySelector('.lp-drawer.on,.lp-door.on')) return;
+    if (glide && glide.lock) { e.preventDefault(); return; }
+    var now = performance.now(), dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1);
+    if (dy <= 0) { coolUntil = 0; pred = 0; clearHold(); return; }
+    if (now < coolUntil) { e.preventDefault(); coolUntil = Math.min(now + 200, hardCool); return; }
+    if (scrollsInside(e.target)) return;
+    var y = scrollY, base = now - predAt < 220 ? Math.max(y, pred) : y, g = null;
+    for (var i = 0; i < gates.length; i++) if (gates[i].y >= y - 1) { g = gates[i]; break; }
+    if (!g) return;
+    if (base + dy < g.y - .5) { pred = base + dy; predAt = now; if (hold && hold.g !== g) clearHold(); return; }
+    e.preventDefault(); pred = 0;
+    var arrived = Math.abs(y - g.y) > 1; if (arrived) window.scrollTo({ top: g.y, behavior: 'instant' });
+    addPull(g, arrived ? 0 : Math.min(dy, 130));
+  }, { passive: false });
+  /* on a touch screen the page end takes the same pull: drag up past the end and let go */
+  var touchFrom = null;
+  addEventListener('touchstart', function () { touchFrom = null; }, { passive: true });
+  addEventListener('touchmove', function (e) {
+    var g = gates[gates.length - 1]; if (!g || !g.end || e.touches.length !== 1 || document.querySelector('.lp-drawer.on,.lp-door.on')) return;
+    if (scrollY < g.y - 2) { touchFrom = null; if (hold) clearHold(); return; }
+    var cy = e.touches[0].clientY; if (touchFrom === null) touchFrom = cy;
+    var d = touchFrom - cy; if (d > 10) showPull(g, Math.min(PULL, d * 2.6)); else if (hold) clearHold();
+  }, { passive: true });
+  addEventListener('touchend', function () { if (hold && hold.g.end && hold.pull >= PULL) openGate(hold.g); else if (hold) clearHold(); touchFrom = null; }, { passive: true });
+  function paintBar() {
+    if (!bar) return;
+    var k = hold ? (hold.g.end ? -1 : hold.g.i) : nextIndex(), out = exitStop(), mode = k >= 0 ? 'sec' : out ? 'room' : 'top', p = 1;
+    if (hold) p = Math.min(1, hold.pull / PULL);
+    else if (k >= 0) { var from = 0; for (var j = 0; j < k; j++) if (ys[j] < ys[k]) from = ys[j]; p = Math.max(0, Math.min(1, (scrollY - from) / Math.max(1, ys[k] - from))); }
+    var small = hold ? 'Keep scrolling' : mode === 'sec' ? 'Next' : mode === 'room' ? 'Onward' : '', name = mode === 'sec' ? stops[k].label : mode === 'room' ? roomName(out) : 'Back to the top', key = mode + '|' + small + '|' + name;
+    barRing.setAttribute('stroke-dashoffset', (100 - p * 100).toFixed(1));
+    bar.classList.toggle('ripe', !!hold || mode !== 'sec' || p > .8);
+    if (key === barKey) return;
+    var had = barKey; barKey = key;
+    bar.classList.toggle('to-room', mode === 'room'); bar.classList.toggle('to-top', mode === 'top');
+    barSmall.textContent = small; barName.textContent = name; barGo.setAttribute('aria-label', (small ? small + ': ' : '') + name);
+    if (had && !reduce) { barName.classList.remove('swap'); void barName.offsetWidth; barName.classList.add('swap'); }
+    barRoom.hidden = mode !== 'sec' || !out;
+    if (out) { barRoom.href = out.link; barRoomName.textContent = roomName(out); barRoom.setAttribute('aria-label', 'Skip to ' + roomName(out)); }
+  }
+
+  /* ---- a wheel that stops just short of a section finishes the motion ---- */
+  var wheelAt = 0, wheelDir = 0, settleT = 0;
+  addEventListener('wheel', function (e) { wheelAt = performance.now(); if (e.deltaY) wheelDir = e.deltaY > 0 ? 1 : -1; }, { passive: true });
+  function settle() {
+    if (glide || hold || leaving || reduce || !wheelDir || performance.now() - wheelAt > 520 || !ys.length) return;
+    if (document.querySelector('.lp-drawer.on,.lp-door.on') || String(getSelection && getSelection())) return;
+    var a = document.activeElement; if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
+    var y = scrollY, best = -1, bestD = 110, i, d;
+    for (i = 0; i <= lastStop(); i++) { d = (ys[i] - y) * wheelDir; if (d > 1.5 && d <= bestD && (best < 0 || d < bestD)) { best = i; bestD = d; } }
+    if (best < 0) return;
+    var to = ys[best], t0 = performance.now(), dur = 300;
+    glide = { raf: 0 };
+    (function frame(now) {
+      if (!glide) return;
+      var p = Math.min(1, (now - t0) / dur);
+      window.scrollTo({ top: y + (to - y) * (1 - Math.pow(1 - p, 3)), behavior: 'instant' });
+      if (p < 1) glide.raf = requestAnimationFrame(frame); else { glide = null; pin = { i: best, y: scrollY }; spy(); }
+    })(t0);
+  }
 
   /* ---- the glide, and the flock that goes with it ---- */
   var glide = null;
   function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-  function stopGlide() { if (glide) { cancelAnimationFrame(glide.raf); glide = null; nav.classList.remove('fly'); } }
+  function stopGlide(e) { if (glide && !(e && glide.lock)) { cancelAnimationFrame(glide.raf); glide = null; nav.classList.remove('fly'); } }
   ['wheel', 'touchstart'].forEach(function (ev) { addEventListener(ev, stopGlide, { passive: true }); });
-  function flyTo(i) {
+  function flyTo(i, lock) {
     var s = stops[i]; if (!s) return;
-    if (s.link) { location.href = s.link; return; }
+    if (s.link) { leave(s); return; }
     stopGlide();
     var from = scrollY, to = targetOf(i), dist = Math.abs(to - from);
-    function land() { pin = { i: i, y: scrollY }; spy(); if (s.top) return; s.el.classList.remove('fl-here'); void s.el.offsetWidth; s.el.classList.add('fl-here'); setTimeout(function () { s.el.classList.remove('fl-here'); }, 1300); if (!s.el.hasAttribute('tabindex')) s.el.setAttribute('tabindex', '-1'); s.el.focus({ preventScroll: true }); s.el.style.outline = 'none'; setTimeout(function () { s.el.style.outline = ''; }, 1250); }
+    function land() { pin = { i: i, y: scrollY }; if (lock) { var n = performance.now(); coolUntil = n + 260; hardCool = n + 1000; } spy(); if (s.top) return; s.el.classList.remove('fl-here'); void s.el.offsetWidth; s.el.classList.add('fl-here'); setTimeout(function () { s.el.classList.remove('fl-here'); }, 1300); if (!s.el.hasAttribute('tabindex')) s.el.setAttribute('tabindex', '-1'); s.el.focus({ preventScroll: true }); s.el.style.outline = 'none'; setTimeout(function () { s.el.style.outline = ''; }, 1250); }
     if (reduce || dist < 2) { window.scrollTo({ top: to, behavior: 'instant' }); land(); return; }
     var dur = Math.min(1250, 560 + dist / 5), t0 = performance.now();
     nav.classList.add('fly'); sweep(to > from ? 1 : -1, dur);
-    glide = { raf: 0 };
+    glide = { raf: 0, lock: !!lock };
     (function frame(now) {
       if (!glide) return;
       var p = Math.min(1, (now - t0) / dur), goal = targetOf(i);
@@ -167,9 +291,16 @@
   }
   addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    var k = e.key.toLowerCase(); if (k !== 'j' && k !== 'k') return;
+    var k = e.key.toLowerCase(), space = e.key === ' ', arrow = e.key === 'ArrowDown' || e.key === 'PageDown'; if (!space && !arrow && k !== 'j' && k !== 'k') return;
     var t = e.target; if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
     if (document.querySelector('.lp-drawer.on,.lp-door.on')) return;
+    if (arrow) { var eg = gates[gates.length - 1]; if (eg && eg.end && scrollY >= eg.y - 2 && !(t && t.closest && t.closest('[role=slider],[role=tab],[role=listbox],[role=menu]'))) { e.preventDefault(); addPull(eg, 130); } return; }
+    if (space) {
+      if (t && t.closest && t.closest('button,a,summary,label,audio,video,[role=button],[role=slider],[role=tab],[tabindex]:not([tabindex="-1"])')) return;
+      e.preventDefault(); if (e.repeat) return;
+      if (e.shiftKey) step(-1); else goNext();
+      return;
+    }
     e.preventDefault(); step(k === 'j' ? 1 : -1);
   });
   document.addEventListener('click', function (e) { if (sheet && sheet.classList.contains('on') && !e.target.closest('.fl-sheet,.fl-compass')) { sheet.classList.remove('on'); count.setAttribute('aria-expanded', 'false'); } });
@@ -202,5 +333,5 @@
     if ('ResizeObserver' in window) new ResizeObserver(later).observe(document.body);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
-  window.Flight = { fly: flyTo, step: step, get stops() { return stops; }, get current() { return current; } };
+  window.Flight = { fly: flyTo, step: step, next: goNext, get nextIndex() { return nextIndex(); }, get stops() { return stops; }, get current() { return current; } };
 })();
