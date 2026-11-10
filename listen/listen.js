@@ -1,6 +1,7 @@
 /* Chapter I: The Listening Post. */
 (function () {
   'use strict';
+  if (window.MURMUR_EMPTY) return;
   var K = window.Kit, $ = K.$, esc = K.esc, fmt = K.fmt, pct = K.pct, F = K.loadFeed();
   $('rail').outerHTML = K.rail('listen');
   var PAL = { X: '#78c8ff', Telegram: '#7df0c3', Instagram: '#ec83e0', Facebook: '#8da2ff', YouTube: '#ff7f9e', Reddit: '#ffb454' };
@@ -16,7 +17,7 @@
   $('k-voices').textContent = fmt(F.voices.size); $('k-voices-s').textContent = 'names read: none';
   $('k-doors').textContent = plats.length; $('k-doors-s').textContent = 'all watched at once';
   $('k-links').textContent = fmt(resolved); $('k-links-s').textContent = pct(resolved, N) + '% of posts answer another';
-  $('meta').textContent = fmt(N) + ' posts · ' + fmt(F.voices.size) + ' anonymous voices · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv');
+  $('meta').textContent = fmt(N) + ' posts · ' + fmt(F.voices.size) + ' anonymous voices · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : window.MURMUR_DEMO.csv);
 
   /* ------------------ the intake line ------------------ */
   var S = { t: 0, playing: false, dur: 15000, last: 0, ptr: 0, parts: [], cells: {}, muted: {}, gate: -1, glow: [0, 0, 0, 0], W: 0, H: 0, ctx: null, onscreen: true };

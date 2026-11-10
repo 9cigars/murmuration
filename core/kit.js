@@ -124,7 +124,7 @@
       var v = voices.get(r.user_id);
       if (!v) { v = { id: r.user_id, platform: r.platform, org: Prof.isOrganisation(r.user_bio), region: Prof.classifyRegion(r.user_location), calling: Prof.classifyInterests(r.user_bio)[0] || null, n: 0 }; voices.set(r.user_id, v); }
       v.n++;
-      posts.push({ id: r.post_id, ts: ts, platform: r.platform, voice: v, text: r.text, type: r.interaction || 'post', refId: r.ref_post_id || '', ref: -1, kids: [], tag: tag ? tag[0] : null, mood: r.sentiment in MOOD ? MOOD[r.sentiment] : null, emotion: feelingOf(r.text, up), lang: r.language || '', depth: 0, raw: r });
+      posts.push({ id: r.post_id, ts: ts, platform: r.platform, voice: v, text: r.text, type: r.interaction || 'post', refId: r.ref_post_id || '', ref: -1, kids: [], tag: tag ? tag[0] : null, mood: r.sentiment in MOOD ? MOOD[r.sentiment] : null, emotion: feelingOf(r.text, up || (root.MURMUR_DEMO && root.MURMUR_DEMO.id !== 'sample')), lang: r.language || '', depth: 0, raw: r });
     });
     posts.forEach(function (p, i) { if (p.refId && idx.has(p.refId)) { p.ref = idx.get(p.refId); posts[p.ref].kids.push(i); } });
     posts.forEach(function (p) { if (p.ref >= 0) p.depth = posts[p.ref].depth + 1; });    // rows are in time order, so a parent is always done first

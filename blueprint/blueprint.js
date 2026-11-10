@@ -1,6 +1,7 @@
 /* The Blueprint: the paper, section by section, against what the site really does. */
 (function () {
   'use strict';
+  if (window.MURMUR_EMPTY) return;
   var K = window.Kit, $ = K.$, esc = K.esc, fmt = K.fmt, F = K.loadFeed(), P = F.posts, UP = window.MURMUR_UPLOAD, R = UP || window.Door.audit(F.rows);
   $('rail').outerHTML = K.rail('blueprint');
   var links = P.filter(function (p) { return p.ref >= 0; }).length, M = K.moodStats(P);

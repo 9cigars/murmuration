@@ -477,14 +477,15 @@
 
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
-  <script src="../data/audience_sample.js"></script>
   <script src="../core/senti_model.js"></script>
   <script src="../core/senti.js"></script>
+  <script src="../core/hub.js"></script>
   <script src="../core/door.js"></script>
   <script src="../core/loupe.js"></script>
   <script>
   (function () {
     'use strict';
+    if (window.MURMUR_EMPTY) return;
     var P = window.Profiler, K = P.K_MIN;
     var $ = function (id) { return document.getElementById(id); };
     var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -586,7 +587,7 @@
       }).then(function (found) {
         if (found) return found;
         return loadSampleText().then(function (t) {
-          return { rows: P.parseCSV(t), title: window.MURMUR_UPLOAD ? window.MURMUR_UPLOAD.name : 'The Murmuration flock', meta: window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv', demo: !window.MURMUR_UPLOAD };
+          return { rows: P.parseCSV(t), title: window.MURMUR_UPLOAD ? window.MURMUR_UPLOAD.name : window.MURMUR_DEMO.name, meta: window.MURMUR_UPLOAD ? 'cleaned at the door' : window.MURMUR_DEMO.csv, demo: !window.MURMUR_UPLOAD };
         });
       }).then(function (d) {
         if (S.manual) return;

@@ -295,5 +295,26 @@
   var api = { COLS: COLS, FIELDS: FIELDS, MIN_ROWS: MIN_ROWS, MIN_VOICES: MIN_VOICES, MAX_ROWS: MAX_ROWS, parseTable: parseTable, guessMap: guessMap, parseDate: parseDate, sentimentReader: sentimentReader, ingest: ingest, toCSV: toCSV, audit: audit, summaryCSV: summaryCSV, save: save, load: load, forget: forget };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.Door = api;
-  if (typeof document !== 'undefined') { var got = load(); if (got) { root.SAMPLE_AUDIENCE_CSV = got.csv; root.MURMUR_UPLOAD = got.report; } }
+  /* Nothing is preloaded. A page reads an uploaded file if there is one, then a chosen demo, and otherwise stays empty. */
+  var DEMO_KEY = 'murmuration-demo';
+  api.DEMOS = [
+    { id: 'jaguar', name: 'Jaguar: the rebrand', when: '12 Nov to 12 Dec 2024', note: 'The Copy Nothing film and the Type 00 reveal.', file: 'jaguar_rebrand' },
+    { id: 'anthropic', name: 'Anthropic: Opus and Sonnet 4.6', when: '28 Jan to 3 Mar 2026', note: 'Two model launches, twelve days apart.', file: 'anthropic_claude_launches' },
+    { id: 'apple', name: 'Apple: iPhone Duo', when: '3 Sep to 31 Oct 2026', note: 'The first foldable iPhone, from keynote to first owners.', file: 'apple_iphone_duo' },
+    { id: 'jio', name: 'Jio: the IPO', when: '6 Oct to 6 Nov 2026', note: 'Bidding, allotment and listing day.', file: 'jio_ipo' },
+    { id: 'zomato', name: 'Zomato: becoming Eternal', when: '27 Jan to 28 Feb 2025', note: 'The parent company rename and the results that came with it.', file: 'zomato_eternal' },
+    { id: 'sample', name: 'The Murmuration flock', when: '30 days', note: 'The original invented crowd.', js: 'data/audience_sample.js', csv: 'data/audience_sample.csv' }
+  ];
+  api.DEMOS.forEach(function (d) { if (d.file) { d.js = 'data/demos/' + d.file + '.js'; d.csv = 'data/demos/' + d.file + '.csv'; d.raw = 'data/demos/raw/' + d.file + '_no_sentiment.csv'; } });
+  api.pickDemo = function (id) { forget(); try { localStorage.setItem(DEMO_KEY, id); } catch (e) { } };
+  api.clearDemo = function () { try { localStorage.removeItem(DEMO_KEY); } catch (e) { } };
+  if (typeof document !== 'undefined') {
+    var got = load();
+    if (got) { root.SAMPLE_AUDIENCE_CSV = got.csv; root.MURMUR_UPLOAD = got.report; }
+    else {
+      var want = null; try { want = localStorage.getItem(DEMO_KEY); } catch (e) { }
+      var chosen = api.DEMOS.filter(function (d) { return d.id === want; })[0], self = document.querySelector('script[src$="core/door.js"]'), base = self ? self.getAttribute('src').replace(/core\/door\.js$/, '') : '';
+      if (chosen) { root.MURMUR_DEMO = chosen; document.write('<script src="' + base + chosen.js + '"><\/script>'); } else root.MURMUR_EMPTY = true;
+    }
+  }
 })(typeof window !== 'undefined' ? window : globalThis);

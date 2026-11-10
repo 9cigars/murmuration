@@ -1,6 +1,7 @@
 /* Chapter II: The Weather Room. */
 (function () {
   'use strict';
+  if (window.MURMUR_EMPTY) return;
   var K = window.Kit, $ = K.$, esc = K.esc, fmt = K.fmt, pct = K.pct, F = K.loadFeed();
   $('rail').outerHTML = K.rail('weather');
   var P = F.posts, ALL = K.moodStats(P);
@@ -9,7 +10,7 @@
   function deg(v) { var d = Math.round(v * 40); return (d > 0 ? '+' : '') + d + '°'; }
   function days(list) { var o = []; for (var d = 0; d < F.days; d++) o.push([]); list.forEach(function (p) { o[p.day].push(p); }); return o; }
   function topFeeling(list) { var c = {}; list.forEach(function (p) { if (p.emotion !== 'Plain') c[p.emotion] = (c[p.emotion] || 0) + 1; }); return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; })[0] || 'Plain'; }
-  $('meta').textContent = fmt(P.length) + ' posts read · ' + F.tags.length + ' fronts tracked · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv');
+  $('meta').textContent = fmt(P.length) + ' posts read · ' + F.tags.length + ' fronts tracked · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : window.MURMUR_DEMO.csv);
 
   /* headline */
   var dayAll = days(P).map(K.moodStats), solid = dayAll.map(function (s, d) { return { d: d, s: s }; }).filter(function (x) { return x.s.n >= Math.min(50, Math.max(1, Math.round(P.length / F.days / 3))); });
@@ -30,14 +31,14 @@
     var c = S.ctx, W = S.W, H = S.H, t = Math.max(0, Math.min(1, (S.net + .45) / .9)), i;
     var top = t > .5 ? mix([66, 80, 104], [40, 116, 186], (t - .5) * 2) : mix([17, 20, 31], [66, 80, 104], t * 2), bot = t > .5 ? mix([128, 132, 142], [250, 196, 136], (t - .5) * 2) : mix([44, 48, 66], [128, 132, 142], t * 2);
     var LT = window.Theme && Theme.light, ink = LT ? Theme.keep : function (x) { return x; };
-    if (LT) { c.fillStyle = ink(rgb(mix([214, 219, 228], [205, 228, 248], t))); c.fillRect(0, 0, W, H); }
+    if (LT) { c.fillStyle = ink(rgb(mix([238, 237, 234], [231, 240, 245], t))); c.fillRect(0, 0, W, H); }
     else { var g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, rgb(top)); g.addColorStop(.8, rgb(bot)); c.fillStyle = g; c.fillRect(0, 0, W, H); }
     // sun
     var sunA = Math.max(0, Math.min(1, (S.net + .28) / .5)), sx = W * .7, sy = H * (.5 - .24 * sunA), R = Math.min(W, H) * .1;
-    if (sunA > .02 && LT) { c.fillStyle = ink('rgba(214,147,28,' + sunA + ')'); c.beginPath(); c.arc(sx, sy, R, 0, 6.2832); c.fill(); }
+    if (sunA > .02 && LT) { c.fillStyle = ink('rgba(214,178,122,' + sunA + ')'); c.beginPath(); c.arc(sx, sy, R, 0, 6.2832); c.fill(); }
     else if (sunA > .02) { var sg = c.createRadialGradient(sx, sy, R * .2, sx, sy, R * 4); sg.addColorStop(0, 'rgba(255,226,160,' + .9 * sunA + ')'); sg.addColorStop(.25, 'rgba(255,200,120,' + .28 * sunA + ')'); sg.addColorStop(1, 'rgba(255,200,120,0)'); c.fillStyle = sg; c.fillRect(0, 0, W, H); c.fillStyle = 'rgba(255,238,190,' + sunA + ')'; c.beginPath(); c.arc(sx, sy, R, 0, 6.2832); c.fill(); }
     // clouds
-    var nC = Math.round(3 + (1 - S.warm / 100) * 19), shade = LT ? mix([255, 255, 255], [128, 138, 156], Math.min(1, S.sour / 45)) : mix([236, 240, 247], [66, 72, 92], Math.min(1, S.sour / 45));
+    var nC = Math.round(3 + (1 - S.warm / 100) * 19), shade = LT ? mix([255, 255, 255], [183, 182, 177], Math.min(1, S.sour / 45)) : mix([236, 240, 247], [66, 72, 92], Math.min(1, S.sour / 45));
     for (i = 0; i < Math.min(nC, S.clouds.length); i++) {
       var k = S.clouds[i]; if (!K.reduce) { k.x += k.v * .016 * (1 + S.sour / 40); if (k.x > 1.25) k.x = -.25; }
       var x = k.x * W, y = k.y * H, r = 44 * k.s * (W < 620 ? .7 : 1);
@@ -45,17 +46,17 @@
       [[0, 0, 1], [r * .9, r * .12, .78], [-r * .9, r * .16, .72], [r * 1.65, r * .3, .5], [-r * 1.6, r * .32, .46]].forEach(function (b) { c.beginPath(); c.arc(x + b[0], y + b[1], r * b[2], 0, 6.2832); c.fill(); });
     }
     // rain
-    var nD = Math.round(Math.max(0, S.sour - 14) * 9); c.strokeStyle = LT ? ink('rgba(58,92,140,.6)') : 'rgba(190,212,245,.5)'; c.beginPath();
+    var nD = Math.round(Math.max(0, S.sour - 14) * 9); c.strokeStyle = LT ? ink('rgba(120,119,116,.55)') : 'rgba(190,212,245,.5)'; c.beginPath();
     for (i = 0; i < Math.min(nD, S.drops.length); i++) { var p = S.drops[i]; if (!K.reduce) { p.y += p.v * .02; if (p.y > 1) { p.y = 0; p.x = Math.random(); } } var dx = p.x * W, dy = p.y * H; c.moveTo(dx, dy); c.lineTo(dx - 3, dy + 13); }
     c.stroke();
     // lightning
     if (S.net < -.2 && !K.reduce && Math.random() < .012) S.flash = 1;
     if (S.flash > .03) {
       if (!LT) { c.fillStyle = 'rgba(255,255,255,' + .3 * S.flash + ')'; c.fillRect(0, 0, W, H); }
-      c.strokeStyle = LT ? ink('rgba(180,120,20,' + S.flash + ')') : 'rgba(255,250,220,' + S.flash + ')'; c.lineWidth = 2; c.beginPath(); var bx = W * (.2 + .55 * ((now / 5000) % 1)), by = H * .1; c.moveTo(bx, by); for (i = 0; i < 6; i++) { bx += (i % 2 ? 22 : -16); by += H * .09; c.lineTo(bx, by); } c.stroke(); c.lineWidth = 1; S.flash *= .86;
+      c.strokeStyle = LT ? ink('rgba(159,107,83,' + S.flash + ')') : 'rgba(255,250,220,' + S.flash + ')'; c.lineWidth = 2; c.beginPath(); var bx = W * (.2 + .55 * ((now / 5000) % 1)), by = H * .1; c.moveTo(bx, by); for (i = 0; i < 6; i++) { bx += (i % 2 ? 22 : -16); by += H * .09; c.lineTo(bx, by); } c.stroke(); c.lineWidth = 1; S.flash *= .86;
     }
     // hills
-    [[.74, 34, LT ? '#b9c2cf' : '#10131c', 3.1], [.84, 24, LT ? '#9ea9b8' : '#090b12', 5.2]].forEach(function (h) { c.fillStyle = ink(h[2]); c.beginPath(); c.moveTo(0, H); for (var x2 = 0; x2 <= W; x2 += 14) c.lineTo(x2, H * h[0] + Math.sin(x2 / W * h[3] * 3.14) * h[1] + Math.sin(x2 / W * 11) * 6); c.lineTo(W, H); c.fill(); });
+    [[.74, 34, LT ? '#dfdeda' : '#10131c', 3.1], [.84, 24, LT ? '#cfcec9' : '#090b12', 5.2]].forEach(function (h) { c.fillStyle = ink(h[2]); c.beginPath(); c.moveTo(0, H); for (var x2 = 0; x2 <= W; x2 += 14) c.lineTo(x2, H * h[0] + Math.sin(x2 / W * h[3] * 3.14) * h[1] + Math.sin(x2 / W * 11) * 6); c.lineTo(W, H); c.fill(); });
   }
   function frame(now) {
     requestAnimationFrame(frame);
@@ -217,7 +218,7 @@
       var yes = 0, n = 0; P.forEach(function (p) { if (!p.mood) return; var s = window.Senti.read(p.text); if (!s.english || !s.known) return; n++; if ((s.p > .5) === (p.mood > 0)) yes++; });
       own = n >= 30 ? '<div><b>' + K.pct(yes, n) + '%</b>agreement with the labels in your file, across ' + fmt(n) + ' posts</div>' : '';
     }
-    host.innerHTML = '<div class="acc-grid"><div>' + '<h4>Positive or negative, on real text</h4>' + row('Tweets, trained reader', M.tweets.accuracy, GOOD) + row('Tweets, old word list', M.tweets.old, OLD) + row('Reviews, trained reader', M.reviews.accuracy, GOOD) + row('Reviews, old word list', M.reviews.old, OLD) + '<p class="hint">' + fmt(M.tweets.n) + ' tweets and ' + fmt(M.reviews.n) + ' product, film and restaurant reviews, each labelled by a person. With neutral allowed as a third answer, it scored ' + M.three.accuracy + '% on ' + fmt(M.three.n) + ' tweets, where always picking the commonest answer scores ' + M.three.baseline + '%.</p></div>'
+    host.innerHTML = '<div class="acc-grid"><div>' + '<h4>Positive or negative, on real text</h4>' + row('Tweets, trained reader', M.tweets.accuracy, GOOD) + (window.Hub && window.Hub.METRICS ? row('Tweets, Hugging Face model', window.Hub.METRICS.tweets.accuracy, '#8fc8ff') : '') + row('Tweets, old word list', M.tweets.old, OLD) + row('Reviews, trained reader', M.reviews.accuracy, GOOD) + (window.Hub && window.Hub.METRICS ? row('Reviews, Hugging Face model', window.Hub.METRICS.reviews.accuracy, '#8fc8ff') : '') + row('Reviews, old word list', M.reviews.old, OLD) + '<p class="hint">' + fmt(M.tweets.n) + ' tweets and ' + fmt(M.reviews.n) + ' product, film and restaurant reviews, each labelled by a person. With neutral allowed as a third answer, it scored ' + M.three.accuracy + '% on ' + fmt(M.three.n) + ' tweets, where always picking the commonest answer scores ' + M.three.baseline + '%.</p></div>'
       + '<div><h4>Where its tweet answers landed</h4><table class="acc-t"><thead><tr><th></th><th>It said positive</th><th>It said negative</th></tr></thead><tbody><tr><th>Really positive</th><td>' + c.tp + '</td><td>' + c.fn + '</td></tr><tr><th>Really negative</th><td>' + c.fp + '</td><td>' + c.tn + '</td></tr></tbody></table><p class="hint">When it says negative it is right ' + M.tweets.negPrecision + '% of the time. When it says positive, ' + M.tweets.posPrecision + '%.</p></div></div>'
       + '<div class="statchips" style="margin-top:12px">' + (own || '<div style="text-transform:none;letter-spacing:0;font-size:12px">Bring a CSV that has its own mood labels and this plate will also measure the reader on your data.</div>') + '</div>';
   })();

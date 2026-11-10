@@ -1,6 +1,7 @@
 /* The Grapevine page logic: the living network, its five tools, and the plates. */
 (function () {
   'use strict';
+  if (window.MURMUR_EMPTY) return;
   var P = window.Profiler, N = window.Network, K = N.K_MIN;
   var $ = function (id) { return document.getElementById(id); };
   var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -59,7 +60,7 @@
       });
     }).then(function (found) {
       if (found) return found;
-      return loadSample().then(function (t) { return { rows: P.parseCSV(t), title: window.MURMUR_UPLOAD ? window.MURMUR_UPLOAD.name : 'The Murmuration flock', meta: window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv', demo: !window.MURMUR_UPLOAD }; });
+      return loadSample().then(function (t) { return { rows: P.parseCSV(t), title: window.MURMUR_UPLOAD ? window.MURMUR_UPLOAD.name : window.MURMUR_DEMO.name, meta: window.MURMUR_UPLOAD ? 'cleaned at the door' : window.MURMUR_DEMO.csv, demo: !window.MURMUR_UPLOAD }; });
     }).then(function (d) { if (!S.manual) setData(d.rows, d.title, d.meta, d.demo); }).catch(function () {
       if (S.manual) return;
       $('dataset-title').textContent = 'Nothing to listen to yet';

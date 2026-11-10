@@ -5,6 +5,7 @@
    The show is saved for changing rooms: keep scrolling at the end of a page, or follow any room link, and a
    flock carries you through. */
 (function () {
+  if (window.MURMUR_EMPTY) return;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css = '.fl{position:fixed;z-index:58;top:50%;right:max(3px,calc((100vw - 1320px)/2 - 34px));transform:translateY(-50%);width:24px;font:500 12px/1.2 var(--sans,Manrope,system-ui,sans-serif);color:var(--ink,#eef1f8)}'
     + ':where(.fl) button,:where(.fl) a{all:unset;box-sizing:border-box;cursor:pointer;display:block}'
@@ -191,7 +192,7 @@
   addEventListener('wheel', function (e) {
     if (e.defaultPrevented || e.ctrlKey || !gates.length || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     if (leaving) { e.preventDefault(); return; }
-    var now = performance.now(), g = gates[0], atEnd = scrollY >= g.y - 1, gap = now - lastWheelAt > 120;
+    var now = performance.now(), g = gates[0], atEnd = scrollY >= g.y - 1, gap = now - lastWheelAt > 260;
     lastWheelAt = now;
     if (atEnd && !wasAtEnd) { arrivedAt = now; freshGesture = false; }
     wasAtEnd = atEnd;

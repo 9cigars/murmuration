@@ -36,6 +36,10 @@ It is a static site with no build step and no server code. Open `index.html`, or
 
 ## The data
 
+Nothing is preloaded. The site opens empty, and the **Demo CSV** button loads one of six demos into every room: Jaguar's 2024 rebrand, Anthropic's Opus and Sonnet 4.6 launches, Apple's iPhone Duo, Jio's IPO, Zomato becoming Eternal, and the original invented flock. The brand demos follow real, dated moments, but every post and person in them is invented. `node tools/make_demos.js` rebuilds them in `data/demos/`, with copies in `data/demos/raw/` that have no sentiment column.
+
+A file with no sentiment column goes through a Hugging Face model (`Xenova/twitter-roberta-base-sentiment-latest`), downloaded once and run in the browser, which adds one. On hand-labelled text it never saw, it scored 92.8% on 359 tweets and 95.0% on 3,000 reviews, telling positive from negative.
+
 `data/audience_sample.csv` holds 5,216 synthetic posts from 892 fictional profiles across six platforms over 30 days. **Every voice, post and quarrel is invented**, and the file can be rebuilt exactly with `node tools/make_sample.js`.
 
 `node tools/verify_data.js` checks the file and recounts the raw data separately to confirm what each room's engine reports.

@@ -44,14 +44,14 @@
     if (c && !OUT[outKey(c.slice(0, 3).map(Math.round), c[3])]) {
       var hsl = toHsl(c), h = hsl[0], s = hsl[1], l = hsl[2], a = c[3], rgb;
       if (s < .2 || (l > .72 && s < .5) || (l > .9 && s < .75)) {          // greys and pale inks flip over
-        var ln = Math.max(.14, 1 - l); if (l >= .3 && a >= .5) ln = Math.min(ln, .44);
+        var ln = Math.max(.2, 1 - l); if (l >= .3 && a >= .5) ln = Math.min(ln, .42);
         if (ln > .9) { rgb = [255, 255, 255]; if (a >= .6) a = 1; }
-        else { rgb = toRgb(h, ln < .3 ? Math.max(s * .5, .32) : s * .6, ln); if (a < .2) a = Math.min(1, a * 1.5); }
+        else { rgb = toRgb(45, .07, ln); if (a < .2) a = Math.min(1, a * 1.5); }   // inks are a soft warm charcoal, never pure black
       } else if (l < .16) { rgb = [255, 255, 255]; if (a >= .6) a = 1; }      // night-coloured panels become paper
-      else if (l < .3) { rgb = toRgb(h, s * .35, .93); if (a >= .6) a = 1; }   // hover surfaces become a pale tint
-      else {                                                                    // every hue deepens until it reads on white
-        var s2 = Math.min(s, .78), l2 = l; rgb = toRgb(h, s2, l2);
-        while (1.05 / (lum(rgb) + .05) < 5.2 && l2 > .1) { l2 -= .01; rgb = toRgb(h, s2, l2); }
+      else if (l < .3) { rgb = toRgb(h, Math.min(.3, s * .35), .955); if (a >= .6) a = 1; }   // hover surfaces become a pale tint
+      else {                                                                    // every hue is muted, then deepened until it reads on white
+        var s2 = Math.min(s, .5), l2 = Math.min(l, .62); rgb = toRgb(h, s2, l2);
+        while (1.05 / (lum(rgb) + .05) < 4.8 && l2 > .1) { l2 -= .01; rgb = toRgb(h, s2, l2); }
       }
       res = fmtC(rgb, a); OUT[outKey(rgb, a)] = 1;
     }
@@ -170,32 +170,32 @@
   /* ---- the hand-picked rules: solid surfaces, flat panels, no glow ---- */
   var L = 'html[data-theme=light] ';
   var css = ''
-    + L.trim() + '{color-scheme:light;--bg:#f4f5f8;--ink:#16202e;--muted:#4a5568;--faint:#626d7d;--line:#d9dee7;--glass:#ffffff;--glass2:#eef1f5;--glow1:#f4f5f8;--glow2:#f4f5f8;--glow3:#f4f5f8;background:#f4f5f8}'
-    + L + 'body{background:#f4f5f8}' + L + 'body:before{background:#f4f5f8}'
+    + L.trim() + '{color-scheme:light;--bg:#ffffff;--ink:#37352f;--muted:#6b6a66;--faint:#73726e;--line:#e9e9e7;--glass:#ffffff;--glass2:#f7f6f3;--glow1:#ffffff;--glow2:#ffffff;--glow3:#ffffff;background:#ffffff}'
+    + L + 'body{background:#ffffff}' + L + 'body:before{background:#ffffff}'
     + L + '*{text-shadow:none!important}'
     + L + '.aurora,' + L + '.kpi:before{display:none}'
     + L + '.stage:before{background-image:none}'
-    + L + '.stage{background:#fff;box-shadow:none}'
-    + L + '.sky-hero{background:#e8ecf2}'
+    + L + '.stage{background:#fff;box-shadow:none;border-color:#e9e9e7}' + L + '.kpi,' + L + '.plate,' + L + '.glass{box-shadow:none}'
+    + L + '.sky-hero{background:#f7f6f3}'
     + L + '.note,' + L + '.room,' + L + '.persona,' + L + '.sec{background:#fff}'
-    + L + '.hint,' + L + '.cap,' + L + '.never .lab,' + L + '.note .head,' + L + '.room p{color:#2c3848}'
-    + L + '.trow .name,' + L + '.never span.x{color:#2c3848}'
-    + L + '.sbar{background:#e6e9ef}'
-    + L + '.never span.x{border-color:#c5ccd8}'
-    + L + '.banner{background:#fbf3e4;border-color:#ecd9b4;color:#6b4a0e}'
+    + L + '.hint,' + L + '.cap,' + L + '.never .lab,' + L + '.note .head,' + L + '.room p{color:#55534e}'
+    + L + '.trow .name,' + L + '.never span.x{color:#55534e}'
+    + L + '.sbar{background:#f1f1ef}'
+    + L + '.never span.x{border-color:#e9e9e7}'
+    + L + '.banner{background:#fbf3db;border-color:#f1e5bc;color:#5f4b1b}'
     + L + 'textarea.box{background:#fff}'
     + L + '.scrub input::-webkit-slider-thumb{box-shadow:none}' + L + '.scrub input::-moz-range-thumb{box-shadow:none}'
-    + L + '.lp-back{background:rgba(22,32,46,.42)}' + L + '.lp-door{background:rgba(22,32,46,.55);color:#16202e}'
-    + L + '.lp-tip,' + L + '.lp-drawer{background:#fff;color:#16202e;border-color:#d9dee7}'
-    + L + '.lp-tip{box-shadow:0 6px 20px rgba(22,32,46,.16)}'
+    + L + '.lp-back{background:rgba(55,53,47,.3)}' + L + '.lp-door{background:rgba(55,53,47,.42);color:#37352f}'
+    + L + '.lp-tip,' + L + '.lp-drawer{background:#fff;color:#37352f;border-color:#e9e9e7}'
+    + L + '.lp-tip{box-shadow:0 3px 10px rgba(55,53,47,.1)}'
     + L + '.lp-card{background:#fff;box-shadow:none}'
-    + L + '.lp-dock a,' + L + '.lp-dock button{background:#fff;color:#16202e;border-color:#d9dee7;box-shadow:0 2px 10px rgba(22,32,46,.12);backdrop-filter:none}'
-    + L + '.lp-dock .go{background:var(--a,var(--teal,var(--vine,#9a5800)));color:#fff;border-color:transparent}'
-    + L + 'h1 em{background:var(--a,var(--teal,var(--vine,#9a5800)));-webkit-background-clip:text;background-clip:text}'
+    + L + '.lp-dock a,' + L + '.lp-dock button{background:#fff;color:#37352f;border-color:#e9e9e7;box-shadow:none;backdrop-filter:none}' + L + '.lp-dock a:hover,' + L + '.lp-dock button:hover{background:#f7f6f3}'
+    + L + '.lp-dock .go,' + L + '.lp-dock .go:hover{background:#37352f;color:#fff;border-color:transparent;filter:none}'
+    + L + 'h1 em{background:var(--a,var(--teal,var(--vine,#8c6a2f)));-webkit-background-clip:text;background-clip:text}'
     + L + '.byo-drop{background:#fff}'
-    + L + '.gate,' + L + '.gate b{color:#2c3848}'
-    + '@keyframes mm-solid{0%,100%{color:#9a5800}20%{color:#1f6fb2}40%{color:#0f7d72}60%{color:#c2410c}80%{color:#3f7d20}}'
-    + L + '.hero-t h1 em{background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:#9a5800;animation:mm-solid 15s linear infinite}'
+    + L + '.gate,' + L + '.gate b{color:#55534e}'
+    + '@keyframes mm-solid{0%,100%{color:#8c6a2f}20%{color:#337ea9}40%{color:#448361}60%{color:#b4533c}80%{color:#9065b0}}'
+    + L + '.hero-t h1 em{background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;color:#8c6a2f;animation:mm-solid 15s linear infinite}'
     + '@media(prefers-reduced-motion:reduce){' + L + '.hero-t h1 em{animation:none}}'
     + '@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.32s}';
   var tag = document.createElement('style'); tag.id = 'mm-theme'; tag.textContent = css; document.head.appendChild(tag);

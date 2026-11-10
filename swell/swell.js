@@ -1,12 +1,13 @@
 /* Chapter IV: The Swell. */
 (function () {
   'use strict';
+  if (window.MURMUR_EMPTY) return;
   var K = window.Kit, $ = K.$, esc = K.esc, fmt = K.fmt, pct = K.pct, F = K.loadFeed();
   $('rail').outerHTML = K.rail('swell');
   var T = F.tags, P = F.posts, BT = K.backtest(F), PAL = ['#ff9270', '#59d5ff', '#ffd27a', '#7be08a', '#b48cff', '#ff7f9e', '#62e0c0', '#ec83e0', '#d3e070', '#8da2ff', '#f7a6c4', '#6fd6e8'];
   var PLAT = K.fillPalette({ X: '#59d5ff', Telegram: '#62e0c0', Instagram: '#ec83e0', Facebook: '#8da2ff', YouTube: '#ff7f9e', Reddit: '#ff9270' }, F.platforms);
   var START = Math.max(3, Math.min(11, F.days - 1)), S = { day: START, sel: null, mode: 'time', playing: false, last: 0, stepAt: 0, W: 0, H: 0, ctx: null, game: null, you: 0, bot: 0, rounds: 0, phase: 0, onscreen: true };
-  $('meta').textContent = fmt(P.length) + ' posts · ' + T.length + ' trends · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : 'data/audience_sample.csv');
+  $('meta').textContent = fmt(P.length) + ' posts · ' + T.length + ' trends · ' + (window.MURMUR_UPLOAD ? 'cleaned at the door' : window.MURMUR_DEMO.csv);
 
   function crest(t) { var m = Math.max.apply(null, t.daily); return { h: m, d: t.daily.indexOf(m) }; }
   function firstDay(t) { return t.daily.findIndex(function (v) { return v > 0; }); }

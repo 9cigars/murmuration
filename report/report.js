@@ -2,6 +2,7 @@
    Reads the same feed as every room and writes it up plainly: what changed against the period before, what to do
    about it, and how far to trust it. A change is only called a change when it is bigger than chance would explain. */
 (function () {
+  if (window.MURMUR_EMPTY) return;
   var K = window.Kit, F = K.loadFeed(), UP = window.MURMUR_UPLOAD || null, esc = K.esc, fmt = K.fmt, $ = K.$;
   $('rail').outerHTML = K.rail('report');
   var P = F.posts, KEY = 'murmuration-report';
@@ -151,8 +152,9 @@
   }
   function trustText(R) {
     var S2 = window.Senti && window.Senti.METRICS, out = [];
-    if (!UP) out.push('This report uses Murmuration’s built-in sample. Every post and person in it is invented, so treat it as a demonstration.');
+    if (!UP) { S2 = null; out.push('This report uses the demo “' + window.MURMUR_DEMO.name + '”. Every post and person in it is invented, so treat it as a demonstration.'); }
     else if (UP.moods === 'file') out.push('Mood comes from the labels in the uploaded file.');
+    else if (UP.moodSource) { var HM = window.Hub && window.Hub.METRICS; out.push('The sentiment column was added by a Hugging Face model (' + UP.moodSource.model.split('/')[1] + '), running in this browser, for ' + fmt(UP.moodSource.read) + ' posts.' + (HM ? ' On hand-labelled text it had never seen, it told positive from negative correctly ' + HM.tweets.accuracy + '% of the time on ' + fmt(HM.tweets.n) + ' tweets and ' + HM.reviews.accuracy + '% on ' + fmt(HM.reviews.n) + ' reviews.' : '')); S2 = null; }
     else out.push('Mood ' + (UP.moods === 'both' ? 'comes partly from the uploaded file and is otherwise' : 'is') + ' estimated from the wording of each post.');
     if (S2) out.push('The wording model was tested on text people labelled by hand, which it had never seen. It told positive from negative correctly ' + S2.tweets.accuracy + '% of the time on ' + fmt(S2.tweets.n) + ' tweets and ' + S2.reviews.accuracy + '% on ' + fmt(S2.reviews.n) + ' reviews. It reads English only and can miss sarcasm.');
     out.push('A change is reported only when it is larger than chance would explain, at the 95% level. Groups with fewer than ' + K.K_MIN + ' people are left out. The suggested actions come from fixed rules and need a person’s judgement.');

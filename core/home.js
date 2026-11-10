@@ -1,6 +1,7 @@
 /* The Murmuration landing page: the flock, the five rooms and the rumour trail. */
 (function () {
   'use strict';
+  if (window.MURMUR_EMPTY) return;
   var K = window.Kit, $ = K.$, esc = K.esc, fmt = K.fmt, pct = K.pct, F = K.loadFeed(), P = F.posts;
   $('rail').outerHTML = K.rail('home').replace(/\.\.\//g, '');
   var ALL = K.moodStats(P), V = Array.from(F.voices.values());
