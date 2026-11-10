@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <script src="../core/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="The Weather Room: the mood of the crowd, read like a forecast, with fronts, storms, and seven kinds of feeling.">
+  <meta name="description" content="Sentiment Analysis: the mood of the crowd, read like a forecast, with fronts, storms, and seven kinds of feeling.">
   <meta name="color-scheme" content="dark">
-  <title>The Weather Room | Murmuration</title>
+  <title>Sentiment Analysis | Murmuration</title>
   <link rel="icon" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -54,19 +54,19 @@
 <body>
   <div class="shell">
     <header class="nav">
-      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="11" r="5.5" fill="#ffd27a"/><path d="M11 25h13a5 5 0 0 0 .8-9.9 7 7 0 0 0-13.3-1.3A5.6 5.6 0 0 0 11 25z" fill="#8fc8ff"/></svg><div>The Weather Room<small>Chapter II &middot; How it feels</small></div></div>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="11" r="5.5" fill="#ffd27a"/><path d="M11 25h13a5 5 0 0 0 .8-9.9 7 7 0 0 0-13.3-1.3A5.6 5.6 0 0 0 11 25z" fill="#8fc8ff"/></svg><div>Sentiment Analysis<small>Sentiment analysis and emotion classification</small></div></div>
       <div id="rail"></div>
       <a class="back" href="../index.html">&larr; Murmuration home</a>
     </header>
     <section class="hero" aria-labelledby="title">
       <div>
-        <div class="eyebrow"><i class="live"></i> Chapter II &middot; Tonight&rsquo;s outlook</div>
-        <h1 id="title">Partly <em>furious</em></h1>
-        <p class="lede">Crowds have weather. Warm fronts roll in with a launch, pressure drops at the first refund, and by Thursday somebody is shouting in the comments. We just report it, with a very straight face.</p>
+        <div class="eyebrow"><i class="live"></i> Chapter II &middot; Sentiment overview</div>
+        <h1 id="title">Sentiment <em>over time</em></h1>
+        <p class="lede">Measure sentiment and emotion across posts over time. Identify shifts by topic, platform, audience segment, and conversation depth.</p>
       </div>
       <div class="kpis" aria-label="Summary">
-        <div class="kpi" style="--c:#7be08a"><span>Warm spells</span><strong id="k-w">&ndash;</strong><small>posts that read as positive</small></div>
-        <div class="kpi" style="--c:#ff7f9e"><span>Sour spells</span><strong id="k-s">&ndash;</strong><small>posts that read as negative</small></div>
+        <div class="kpi" style="--c:#7be08a"><span>Positive sentiment</span><strong id="k-w">&ndash;</strong><small>posts that read as positive</small></div>
+        <div class="kpi" style="--c:#ff7f9e"><span>Negative sentiment</span><strong id="k-s">&ndash;</strong><small>posts that read as negative</small></div>
         <div class="kpi" style="--c:#8fc8ff"><span>Stormiest day</span><strong id="k-st">&ndash;</strong><small id="k-st-s">&nbsp;</small></div>
         <div class="kpi" style="--c:#ffd27a"><span>Sunniest day</span><strong id="k-su">&ndash;</strong><small id="k-su-s">&nbsp;</small></div>
       </div>
@@ -85,59 +85,59 @@
     </section>
   </div>
   <main class="shell">
-    <section class="strip" aria-label="Dataset"><div><strong>The Murmuration flock</strong><small id="meta">&nbsp;</small></div><a class="btn go" href="../data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></section>
+    <section class="strip" aria-label="Dataset"><div><strong>The Murmuration dataset</strong><small id="meta">&nbsp;</small></div><a class="btn go" href="../data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></section>
     <div class="banner"><b>Synthetic data</b><span>These are invented people having invented feelings. Please do not cancel your picnic.</span></div>
 
-    <div class="section-head"><h2>Shipping forecast</h2><p>Read slowly, in a calm voice.</p></div>
+    <div class="section-head"><h2>Sentiment summary</h2><p>Read slowly, in a calm voice.</p></div>
     <section class="notes" id="notes" aria-label="Findings"></section>
 
-    <div class="section-head"><h2>The plates</h2><p>Instruments of the trade.</p></div>
+    <div class="section-head"><h2>Analysis</h2><p>Instruments of the trade.</p></div>
     <div class="plates">
       <section class="glass plate wide" aria-labelledby="p1">
-        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="p1">The barometer</h3></div><span class="tag">Try it</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="p1">Sentiment distribution</h3></div><span class="tag">Try it</span></div>
         <p class="cap">Tap the glass. Type anything and see which way the needle swings.</p>
         <div class="dials"><div><textarea class="box" id="b-in" aria-label="Sentence to read">Oh great, the battery is really terrible and support was slow. Not impressed!</textarea><div class="hits" id="b-hits"></div></div><div style="text-align:center"><svg class="viz" id="b-g" viewBox="0 0 320 180" style="max-width:340px;margin:auto" role="img" aria-label="Needle showing sentiment"></svg><p class="verdict" id="b-v" aria-live="polite"></p><span class="pill" id="b-f"></span></div></div>
         <details class="how"><summary>How it is read</summary><p>The needle follows a small model trained on 1.6 million tweets, running on your device. The coloured words are the ones that pushed it hardest. The word-list score beside it is the simpler method from the paper. Both are English only, and both can miss a joke.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="p2">
-        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="p2">Seven kinds of air</h3></div><span class="tag">Feelings</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="p2">Emotion categories</h3></div><span class="tag">Feelings</span></div>
         <p class="cap">Mood says warm or cold. Feeling says what is actually blowing in. Tap a petal to chart it.</p>
         <svg class="viz" id="wheel" viewBox="-200 -200 400 400" style="max-width:420px;margin:auto" role="img" aria-label="Radial chart of seven feelings"></svg>
         <button type="button" class="btn" id="wheel-read" hidden style="align-self:center;margin-top:8px"></button>
         <details class="how"><summary>How it is read</summary><p>Wording rules sort each post into one feeling, across all the languages in the flock. Sarcasm is the hardest and the least reliable.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="p3">
-        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="p3">Climate zones</h3></div><span class="tag">Feeling by group</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="p3">Sentiment by audience segment</h3></div><span class="tag">Feeling by group</span></div>
         <p class="cap">Everyone is sure their own town has the worst weather.</p>
-        <div class="opts"><div class="tabs" id="z-dim"><button type="button" data-v="platform" aria-pressed="true">Platforms</button><button type="button" data-v="region" aria-pressed="false">Regions</button><button type="button" data-v="calling" aria-pressed="false">Callings</button></div></div>
+        <div class="opts"><div class="tabs" id="z-dim"><button type="button" data-v="platform" aria-pressed="true">Platforms</button><button type="button" data-v="region" aria-pressed="false">Regions</button><button type="button" data-v="calling" aria-pressed="false">Professional interests</button></div></div>
         <div class="scrollx"><div class="grid-h" id="zones"></div></div>
         <details class="how"><summary>How it is read</summary><p>Each number is the share of that group&rsquo;s posts carrying that feeling. Groups under 5 people are left out.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="p4">
-        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="p4">The river of feeling</h3></div><span class="tag" id="r-tag">All feelings</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="p4">Sentiment timeline</h3></div><span class="tag" id="r-tag">All feelings</span></div>
         <p class="cap">The mood as one long current, thick where the crowd was loud. Click a day to read it.</p>
         <svg class="viz" id="river" viewBox="0 0 1000 300" role="img" aria-label="Stream of feelings per day"></svg>
         <div class="lgd" id="r-l" style="margin-top:10px"></div>
-        <details class="how"><summary>How it is read</summary><p>Each band is one feeling, stacked by day. Tap a petal in Seven kinds of air to lift a single feeling out of the stream.</p></details>
+        <details class="how"><summary>How it is read</summary><p>Each band is one feeling, stacked by day. Tap a petal in Emotion categories to lift a single feeling out of the stream.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="p5">
-        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="p5">Fronts on the map</h3></div><span class="tag">Trends</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="p5">Sentiment by topic</h3></div><span class="tag">Trends</span></div>
         <p class="cap">Every trend carries its own weather. A few of them change their mind halfway.</p>
         <div class="cards" id="cards"></div>
         <details class="how"><summary>How it is read</summary><p>Each line is a trend&rsquo;s mood over its active days, above the dotted line warm, below it sour. The verdict compares its first half with its second.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="p6">
-        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="p6">Around the clock</h3></div><span class="tag">By hour, UTC</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="p6">Sentiment by hour</h3></div><span class="tag">By hour, UTC</span></div>
         <p class="cap">Is the crowd kinder in the morning? Consult the bars.</p>
         <svg class="viz" id="hours" viewBox="0 0 620 260" role="img" aria-label="Mood by hour"></svg>
         <details class="how"><summary>How it is read</summary><p>Warm minus sour as a share of posts in each UTC hour, from all time zones at once.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="p7">
-        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="p7">Further down the thread</h3></div><span class="tag">Depth</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="p7">Sentiment by conversation depth</h3></div><span class="tag">Depth</span></div>
         <p class="cap">Conversations have altitude. Watch the temperature as they climb.</p>
         <svg class="viz" id="depth" viewBox="0 0 620 260" role="img" aria-label="Mood by depth in thread"></svg>
         <details class="how"><summary>How it is read</summary><p>Mood of posts by how many hops they sit from the original post. Dots shrink when few posts reach that depth.</p></details>
@@ -146,7 +146,7 @@
 
     <div class="plates" style="margin-top:14px">
       <section class="glass plate" aria-labelledby="p8" id="nb">
-        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="p8">The Bayes clerk</h3></div><span class="tag">Paper &sect;6.2.2</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="p8">Classifier method</h3></div><span class="tag">Paper &sect;6.2.2</span></div>
         <p class="cap">A clerk who has only ever read the labelled posts, and now has opinions about yours.</p>
         <textarea class="box" id="nb-in" aria-label="Sentence for the classifier">Honestly the support team was quick and lovely</textarea>
         <div id="nb-out" style="margin-top:12px"></div>
@@ -154,21 +154,21 @@
         <details class="how"><summary>How it is read</summary><p>A multinomial Naive Bayes over a bag of words, trained in your browser. It sits two exams. The first holds back a fifth of the posts. The second holds back a fifth of the distinct wordings, so every question is new. The demo flock is written from only a few dozen phrases, so the clerk can memorise them but learns little it can carry to a fresh sentence, and the second score shows it. Real files tend to bring the two scores closer.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="p9" id="strength">
-        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="p9">How hard it blows</h3></div><span class="tag">Paper &sect;6.2.1</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="p9">Sentiment confidence</h3></div><span class="tag">Paper &sect;6.2.1</span></div>
         <p class="cap">First, is it an opinion at all? Then, how firmly was it meant? Click a band to read it.</p>
         <div id="str" class="roomy"></div>
         <div class="lgd" style="margin-top:10px"><span><i style="background:#7be08a"></i>warm</span><span><i style="background:#ffd27a"></i>even</span><span><i style="background:#ff7f9e"></i>sour</span></div>
         <details class="how"><summary>How it is read</summary><p>The word list scores opinion words +1 or -1, flips them after a negation and boosts them after "very" or an exclamation mark. No opinion words means a plain statement. Only posts in English or with no language tag are read.</p></details>
       </section>
       <section class="glass plate wide" aria-labelledby="p10" id="accuracy">
-        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="p10">How often it is right</h3></div><span class="tag">Measured</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="p10">Model evaluation</h3></div><span class="tag">Measured</span></div>
         <p class="cap">Marked against text that people labelled by hand, which the model never saw while it learned.</p>
         <div id="acc"></div>
         <details class="how"><summary>How it is read</summary><p>The reader is a logistic regression over words and word pairs, with negation marked. It learned from Sentiment140, 1.6 million tweets labelled by their emoticons. The exams are Sentiment140&rsquo;s hand-labelled tweets and UCI&rsquo;s Sentiment Labelled Sentences. Neither was used for training or for choosing settings. Marks fall on sarcasm, slang and language that differs from what it studied, and it will not judge posts that are not in English.</p></details>
       </section>
     </div>
 
-    <div class="section-head"><h2>How the forecast is made</h2><p>Four instruments, and a few things no forecaster should promise.</p></div>
+    <div class="section-head"><h2>Sentiment methodology</h2><p>Four instruments, and a few things no forecaster should promise.</p></div>
     <section class="pipeline" aria-label="Method">
       <div class="stepc"><div class="n">1</div><h3>Read</h3><p>Each post arrives with a mood: warm, even or sour.</p></div>
       <div class="stepc"><div class="n">2</div><h3>Sort</h3><p>Wording rules name the feeling, from excitement to sarcasm.</p></div>
@@ -181,7 +181,7 @@
       <div class="caveat" data-sample="1"><b>Labels came with the flock</b>Mood here was written alongside the sample. On a file with no labels, the trained reader fills it in.</div>
       <div class="caveat"><b>A post is not a person</b>Somebody can be sour on Tuesday and delightful by Friday.</div>
     </div>
-    <footer><span>Chapter II of Murmuration &middot; Utsav</span><a class="nx" href="../atlas/index.html">Next: The Audience Atlas &rarr;</a><em>Every voice here is synthetic.</em></footer>
+    <footer><span>Chapter II of Murmuration &middot; Utsav</span><a class="nx" href="../atlas/index.html">Next: Audience Demographics &rarr;</a><em>Every voice here is synthetic.</em></footer>
   </main>
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
