@@ -161,7 +161,7 @@
   addEventListener('pageshow', function () { leaving = false; document.querySelectorAll('.fl-curtain,.fl-sweep').forEach(function (c) { c.remove(); }); clearHold(); });
 
   /* ---- any link to another room gets the same send-off ---- */
-  var PLACES = { listen: 'The Listening Post', weather: 'The Weather Room', atlas: 'The Audience Atlas', swell: 'The Swell', grapevine: 'The Grapevine', blueprint: 'The Blueprint', report: 'The Report' };
+  var PLACES = { listen: 'Data Ingestion & Timeline', weather: 'Sentiment Analysis', atlas: 'Audience Demographics', swell: 'Trend Intelligence', grapevine: 'Network & Influence Analysis', blueprint: 'Methodology', report: 'Export Report' };
   function placeOf(url) { var m = /\/(?:([a-z]+)\/)?index\.html$/.exec(url.pathname) || /\/(?:([a-z]+)\/)?$/.exec(url.pathname); if (!m) return null; return m[1] && PLACES[m[1]] ? PLACES[m[1]] : (m[1] ? null : 'The flock'); }
   document.addEventListener('click', function (e) {
     if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;

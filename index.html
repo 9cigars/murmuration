@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <script src="core/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Murmuration: how a crowd makes up its mind. Five interactive rooms on who is talking, how they feel, what is rising and how word travels.">
+  <meta name="description" content="Murmuration provides social media audience intelligence across sentiment, demographics, trends, and network relationships.">
   <meta name="color-scheme" content="dark">
   <title>Murmuration</title>
   <link rel="icon" href="favicon.svg">
@@ -59,7 +59,7 @@
 </head>
 <body>
   <section class="sky-hero" aria-labelledby="title">
-    <canvas id="flock" role="img" aria-label="A flock of starlings, one bird for each anonymous voice in the data, wheeling across a dusk sky."></canvas>
+    <canvas id="flock" role="img" aria-label="Visualization of anonymized audience accounts, grouped by platform, sentiment, or region."></canvas>
     <div class="over"><div class="shell" style="display:flex;flex-direction:column;height:100%;width:100%">
       <header class="nav">
         <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><g fill="#ffc266"><path d="M4 21c6-1 8-3 11-7-1 5-4 9-10 9z"/><path d="M13 14c6-2 9-5 14-10-1 7-6 12-13 13z"/><path d="M12 24c5 0 8-1 11-5-1 5-6 7-11 7z" opacity=".7"/></g></svg><div>Murmuration<small>Audience intelligence</small></div></div>
@@ -67,40 +67,40 @@
       </header>
       <div class="hero-t">
         <h1 id="title">Murm<em>uration</em></h1>
-        <p>Nobody leads a flock of starlings, and still ten thousand of them turn at once. Crowds online do the same thing, and now you can watch.</p>
-        <div class="flock-bar"><div class="tabs" id="flock-by" style="background:#14162ab3"><button type="button" data-v="platform" aria-pressed="true">By platform</button><button type="button" data-v="mood" aria-pressed="false">By mood</button><button type="button" data-v="region" aria-pressed="false">By region</button></div><div class="tabs" id="flock-mode" style="background:#14162ab3"><button type="button" data-v="one" aria-pressed="true">One flock</button><button type="button" data-v="split" aria-pressed="false">Separate them</button></div><span id="flock-note">Each bird is one voice. Move your cursor through them and be the hawk.</span></div>
+        <p>Analyze social conversations to understand audience sentiment, demographic composition, emerging topics, and information flow.</p>
+        <div class="flock-bar"><div class="tabs" id="flock-by" style="background:#14162ab3"><button type="button" data-v="platform" aria-pressed="true">By platform</button><button type="button" data-v="mood" aria-pressed="false">By sentiment</button><button type="button" data-v="region" aria-pressed="false">By region</button></div><div class="tabs" id="flock-mode" style="background:#14162ab3"><button type="button" data-v="one" aria-pressed="true">All accounts</button><button type="button" data-v="split" aria-pressed="false">Split by group</button></div><span id="flock-note">Each point represents an anonymized account. Select a grouping to explore audience composition.</span></div>
       </div>
     </div></div>
   </section>
 
   <main class="shell" style="padding-top:0">
-    <section class="stats" aria-label="The flock in numbers" id="stats"></section>
+    <section class="stats" aria-label="Dataset overview" id="stats"></section>
 
-    <div class="section-head"><h2>Five rooms</h2><p>One flock, five honest questions.</p></div>
-    <section class="rooms" id="rooms" aria-label="The five chapters"></section>
+    <div class="section-head"><h2>Analytics modules</h2><p>Explore five dimensions of audience behavior.</p></div>
+    <section class="rooms" id="rooms" aria-label="Analytics modules"></section>
 
-    <div class="section-head"><h2>Follow one rumour</h2><p>Pick a hashtag and walk it through every room.</p></div>
+    <div class="section-head"><h2>Explore a trend across modules</h2><p>Track a selected topic across sentiment, audience, trends, and network activity.</p></div>
     <div class="chips" id="trail-tags" role="group" aria-label="Pick a trend"></div>
     <section class="trail" id="trail" aria-label="One trend across five chapters"></section>
 
-    <div class="section-head"><h2>Bring your own flock</h2><p>The rooms do not care whose crowd it is.</p></div>
-    <section class="byo"><button type="button" class="byo-drop" data-door="drop"><b>Drop in your own CSV</b><span>Any spreadsheet of posts. Five rooms rearrange themselves around it, and nothing leaves this device.</span></button><button type="button" class="byo-paper" data-demo="1"><b>Open another demo</b><span>Five real moments, from a car brand&rsquo;s rebrand to an IPO. Every post in them is invented.</span></button></section>
+    <div class="section-head"><h2>Analyze your dataset</h2><p>Upload a compatible post dataset to generate audience insights.</p></div>
+    <section class="byo"><button type="button" class="byo-drop" data-door="drop"><b>Upload a CSV</b><span>Upload a CSV containing social posts. Data is processed locally in your browser.</span></button><button type="button" class="byo-paper" data-demo="1"><small>Demo data</small><b>Load a demo dataset</b><span>Five real brand moments, from a rebrand to an IPO. Every post in them is invented.</span></button></section>
 
-    <div class="section-head"><h2>What you are looking at</h2><p>A short, plain confession.</p></div>
+    <div class="section-head"><h2>Data and methodology</h2><p>Dataset coverage, processing, and privacy information.</p></div>
     <section class="glance">
       <div class="glass plate">
-        <h3>One file feeds every room</h3>
+        <h3>Dataset schema</h3>
         <p class="cap" id="data-line"></p>
         <div class="cols"><span><code>post_id</code>, <code>platform</code>, <code>timestamp</code></span><span><code>user_id</code>, always a code</span><span><code>text</code>, with its #hashtags</span><span><code>interaction</code>, <code>ref_post_id</code></span><span><code>sentiment</code>, <code>language</code></span><span><code>user_bio</code>, <code>user_location</code></span><span><code>followers</code>, <code>joined</code></span><span><code>parent_id</code></span></div>
         <div class="ctas" style="margin-top:auto"><a class="btn go" href="data/audience_sample.csv" download="audience_sample.csv">Download the dataset</a></div>
       </div>
       <div class="caveats" style="grid-template-columns:1fr;margin:0">
-        <div class="caveat" data-sample="1"><b>The flock is invented</b>A seeded generator wrote every voice, post and quarrel. No real person is in here.</div>
-        <div class="caveat"><b>It all runs on your device</b>PageRank, Louvain, forecasts and all. Nothing you type or load is sent anywhere.</div>
-        <div class="caveat"><b>Names stay at the door</b>Bios and places are read once and never shown. Groups under five people are folded away.</div>
+        <div class="caveat" data-sample="1"><b>Synthetic sample data</b>A seeded generator wrote every voice, post and quarrel. No real person is in here.</div>
+        <div class="caveat"><b>Local processing</b>PageRank, Louvain, forecasts and all. Nothing you type or load is sent anywhere.</div>
+        <div class="caveat"><b>Privacy safeguards</b>Bios and places are read once and never shown. Groups under five people are folded away.</div>
       </div>
     </section>
-    <footer><span>Murmuration &middot; Utsav</span><a class="nx" href="listen/index.html">Enter the first room &rarr;</a><em>How a crowd makes up its mind.</em></footer>
+    <footer><span>Murmuration &middot; Utsav</span><a class="nx" href="listen/index.html">Open Data Ingestion &amp; Timeline &rarr;</a><em>How a crowd makes up its mind.</em></footer>
   </main>
   <script src="core/profiler.js"></script>
   <script src="core/kit.js"></script>

@@ -6,11 +6,11 @@
   $('rail').outerHTML = K.rail('home').replace(/\.\.\//g, '');
   var ALL = K.moodStats(P), V = Array.from(F.voices.values());
   var ROOMS = [
-    { id: 'listen', n: 'I', name: 'The Listening Post', q: 'How did it get here?', c: '#ffb454', line: 'Every door, four checkpoints and a clerk who shreds your name on arrival.' },
-    { id: 'weather', n: 'II', name: 'The Weather Room', q: 'How does it feel?', c: '#8fc8ff', line: 'The crowd&rsquo;s mood, delivered by a forecaster who has stopped being surprised.' },
-    { id: 'atlas', n: 'III', name: 'The Audience Atlas', q: 'Who are they?', c: '#35d0c0', line: 'A field guide to the people behind the posts, with their names politely removed.' },
-    { id: 'swell', n: 'IV', name: 'The Swell', q: 'What is rising?', c: '#ff9270', line: 'Roll back to any morning and bet against a machine that cannot peek.' },
-    { id: 'grapevine', n: 'V', name: 'The Grapevine', q: 'Who told whom?', c: '#a3de76', line: 'Follow a whisper across the crowd, or cut the wires and watch it fall apart.' }
+    { id: 'listen', n: 'I', name: 'Data Ingestion & Timeline', q: 'How did it get here?', c: '#ffb454', line: 'Every door, four checkpoints and a clerk who shreds your name on arrival.' },
+    { id: 'weather', n: 'II', name: 'Sentiment Analysis', q: 'How does it feel?', c: '#8fc8ff', line: 'The crowd&rsquo;s mood, delivered by a forecaster who has stopped being surprised.' },
+    { id: 'atlas', n: 'III', name: 'Audience Demographics', q: 'Who are they?', c: '#35d0c0', line: 'A field guide to the people behind the posts, with their names politely removed.' },
+    { id: 'swell', n: 'IV', name: 'Trend Intelligence', q: 'What is rising?', c: '#ff9270', line: 'Roll back to any morning and bet against a machine that cannot peek.' },
+    { id: 'grapevine', n: 'V', name: 'Network & Influence Analysis', q: 'Who told whom?', c: '#a3de76', line: 'Follow a whisper across the crowd, or cut the wires and watch it fall apart.' }
   ];
   var links = P.filter(function (p) { return p.ref >= 0; }).length;
 
@@ -19,7 +19,7 @@
   $('data-line').textContent = fmt(P.length) + ' posts, ' + fmt(V.length) + ' voices, ' + K.spanText(F) + ' and ' + F.platforms.length + ' platforms, in a single CSV that all five rooms read.';
 
   /* ------------- room glyphs ------------- */
-  var TIP = { listen: 'Posts per day\nThe archive filling up.', weather: 'Mood per day\nAbove the line is warm, below is sour.', atlas: 'One dot per kind of voice\nStep inside for the constellation.', swell: 'The five biggest trends\nEach ridge is a wave of posts.', grapevine: 'Who answers whom\nEvery line is a thread.' };
+  var TIP = { listen: 'Posts per day\nThe archive filling up.', weather: 'Mood per day\nAbove the line is warm, below is sour.', atlas: 'One dot per kind of voice\nStep inside for the constellation.', swell: 'The five biggest trends\nEach ridge is a wave of posts.', grapevine: 'Interaction flows\nEvery line is a thread.' };
   var daily = new Array(F.days).fill(0), net = []; P.forEach(function (p) { daily[p.day]++; });
   for (var d = 0; d < F.days; d++) net.push(K.moodStats(P.filter(function (p) { return p.day === d; })).net);
   function glyph(id, c) {

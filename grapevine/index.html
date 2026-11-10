@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <script src="../core/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="The Grapevine: who answers whom, who holds a community together, and how word travels from one crowd to the next. An interactive network and influence atlas.">
+  <meta name="description" content="Network &amp; Influence Analysis: who answers whom, who holds a community together, and how word travels from one crowd to the next. An interactive network and influence atlas.">
   <meta name="color-scheme" content="dark">
-  <title>The Grapevine | Murmuration</title>
+  <title>Network &amp; Influence Analysis | Murmuration</title>
   <link rel="icon" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -237,17 +237,17 @@
     <header class="nav">
       <div class="brand">
         <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 28C10 22 9 15 15 12S25 9 28 4" fill="none" stroke="#a3de76" stroke-width="1.6" stroke-linecap="round"/><path d="M14 13c-3-3-7-3-9-2 1 3 5 5 9 2zM21 9c0-4 3-6 5-6 1 3-1 6-5 6z" fill="#a3de76" opacity=".75"/><g fill="#b48cff"><circle cx="17" cy="19" r="2.6"/><circle cx="22" cy="18" r="2.6"/><circle cx="19.5" cy="23" r="2.6"/></g></svg>
-        <div>The Grapevine<small>Chapter V &middot; Who told whom</small></div>
+        <div>Network &amp; Influence Analysis<small>Network structure and information diffusion</small></div>
       </div>
-      <nav class="rail" aria-label="Chapters"><a class="rail-label" href="../index.html" style="text-decoration:none">Murmuration</a><a class="step" href="../listen/index.html"><b>I</b><span>Listen</span></a><a class="step" href="../weather/index.html"><b>II</b><span>Feel</span></a><a class="step" href="../atlas/index.html"><b>III</b><span>Know</span></a><a class="step" href="../swell/index.html"><b>IV</b><span>Trend</span></a><span class="step on" aria-current="page"><b>V</b><span>Connect</span></span><a class="step" href="../report/index.html"><b>R</b><span>Report</span></a></nav>
+      <nav class="rail" aria-label="Chapters"><a class="rail-label" href="../index.html" style="text-decoration:none">Murmuration</a><a class="step" href="../listen/index.html"><b>I</b><span>Data</span></a><a class="step" href="../weather/index.html"><b>II</b><span>Sentiment</span></a><a class="step" href="../atlas/index.html"><b>III</b><span>Audience</span></a><a class="step" href="../swell/index.html"><b>IV</b><span>Trends</span></a><span class="step on" aria-current="page"><b>V</b><span>Network</span></span><a class="step" href="../report/index.html"><b>R</b><span>Reports</span></a></nav>
       <a class="back" href="../index.html">&larr; Murmuration home</a>
     </header>
 
     <section class="hero" aria-labelledby="title">
       <div>
-        <div class="eyebrow"><i class="live"></i> Chapter V &middot; Who told whom</div>
-        <h1 id="title">Word <em>travels</em></h1>
-        <p class="lede">Follow a rumour from its first whisper to the far side of the crowd. Find the few voices everyone answers, and the quiet ones holding it all together.</p>
+        <div class="eyebrow"><i class="live"></i> Network structure and information diffusion</div>
+        <h1 id="title">Information <em>diffusion</em></h1>
+        <p class="lede">Map interaction networks to identify influential accounts, community clusters, and how topics and sentiment diffuse across segments.</p>
       </div>
       <div class="kpis" aria-label="Summary">
         <div class="kpi" style="--c:#a3de76"><span>Voices on the vine</span><strong id="k-voices">&ndash;</strong><small id="k-silent">&nbsp;</small></div>
@@ -294,11 +294,11 @@
     <div class="gate" title="Every voice appears only under a generated codename. Groups under 5 people are folded away."><b>k = 5</b><span>Codenames only. No bios, handles or places, and small groups fold away.</span></div>
 
     <svg class="rule" data-rule aria-hidden="true"></svg>
-    <div class="section-head"><h2>Overheard</h2><p>What the vine gave away.</p></div>
+    <div class="section-head"><h2>Network summary</h2><p>What the vine gave away.</p></div>
     <section class="notes" id="notes" aria-label="Key findings"></section>
 
     <svg class="rule" data-rule aria-hidden="true"></svg>
-    <div class="section-head"><h2>The whisperers</h2><p>Four ways to matter, and they rarely agree.</p></div>
+    <div class="section-head"><h2>Influential accounts</h2><p>Four ways to matter, and they rarely agree.</p></div>
     <div class="tabs" id="metric-tabs" role="group" aria-label="Rank voices by">
       <button type="button" data-m="pr" aria-pressed="true">Weight</button><button type="button" data-m="inW" aria-pressed="false">Most answered</button><button type="button" data-m="bc" aria-pressed="false">Bridges</button><button type="button" data-m="spark" aria-pressed="false">Sparks</button>
     </div>
@@ -311,7 +311,7 @@
         <details class="how"><summary>How it is read</summary><p>Weight is PageRank on who answers whom. Most answered counts incoming replies, quotes, reposts and shares. Bridges is betweenness: how often a voice sits on the shortest route between two others. Sparks counts everything that grew from posts they started.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-roles">
-        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="h-roles">The cast</h3></div><span class="tag">Roles</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="h-roles">Influence roles</h3></div><span class="tag">Roles</span></div>
         <p class="cap">Everyone plays a part. Click a dot to find it on the vine.</p>
         <div class="censusbar" id="census"></div>
         <svg class="viz" id="scatter" viewBox="0 0 620 300" role="img" aria-label="Scatter of attention against bridging"></svg>
@@ -321,10 +321,10 @@
     <section class="roles" id="roles" style="margin-top:14px" aria-label="Role census"></section>
 
     <svg class="rule" data-rule aria-hidden="true"></svg>
-    <div class="section-head"><h2>The plates</h2><p>The vine, cut open and labelled.</p></div>
+    <div class="section-head"><h2>Analysis</h2><p>The vine, cut open and labelled.</p></div>
     <div class="plates">
       <section class="glass plate wide" aria-labelledby="h-vine">
-        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="h-vine">Anatomy of a vine</h3></div><span class="tag">Cascades</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="h-vine">Conversation cascades</h3></div><span class="tag">Cascades</span></div>
         <p class="cap">One post, and everything that grew from it. Leaves mark where the word stopped.</p>
         <div class="opts"><div class="tagchips" id="vine-picks"></div><div class="tabs" id="vine-x"><button type="button" data-x="hops" aria-pressed="true">By hops</button><button type="button" data-x="hours" aria-pressed="false">By time</button></div><button type="button" class="btn" id="vine-grow">Grow it again</button></div>
         <svg class="viz" id="vine" viewBox="0 0 1000 420" role="img" aria-label="Tree of one cascade"></svg>
@@ -333,43 +333,43 @@
       </section>
 
       <section class="glass plate wide" aria-labelledby="h-relay">
-        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="h-relay">The relay</h3></div><span class="tag">Spread over time</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="h-relay">Information spread over time</h3></div><span class="tag">Spread over time</span></div>
         <p class="cap">Who passed the baton to whom. The bright line joins each group&rsquo;s first post on the trend.</p>
         <div class="opts"><div class="tagchips" id="relay-tags"></div></div>
-        <div class="opts"><div class="tabs" id="relay-dim"><button type="button" data-d="platform" aria-pressed="true">Platforms</button><button type="button" data-d="circle" aria-pressed="false">Circles</button><button type="button" data-d="region" aria-pressed="false">Regions</button><button type="button" data-d="calling" aria-pressed="false">Callings</button></div><div class="tabs" id="relay-view"><button type="button" data-v="volume" aria-pressed="true">Volume</button><button type="button" data-v="mood" aria-pressed="false">Mood</button></div></div>
+        <div class="opts"><div class="tabs" id="relay-dim"><button type="button" data-d="platform" aria-pressed="true">Platforms</button><button type="button" data-d="circle" aria-pressed="false">Circles</button><button type="button" data-d="region" aria-pressed="false">Regions</button><button type="button" data-d="calling" aria-pressed="false">Professional interests</button></div><div class="tabs" id="relay-view"><button type="button" data-v="volume" aria-pressed="true">Volume</button><button type="button" data-v="mood" aria-pressed="false">Mood</button></div></div>
         <div class="scrollx"><svg class="viz" id="relay" viewBox="0 0 1000 340" role="img" aria-label="Trend spreading between groups by day"></svg></div>
         <details class="how"><summary>How it is read</summary><p>Rows are ordered by who picked the trend up first. In Volume view brighter means more posts that day. In Mood view green is positive and rose is negative. The strip underneath shows the trend&rsquo;s overall mood drifting day by day.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="h-chord">
-        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h-chord">Neighbourhoods</h3></div><span class="tag">Circles</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h-chord">Community clusters</h3></div><span class="tag">Circles</span></div>
         <p class="cap">Circles the algorithm found by itself, and the few ropes between them.</p>
         <svg class="viz chord" id="chord" viewBox="-385 -345 770 690" role="img" aria-label="Chord diagram of exchanges between circles"></svg>
         <details class="how"><summary>How it is read</summary><p>Louvain community detection groups voices that talk to each other more than chance would predict. Each circle is named after its usual platform and calling. Ribbons show exchanges between circles; chatter inside a circle is left out so the rare crossings can be seen.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-mix">
-        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="h-mix">Who answers whom</h3></div><span class="tag" id="mix-tag">Mixing</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="h-mix">Interaction flows</h3></div><span class="tag" id="mix-tag">Mixing</span></div>
         <p class="cap">Read across: of everything a group says, how much goes to each other group.</p>
-        <div class="opts"><div class="tabs" id="mix-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="calling" aria-pressed="false">Callings</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button></div></div>
+        <div class="opts"><div class="tabs" id="mix-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="calling" aria-pressed="false">Professional interests</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button></div></div>
         <div class="scrollx"><svg class="viz" id="mix" viewBox="0 0 640 520" role="img" aria-label="Mixing matrix"></svg></div>
         <details class="how"><summary>How it is read</summary><p>The diagonal is a group talking to itself. A bright diagonal means an echo chamber. The tag above compares the share of exchanges inside groups with what random mixing would give.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="h-border">
-        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h-border">Border crossings</h3></div><span class="tag">Cross-platform</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h-border">Cross-platform diffusion</h3></div><span class="tag">Cross-platform</span></div>
         <p class="cap">Word leaving one platform for another. Arcs above run left to right, arcs below run back.</p>
         <svg class="viz" id="border" viewBox="0 0 1000 340" role="img" aria-label="Arcs between platforms"></svg>
         <details class="how"><summary>How it is read</summary><p>A crossing is a post shared from one platform to another. Thicker arcs carry more of them. Direction follows the word: from the platform it was first said on to the one that picked it up.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="h-mood">
-        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="h-mood">Mood is catching</h3></div><span class="tag">Sentiment spread</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="h-mood">Sentiment diffusion</h3></div><span class="tag">Sentiment spread</span></div>
         <p class="cap">Row is the post being answered. Column is the answer it got.</p>
         <div class="moodgrid" id="moodgrid"></div>
         <details class="how"><summary>How it is read</summary><p>Each cell is the share of answers to that kind of post. The multiplier compares it with how common that mood is overall, so 1.8&times; means nearly twice as likely as usual. Reposts are left out because they copy the original.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-speed">
-        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="h-speed">The waiting room</h3></div><span class="tag">Reaction time</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="h-speed">Response latency</h3></div><span class="tag">Reaction time</span></div>
         <p class="cap">How long a post waits before someone reacts.</p>
         <div class="opts"><div class="tabs" id="speed-type"><button type="button" data-t="all" aria-pressed="true">All</button><button type="button" data-t="reply" aria-pressed="false">Replies</button><button type="button" data-t="quote" aria-pressed="false">Quotes</button><button type="button" data-t="repost" aria-pressed="false">Reposts</button><button type="button" data-t="share" aria-pressed="false">Shares</button></div></div>
         <svg class="viz" id="speed" viewBox="0 0 620 280" role="img" aria-label="Histogram of reaction times"></svg>
@@ -377,13 +377,13 @@
       </section>
 
       <section class="glass plate" aria-labelledby="h-tail">
-        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="h-tail">The long tail</h3></div><span class="tag" id="tail-tag">Degree</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="h-tail">Network connectivity</h3></div><span class="tag" id="tail-tag">Degree</span></div>
         <p class="cap">Many voices heard by a few. A few voices heard by many.</p>
         <svg class="viz" id="tail" viewBox="0 0 620 300" role="img" aria-label="Log-log plot of how many voices answer each voice"></svg>
         <details class="how"><summary>How it is read</summary><p>Both axes are logarithmic. A straight, falling line is the mark of a heavy-tailed network, and the tag above shows its estimated slope.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-break">
-        <div class="plate-head"><div><span class="plate-no">Plate XI</span><h3 id="h-break">The breaking point</h3></div><span class="tag">Robustness</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate XI</span><h3 id="h-break">Network robustness</h3></div><span class="tag">Robustness</span></div>
         <p class="cap">Remove voices one by one. How much of the vine still holds together?</p>
         <svg class="viz" id="break" viewBox="0 0 620 300" role="img" aria-label="How the largest connected group shrinks as voices are removed"></svg>
         <details class="how"><summary>How it is read</summary><p>The height of each line is the share of the largest connected group that survives. Targeted cuts usually fall faster than random ones. Try it live with the Cut the wires tool above.</p></details>
@@ -391,7 +391,7 @@
     </div>
 
     <svg class="rule" data-rule aria-hidden="true"></svg>
-    <div class="section-head"><h2>How the vine is grown</h2><p>Four steps, and a few things it refuses to do.</p></div>
+    <div class="section-head"><h2>Network analysis methodology</h2><p>Four steps, and a few things it refuses to do.</p></div>
     <section class="pipeline" aria-label="Method">
       <div class="stepc"><div class="n">1</div><h3>Thread</h3><p>Every reply, quote, repost and share becomes a line from one anonymous voice to another.</p></div>
       <div class="stepc"><div class="n">2</div><h3>Weigh</h3><p>PageRank, betweenness and k-core score each voice, right here in your browser.</p></div>
@@ -402,9 +402,9 @@
     <div class="caveats">
       <div class="caveat"><b>A reply is not a friendship</b>A line records one public event, nothing about how two people feel.</div>
       <div class="caveat"><b>The vine has edges</b>Only what was collected appears. Conversations elsewhere stay invisible.</div>
-      <div class="caveat"><b>Whispers are models</b>Simulated spread shows what could happen, never what did.</div>
+      <div class="caveat"><b>Diffusion patterns are models</b>Simulated spread shows what could happen, never what did.</div>
     </div>
-    <footer><span>Chapter V of Murmuration &middot; Utsav</span><a href="../index.html" style="font:italic 16px var(--display);color:var(--ink);text-decoration:none">Next: Back to the flock &rarr;</a><em>Every voice here is synthetic unless you load your own file.</em></footer>
+    <footer><span>Chapter V of Murmuration &middot; Utsav</span><a href="../index.html" style="font:italic 16px var(--display);color:var(--ink);text-decoration:none">Next: Back to Murmuration &rarr;</a><em>Every voice here is synthetic unless you load your own file.</em></footer>
   </main>
 
   <script src="../core/profiler.js"></script>

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Audience Atlas: a field guide to the people behind the posts. An interactive constellation of anonymous profiles, with language, region, calling, rhythm, reach and vocabulary plates.">
   <meta name="color-scheme" content="dark">
-  <title>The Audience Atlas | Murmuration</title>
+  <title>Audience Demographics | Murmuration</title>
   <link rel="icon" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -275,20 +275,20 @@
         <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#35d0c0"/><stop offset="1" stop-color="#b48cff"/></linearGradient></defs><g stroke="url(#lg)" stroke-width="1.2" fill="none" opacity=".7"><path d="M6 22 12 12 20 17 26 7M12 12 14 25 20 17"/></g><g fill="url(#lg)"><circle cx="6" cy="22" r="2.6"/><circle cx="12" cy="12" r="3"/><circle cx="20" cy="17" r="2.6"/><circle cx="26" cy="7" r="2.2"/><circle cx="14" cy="25" r="1.8"/></g></svg>
         <div>Audience Atlas<small>Chapter III &middot; Who they are</small></div>
       </div>
-      <nav class="rail" aria-label="Chapters"><a class="rail-label" href="../index.html" style="text-decoration:none">Murmuration</a><a class="step" href="../listen/index.html"><b>I</b><span>Listen</span></a><a class="step" href="../weather/index.html"><b>II</b><span>Feel</span></a><span class="step on" aria-current="page"><b>III</b><span>Know</span></span><a class="step" href="../swell/index.html"><b>IV</b><span>Trend</span></a><a class="step" href="../grapevine/index.html"><b>V</b><span>Connect</span></a><a class="step" href="../report/index.html"><b>R</b><span>Report</span></a></nav>
+      <nav class="rail" aria-label="Chapters"><a class="rail-label" href="../index.html" style="text-decoration:none">Murmuration</a><a class="step" href="../listen/index.html"><b>I</b><span>Data</span></a><a class="step" href="../weather/index.html"><b>II</b><span>Sentiment</span></a><span class="step on" aria-current="page"><b>III</b><span>Audience</span></span><a class="step" href="../swell/index.html"><b>IV</b><span>Trends</span></a><a class="step" href="../grapevine/index.html"><b>V</b><span>Network</span></a><a class="step" href="../report/index.html"><b>R</b><span>Reports</span></a></nav>
       <a class="back" href="../index.html">&larr; Murmuration home</a>
     </header>
 
     <section class="hero" aria-labelledby="title">
       <div>
-        <div class="eyebrow"><i class="live"></i> Chapter III &middot; A field guide to the audience</div>
-        <h1 id="title">The crowd, <em>charted</em></h1>
-        <p class="lede">Where they live, what they speak, when they are awake. Every light is one anonymous profile. Tap a cluster and the whole atlas turns to follow it.</p>
+        <div class="eyebrow"><i class="live"></i> Chapter III &middot; Aggregate audience profile</div>
+        <h1 id="title">Audience <em>profile</em></h1>
+        <p class="lede">Explore aggregate audience characteristics, including geography, language, activity patterns, and inferred interests. Select a segment to filter the analysis.</p>
       </div>
       <div class="kpis" aria-label="Summary">
         <div class="kpi" style="--c:#35d0c0"><span>People mapped</span><strong id="k-users">&ndash;</strong><small id="k-users-sub">anonymous IDs</small></div>
         <div class="kpi" style="--c:#6ea8ff"><span>Posts read</span><strong id="k-posts">&ndash;</strong><small id="k-posts-sub">in view</small></div>
-        <div class="kpi" style="--c:#b48cff"><span>Languages heard</span><strong id="k-langs">&ndash;</strong><small id="k-multi">&nbsp;</small></div>
+        <div class="kpi" style="--c:#b48cff"><span>Languages detected</span><strong id="k-langs">&ndash;</strong><small id="k-multi">&nbsp;</small></div>
         <div class="kpi" style="--c:#ffc15e"><span>Place stated</span><strong id="k-cov">&ndash;</strong><small id="k-cov-sub">&nbsp;</small></div>
       </div>
     </section>
@@ -337,41 +337,41 @@
     <div id="notice" role="status"></div>
     <div class="gate" title="Groups under 5 profiles fold into Other. Words used by under 5 profiles never appear."><b>k = 5</b><span>No names, bios or handles on screen. Small groups fold into &ldquo;Other&rdquo;.</span></div>
 
-    <div class="section-head"><h2>Field notes</h2><p>Written fresh from whatever is on screen.</p></div>
-    <section class="notes" id="notes" aria-label="Field notes"></section>
+    <div class="section-head"><h2>Audience summary</h2><p>Summary statistics for the currently selected dataset.</p></div>
+    <section class="notes" id="notes" aria-label="Audience summary"></section>
 
-    <div class="section-head"><h2>Cast of characters</h2><p>Composite archetypes from the biggest groups. Never one person.</p></div>
+    <div class="section-head"><h2>Audience segments</h2><p>Aggregated audience segments. No individual-level profiles are displayed.</p></div>
     <section class="personas" id="personas" aria-label="Audience personas"></section>
 
-    <div class="section-head"><h2>The plates</h2><p>Every lens in detail.</p></div>
+    <div class="section-head"><h2>Analysis</h2><p>Every lens in detail.</p></div>
     <div class="plates">
       <section class="glass plate" aria-labelledby="h-lang">
-        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="h-lang">Tongues</h3></div><span class="tag">Language</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="h-lang">Language distribution</h3></div><span class="tag">Language</span></div>
         <p class="cap">The language each profile reaches for first.</p>
         <div class="bars" id="bars-language"></div><div class="na" id="na-language"></div>
         <details class="how"><summary>How it is read</summary><p>The language tag on each post decides it. When a post has no tag, the writing script (Devanagari, Arabic, Cyrillic and so on) gives it away. Mixed speech such as Hinglish keeps its own line.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-reg">
-        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="h-reg">Territories</h3></div><span class="tag">Region</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate II</span><h3 id="h-reg">Geographic distribution</h3></div><span class="tag">Region</span></div>
         <p class="cap">Where the crowd says it lives, folded into world regions.</p>
         <div class="bars" id="bars-region"></div><div class="na" id="na-region"></div>
         <details class="how"><summary>How it is read</summary><p>City and country names in the location field are matched to a world region. Exact places are never shown, and a blank or joke location counts as not stated.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-int">
-        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="h-int">Callings</h3></div><span class="tag">Interest</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate III</span><h3 id="h-int">Professional interests</h3></div><span class="tag">Interest</span></div>
         <p class="cap">What people do, or love doing, in their own words.</p>
         <div class="bars" id="bars-interest"></div><div class="na" id="na-interest"></div>
         <details class="how"><summary>How it is read</summary><p>Keyword rules read each bio for work and hobby themes. A bio can carry several, so these shares add up past 100%. In the constellation each dot sits in its first match.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-age">
-        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="h-age">Seasons</h3></div><span class="tag warn">Faint signal</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IV</span><h3 id="h-age">Estimated age bands</h3></div><span class="tag warn">Faint signal</span></div>
         <p class="cap">A hint of life stage, from words like &ldquo;student&rdquo; or &ldquo;retired&rdquo;.</p>
         <div class="bars" id="bars-age"></div><div class="na" id="na-age"></div>
         <details class="how"><summary>How it is read</summary><p>Most bios give no hint at all. This is a group-level estimate from self-described words and says nothing about any one person.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="h-rh">
-        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h-rh">Rhythm</h3></div><span class="tag">Posting hours &middot; UTC</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate V</span><h3 id="h-rh">Posting activity</h3></div><span class="tag">Posting hours &middot; UTC</span></div>
         <p class="cap">When the crowd posts, hour by hour. The rows follow the lens you picked above.</p>
         <div class="rhythm">
           <div><svg class="clock" id="clock" viewBox="-130 -130 260 260" role="img" aria-label="24-hour clock of posting activity in UTC"></svg></div>
@@ -381,37 +381,37 @@
       </section>
 
       <section class="glass plate" aria-labelledby="h-rc">
-        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="h-rc">Reach</h3></div><span class="tag">Followers</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VI</span><h3 id="h-rc">Follower distribution</h3></div><span class="tag">Followers</span></div>
         <p class="cap">Mostly small voices, and a few loud ones.</p>
         <svg class="viz" id="reach" viewBox="0 0 500 170" role="img" aria-label="Follower tiers as bubbles"></svg><div class="na" id="na-reach"></div>
         <details class="how"><summary>How it is read</summary><p>Public follower counts, grouped into five tiers. Bubble area follows the number of profiles in each tier.</p></details>
       </section>
       <section class="glass plate" aria-labelledby="h-tn">
-        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h-tn">Tenure</h3></div><span class="tag">Account age</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VII</span><h3 id="h-tn">Account age</h3></div><span class="tag">Account age</span></div>
         <p class="cap">When their accounts were opened.</p>
         <svg class="viz" id="tenure" viewBox="0 0 500 170" role="img" aria-label="Account age cohorts as columns"></svg><div class="na" id="na-tenure"></div>
         <details class="how"><summary>How it is read</summary><p>Public join dates, grouped into two-year cohorts. A tall right-hand column means a young audience on that platform.</p></details>
       </section>
 
       <section class="glass plate wide" aria-labelledby="h-vo">
-        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="h-vo">Vocabulary</h3></div><span class="tag">Bio words</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate VIII</span><h3 id="h-vo">Profile topics</h3></div><span class="tag">Bio words</span></div>
         <p class="cap">The words people use to introduce themselves. Tap one and its owners light up in the constellation above.</p>
         <div class="vocab" id="vocab"></div><div class="na" id="na-vocab" style="text-align:center"></div>
         <details class="how"><summary>How it is read</summary><p>Only words used by at least 5 profiles appear, and common filler words are dropped. Larger means more profiles. Italic words are hashtags. The bios themselves are never shown.</p></details>
       </section>
 
       <section class="glass plate wide" data-net aria-labelledby="h-fa">
-        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="h-fa">Fashions</h3></div><span class="tag">Trends</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate IX</span><h3 id="h-fa">Topic interests</h3></div><span class="tag">Trends</span></div>
         <p class="cap">Which crowds wear which tags. Tap a tag to light up everyone wearing it.</p>
-        <div class="opts"><div class="tabs" id="fash-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="interest" aria-pressed="false">Callings</button><button type="button" data-d="language" aria-pressed="false">Languages</button><button type="button" data-d="age" aria-pressed="false">Life stages</button><button type="button" data-d="cohort" aria-pressed="false">Account age</button></div></div>
+        <div class="opts"><div class="tabs" id="fash-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="interest" aria-pressed="false">Professional interests</button><button type="button" data-d="language" aria-pressed="false">Languages</button><button type="button" data-d="age" aria-pressed="false">Life stages</button><button type="button" data-d="cohort" aria-pressed="false">Account age</button></div></div>
         <div class="scrollx"><div class="fgrid" id="fgrid"></div></div>
         <details class="how"><summary>How it is read</summary><p>Each number is the share of a group who used that hashtag. A gold outline means the group took it up at least one and a half times as often as everyone else. Cells with fewer than 5 people stay blank.</p></details>
       </section>
 
       <section class="glass plate" data-net aria-labelledby="h-te">
-        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="h-te">Temperament</h3></div><span class="tag">Mood</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="h-te">Sentiment by segment</h3></div><span class="tag">Mood</span></div>
         <p class="cap">Who runs warm, and who runs sour.</p>
-        <div class="opts"><div class="tabs" id="temp-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="interest" aria-pressed="false">Callings</button><button type="button" data-d="language" aria-pressed="false">Languages</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button></div></div>
+        <div class="opts"><div class="tabs" id="temp-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="interest" aria-pressed="false">Professional interests</button><button type="button" data-d="language" aria-pressed="false">Languages</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button></div></div>
         <div class="lgd"><span><i style="background:#ff7a90"></i>Sour</span><span><i style="background:#566178"></i>Even</span><span><i style="background:#7be08a"></i>Warm</span></div>
         <div id="temper"></div>
         <details class="how"><summary>How it is read</summary><p>Groups are sorted from warmest to sourest by the share of positive minus negative posts. The number on the right is that balance, from &minus;100 to +100.</p></details>
@@ -420,46 +420,46 @@
       <section class="glass plate" data-net aria-labelledby="h-ma">
         <div class="plate-head"><div><span class="plate-no">Plate XI</span><h3 id="h-ma">Manners</h3></div><span class="tag">How they join in</span></div>
         <p class="cap">Some start things, some answer, some pass it along.</p>
-        <div class="opts"><div class="tabs" id="man-dim"><button type="button" data-d="platform" aria-pressed="true">Platforms</button><button type="button" data-d="region" aria-pressed="false">Regions</button><button type="button" data-d="interest" aria-pressed="false">Callings</button><button type="button" data-d="age" aria-pressed="false">Life stages</button></div></div>
+        <div class="opts"><div class="tabs" id="man-dim"><button type="button" data-d="platform" aria-pressed="true">Platforms</button><button type="button" data-d="region" aria-pressed="false">Regions</button><button type="button" data-d="interest" aria-pressed="false">Professional interests</button><button type="button" data-d="age" aria-pressed="false">Life stages</button></div></div>
         <div class="lgd" id="man-lgd"></div>
         <div id="manners"></div>
         <details class="how"><summary>How it is read</summary><p>Every post, reply, quote, repost and share by the group, as shares of what it does. The label on the right is the style this group has more of than the other groups do.</p></details>
       </section>
 
       <section class="glass plate wide" data-net aria-labelledby="h-ov">
-        <div class="plate-head"><div><span class="plate-no">Plate XII</span><h3 id="h-ov">Standing ovation</h3></div><span class="tag">Attention</span></div>
+        <div class="plate-head"><div><span class="plate-no">Plate XII</span><h3 id="h-ov">Audience engagement</h3></div><span class="tag">Attention</span></div>
         <p class="cap">How many reactions each post earns, and how far a big following carries it.</p>
-        <div class="opts"><div class="tabs" id="att-dim"><button type="button" data-d="reach" aria-pressed="true">Follower tier</button><button type="button" data-d="interest" aria-pressed="false">Callings</button><button type="button" data-d="region" aria-pressed="false">Regions</button><button type="button" data-d="cohort" aria-pressed="false">Account age</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button></div></div>
+        <div class="opts"><div class="tabs" id="att-dim"><button type="button" data-d="reach" aria-pressed="true">Follower tier</button><button type="button" data-d="interest" aria-pressed="false">Professional interests</button><button type="button" data-d="region" aria-pressed="false">Regions</button><button type="button" data-d="cohort" aria-pressed="false">Account age</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button></div></div>
         <div id="ovation"></div>
         <details class="how"><summary>How it is read</summary><p>Replies, quotes, reposts and shares received from other people, divided by the group&rsquo;s own original posts. Reposts by the group itself are left out.</p></details>
       </section>
     </div>
 
     <div data-net>
-      <div class="section-head"><h2>Face-off</h2><p>Pick two crowds and put them side by side.</p></div>
+      <div class="section-head"><h2>Segment comparison</h2><p>Pick two crowds and put them side by side.</p></div>
       <section class="glass faceoff" aria-label="Compare two groups">
-        <div class="opts"><div class="tabs" id="fo-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="interest" aria-pressed="false">Callings</button><button type="button" data-d="language" aria-pressed="false">Languages</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button><button type="button" data-d="age" aria-pressed="false">Life stages</button></div></div>
+        <div class="opts"><div class="tabs" id="fo-dim"><button type="button" data-d="region" aria-pressed="true">Regions</button><button type="button" data-d="interest" aria-pressed="false">Professional interests</button><button type="button" data-d="language" aria-pressed="false">Languages</button><button type="button" data-d="platform" aria-pressed="false">Platforms</button><button type="button" data-d="age" aria-pressed="false">Life stages</button></div></div>
         <div class="fo-pick"><label class="sr" for="fo-a">First crowd</label><select id="fo-a"></select><b>versus</b><label class="sr" for="fo-b">Second crowd</label><select id="fo-b"></select></div>
         <div id="fo-rows"></div>
         <div class="fo-words" id="fo-words"></div>
       </section>
     </div>
 
-    <div class="section-head"><h2>Habitats</h2><p>How each platform&rsquo;s crowd differs.</p></div>
+    <div class="section-head"><h2>Platform comparison</h2><p>How each platform&rsquo;s crowd differs.</p></div>
     <section class="glass plate" aria-labelledby="h-plat">
       <div class="plate-head"><h3 id="h-plat" class="sr">Compare platforms</h3>
-        <div style="margin-left:auto"><label for="dim" class="sr">Dimension</label><select id="dim" aria-label="Choose what to compare"><option value="language">Languages</option><option value="region">Regions</option><option value="interest">Callings</option></select></div></div>
+        <div style="margin-left:auto"><label for="dim" class="sr">Dimension</label><select id="dim" aria-label="Choose what to compare"><option value="language">Languages</option><option value="region">Regions</option><option value="interest">Professional interests</option></select></div></div>
       <div class="legend2" id="stack-legend"></div><div id="stack"></div>
     </section>
 
-    <div class="section-head"><h2>Tribes</h2><p>The biggest region and calling pairings.</p></div>
+    <div class="section-head"><h2>Audience segment combinations</h2><p>The biggest region and calling pairings.</p></div>
     <section class="glass plate" aria-labelledby="h-seg">
       <h3 id="h-seg" class="sr">Largest audience segments</h3>
       <div class="table-scroll"><table><thead><tr><th>Region</th><th>Calling</th><th>Main language</th><th>Main platform</th><th class="num">Profiles</th></tr></thead><tbody id="seg-body"></tbody></table></div>
     </section>
 
-    <div class="section-head"><h2>How the atlas is drawn</h2><p>Four steps, and a few things it will never do.</p></div>
-    <section class="pipeline" aria-label="How the atlas is drawn">
+    <div class="section-head"><h2>Demographic inference methodology</h2><p>Four steps, and a few things it will never do.</p></div>
+    <section class="pipeline" aria-label="Demographic inference methodology">
       <div class="stepc"><div class="n">1</div><h3>Read</h3><p>Public signals only: the bio, the stated place, the language tag, posting hours, follower count, join date, and how each profile joins the conversation.</p></div>
       <div class="stepc"><div class="n">2</div><h3>Match</h3><p>Plain keyword rules and script detection. No model is trained and nothing leaves your browser.</p></div>
       <div class="stepc"><div class="n">3</div><h3>Count</h3><p>One light is one anonymous ID. Brand and official accounts are set aside, not counted as audience.</p></div>
@@ -472,7 +472,7 @@
       <div class="caveat"><b>One ID, one light</b>The same person on two platforms counts twice.</div>
     </div>
 
-    <footer><span>Chapter III of Murmuration &middot; Utsav</span><a href="../swell/index.html" style="font:italic 16px var(--display);color:var(--ink);text-decoration:none">Next: The Swell &rarr;</a><em>Every voice here is synthetic unless you load your own file.</em></footer>
+    <footer><span>Chapter III of Murmuration &middot; Utsav</span><a href="../swell/index.html" style="font:italic 16px var(--display);color:var(--ink);text-decoration:none">Next: Trend Intelligence &rarr;</a><em>Every voice here is synthetic unless you load your own file.</em></footer>
   </main>
 
   <script src="../core/profiler.js"></script>
@@ -596,7 +596,7 @@
         if (S.manual) return;
         $('dataset-title').textContent = 'No dataset found';
         $('dataset-meta').textContent = 'Use Load a CSV to open a file with user_id and the optional language, user_bio, user_location, followers and joined columns.';
-        notice('error', '<b>No data</b><span>The Murmuration flock could not be loaded. Load a CSV to begin.</span>');
+        notice('error', '<b>No data</b><span>The Murmuration dataset could not be loaded. Load a CSV to begin.</span>');
       });
     }
 
@@ -1097,7 +1097,7 @@
         }).join('');
         var rest = Math.max(0, 100 - used);
         return '<div class="stack-row"><span>' + esc(n) + ' <small style="color:var(--faint)">(' + fmt(plats[n].length) + ')</small></span><span class="stack" role="img" aria-label="' + esc(n) + ' ' + esc(dim) + ' mix">' + segs + (rest > 0.5 ? '<i style="width:' + rest + '%;background:' + C_OTHER + '"></i>' : '') + '</span></div>';
-      }).join('') + (dim === 'interest' ? '<div class="na">Callings are multi-label, so each bar shows that calling&rsquo;s share of all callings on the platform.</div>' : '');
+      }).join('') + (dim === 'interest' ? '<div class="na">Professional interests are multi-label, so each bar shows that calling&rsquo;s share of all callings on the platform.</div>' : '');
     }
 
     function legend() {
@@ -1202,7 +1202,7 @@
         ['Warm posts', A.c.pos, B.c.pos, pctv], ['Sour posts', A.c.neg, B.c.neg, pctv],
         ['Answering others', A.c.replyShare, B.c.replyShare, pctv], ['Passing things on', A.c.passShare, B.c.passShare, pctv],
         ['Reactions per post', A.c.reactions, B.c.reactions, function (v) { return v.toFixed(2); }],
-        ['Beyond plain English', A.agg.nonEnglishShare, B.agg.nonEnglishShare, pctv],
+        ['Other languages', A.agg.nonEnglishShare, B.agg.nonEnglishShare, pctv],
         ['Under 1K followers', small(A.agg), small(B.agg), pctv], ['Joined since 2024', fresh(A.agg), fresh(B.agg), pctv]
       ];
       rows.innerHTML = M.map(function (m) {
