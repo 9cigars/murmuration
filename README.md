@@ -16,7 +16,7 @@ The home page has one bird for every voice in the data. Move your cursor through
 
 Hover a chart for its numbers, and click a mark to open the real posts behind it. Charts of model results, such as the Grapevine's breaking point, give the readout only.
 
-Scroll to the end of a section and the page holds at a divide. Keep scrolling and the next section opens. At the end of a page the next room opens the same way. A bar at the foot of every page names what comes next, and clicking it or pressing the space bar goes there too. Every page also has a flight path on its right edge: click a perch, use its arrows, or press J and K. On phones it folds into a compass by the dock. The Light button switches to a solid, gradient-free theme and the site remembers the choice.
+Reach the end of a page and it holds at a divide. Keep scrolling and a flock carries you into the next room. Inside a room, scrolling stays plain and quick. A bar at the foot of every page names what comes next, and clicking it or pressing the space bar goes there too. Every page also has a flight path on its right edge: click a perch, use its arrows, or press J and K. On phones it folds into a compass by the dock. The Light button switches to a solid, gradient-free theme and the site remembers the choice.
 
 ## Bring your own CSV
 
@@ -42,7 +42,11 @@ It is a static site with no build step and no server code. Open `index.html`, or
 
 ## How it works
 
-Everything runs in the visitor's browser: PageRank, betweenness, k-core and Louvain community detection, cascade reconstruction, contagion simulation, damped Holt forecasting with an honest backtest, and transparent keyword rules for language, region, interests and feeling. Moods in the sample ship with the data. On real posts a trained model would supply them.
+Everything runs in the visitor's browser: PageRank, betweenness, k-core and Louvain community detection, cascade reconstruction, contagion simulation, damped Holt forecasting with an honest backtest, and transparent keyword rules for language, region, interests and feeling. Moods in the sample ship with the data. On a file without labels, a small trained model reads mood from the wording of English posts and leaves other languages unscored. Its marks on hand-labelled exams are published in the Weather Room, and `tools/train_sentiment.js` rebuilds it from the public datasets, which are not stored in this repository.
+
+## The report
+
+The [Report](report/index.html) page writes up the loaded data for someone who has ten seconds: what changed against the period before, what to do, and how far to trust it. A change is only called a change when it is larger than chance would explain. It exports as a PDF, a standalone web file or a plain summary.
 
 ## Privacy by design
 

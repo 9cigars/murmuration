@@ -14,6 +14,9 @@
   <style>
     /* A forecaster's studio before dawn: slate skies, one warm sun. */
     :root{--bg:#080b12;--a:#ffd27a;--b:#8fc8ff;--dark-on-a:#2a1d04;--glow1:#1e3150;--glow2:#2b2a38;--glow3:#3a2830}
+    .acc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}.acc-grid h4{margin:0 0 12px;font:italic 400 17px var(--display)}.acc-grid .hint{margin:10px 0 0;font-size:13.5px;line-height:1.5}
+    .acc-t{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.acc-t th,.acc-t td{padding:11px 10px;text-align:center;border-bottom:1px solid var(--line);font-size:12px}.acc-t th{color:var(--muted);font-weight:600}.acc-t tbody th{text-align:left}.acc-t td{font:300 24px var(--display)}
+    @media(max-width:760px){.acc-grid{grid-template-columns:1fr}}
     .fc{position:absolute;left:22px;top:18px;z-index:4;text-shadow:0 2px 18px #0009;max-width:60%}
     .fc .d{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#f1f4fa;font-weight:700}
     .fc .c{font:300 clamp(40px,6vw,76px)/1 var(--display);margin:6px 0 4px;letter-spacing:-.02em}
@@ -94,7 +97,7 @@
         <div class="plate-head"><div><span class="plate-no">Plate I</span><h3 id="p1">The barometer</h3></div><span class="tag">Try it</span></div>
         <p class="cap">Tap the glass. Type anything and see which way the needle swings.</p>
         <div class="dials"><div><textarea class="box" id="b-in" aria-label="Sentence to read">Oh great, the battery is really terrible and support was slow. Not impressed!</textarea><div class="hits" id="b-hits"></div></div><div style="text-align:center"><svg class="viz" id="b-g" viewBox="0 0 320 180" style="max-width:340px;margin:auto" role="img" aria-label="Needle showing sentiment"></svg><p class="verdict" id="b-v" aria-live="polite"></p><span class="pill" id="b-f"></span></div></div>
-        <details class="how"><summary>How it is read</summary><p>A small wordlist with negation and emphasis, run on your device. It is here to show how the reading works, and it will happily miss a joke. English only.</p></details>
+        <details class="how"><summary>How it is read</summary><p>The needle follows a small model trained on 1.6 million tweets, running on your device. The coloured words are the ones that pushed it hardest. The word-list score beside it is the simpler method from the paper. Both are English only, and both can miss a joke.</p></details>
       </section>
 
       <section class="glass plate" aria-labelledby="p2">
@@ -157,6 +160,12 @@
         <div class="lgd" style="margin-top:10px"><span><i style="background:#7be08a"></i>warm</span><span><i style="background:#ffd27a"></i>even</span><span><i style="background:#ff7f9e"></i>sour</span></div>
         <details class="how"><summary>How it is read</summary><p>The word list scores opinion words +1 or -1, flips them after a negation and boosts them after "very" or an exclamation mark. No opinion words means a plain statement. Only posts in English or with no language tag are read.</p></details>
       </section>
+      <section class="glass plate wide" aria-labelledby="p10" id="accuracy">
+        <div class="plate-head"><div><span class="plate-no">Plate X</span><h3 id="p10">How often it is right</h3></div><span class="tag">Measured</span></div>
+        <p class="cap">Marked against text that people labelled by hand, which the model never saw while it learned.</p>
+        <div id="acc"></div>
+        <details class="how"><summary>How it is read</summary><p>The reader is a logistic regression over words and word pairs, with negation marked. It learned from Sentiment140, 1.6 million tweets labelled by their emoticons. The exams are Sentiment140&rsquo;s hand-labelled tweets and UCI&rsquo;s Sentiment Labelled Sentences. Neither was used for training or for choosing settings. Marks fall on sarcasm, slang and language that differs from what it studied, and it will not judge posts that are not in English.</p></details>
+      </section>
     </div>
 
     <div class="section-head"><h2>How the forecast is made</h2><p>Four instruments, and a few things no forecaster should promise.</p></div>
@@ -168,8 +177,8 @@
     </section>
     <div class="never"><span class="lab">Not on the chart</span><span class="x">Any one person&rsquo;s mood</span><span class="x">Diagnoses</span><span class="x">Mental health</span><span class="x">Private messages</span></div>
     <div class="caveats">
-      <div class="caveat"><b>Sarcasm bites back</b>Rules read &ldquo;oh great&rdquo; as a compliment more often than they should.</div>
-      <div class="caveat" data-sample="1"><b>Labels came with the flock</b>Mood here was written alongside the sample. On real posts a trained model would fill it in.</div>
+      <div class="caveat"><b>Sarcasm bites back</b>The reader takes &ldquo;oh great&rdquo; as a compliment more often than it should.</div>
+      <div class="caveat" data-sample="1"><b>Labels came with the flock</b>Mood here was written alongside the sample. On a file with no labels, the trained reader fills it in.</div>
       <div class="caveat"><b>A post is not a person</b>Somebody can be sour on Tuesday and delightful by Friday.</div>
     </div>
     <footer><span>Chapter II of Murmuration &middot; Utsav</span><a class="nx" href="../atlas/index.html">Next: The Audience Atlas &rarr;</a><em>Every voice here is synthetic.</em></footer>
@@ -177,6 +186,8 @@
   <script src="../core/profiler.js"></script>
   <script src="../core/kit.js"></script>
   <script src="../data/audience_sample.js"></script>
+  <script src="../core/senti_model.js"></script>
+  <script src="../core/senti.js"></script>
   <script src="../core/door.js"></script>
   <script src="../core/loupe.js"></script>
   <script src="weather.js"></script>

@@ -196,7 +196,7 @@
   window.addEventListener('beforeunload', function () { if (pending) try { sessionStorage.setItem('murmuration.justRead', '1'); } catch (e) { } });
 
   /* ---------------------------- on every page ---------------------------- */
-  var room = (location.pathname.match(/\/(listen|weather|atlas|swell|grapevine|blueprint)\//) || [])[1] || 'home';
+  var room = (location.pathname.match(/\/(listen|weather|atlas|swell|grapevine|blueprint|report)\//) || [])[1] || 'home';
   var UP_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V3M4.5 6 8 2.5 11.5 6M2.5 13.5h11"/></svg>';
   var dock = document.body.appendChild(el('<div class="lp-dock">' + (room === 'blueprint' ? '' : '<a class="wide" href="' + BASE + 'blueprint/index.html">The paper</a>') + '<button type="button" data-theme-toggle="1" aria-label="Switch colour theme"></button><button type="button" class="go" data-open="1">' + UP_ICON + (UP ? '<span>Your file</span>' : '<span>Bring your CSV</span>') + '</button></div>'));
   dock.addEventListener('click', function (e) { if (e.target.closest('[data-open]')) openDoor(!!UP); if (e.target.closest('[data-theme-toggle]') && window.Theme) window.Theme.toggle(); });

@@ -117,16 +117,16 @@
   /* ------------------ barometer ------------------ */
   $('b-hits').insertAdjacentHTML('afterend', '<div id="b-parts"></div>');
   function reading() {
-    var r = K.readSentence($('b-in').value), a = Math.PI * (1 - (r.score + 1) / 2), cx = 160, cy = 150, R = 118, o = '', i;
+    var r = K.readSentence($('b-in').value), s = window.Senti ? window.Senti.read($('b-in').value) : null, model = !!(s && s.english && s.known), dial = model ? (s.p - .5) * 2 : r.score, a = Math.PI * (1 - (dial + 1) / 2), cx = 160, cy = 150, R = 118, o = '', i;
     function p(ang, rad) { return (cx + Math.cos(ang) * rad).toFixed(1) + ' ' + (cy - Math.sin(ang) * rad).toFixed(1); }
     for (i = 0; i < 40; i++) { var a0 = Math.PI * (1 - i / 40), a1 = Math.PI * (1 - (i + .85) / 40), t = i / 39, col = t < .5 ? 'rgb(255,' + Math.round(127 + 100 * t * 2) + ',' + Math.round(158 - 40 * t * 2) + ')' : 'rgb(' + Math.round(255 - 132 * (t - .5) * 2) + ',' + Math.round(227 - 3 * (t - .5) * 2) + ',' + Math.round(118 + 20 * (t - .5) * 2) + ')'; o += '<path d="M' + p(a0, R) + ' L' + p(a1, R) + '" stroke="' + col + '" stroke-width="16" fill="none"/>'; }
     o += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + Math.cos(a) * (R - 26)).toFixed(1) + '" y2="' + (cy - Math.sin(a) * (R - 26)).toFixed(1) + '" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="' + cx + '" cy="' + cy + '" r="7" fill="#fff"/><text class="t f" x="28" y="172">sour</text><text class="t f" x="292" y="172" text-anchor="end">warm</text>';
     $('b-g').innerHTML = o;
-    $('b-v').textContent = r.words ? K.condition(r.score * .6) : 'Waiting for weather';
+    $('b-v').textContent = r.words ? K.condition(dial * .6) : 'Waiting for weather';
     $('b-f').textContent = r.words ? r.feeling : 'Say something';
-    $('b-hits').innerHTML = r.hits.map(function (h) { return '<span data-tip="' + esc(h.word) + '\nscored ' + (h.value > 0 ? '+' : '') + h.value.toFixed(1) + '" style="color:' + (h.value > 0 ? '#7be08a' : '#ff7f9e') + '">' + esc(h.word) + '</span>'; }).join('');
+    $('b-hits').innerHTML = (model ? s.why : r.hits).map(function (h) { return '<span data-tip="' + esc(h.word) + '\nscored ' + (h.value > 0 ? '+' : '') + h.value.toFixed(1) + '" style="color:' + (h.value > 0 ? '#7be08a' : '#ff7f9e') + '">' + esc(h.word) + '</span>'; }).join('');
     var parts = K.readParts($('b-in').value), a2 = Math.abs(r.score), side = $('b-parts');
-    side.innerHTML = r.words ? '<div class="statchips"><div><b>' + (r.hits.length ? (a2 >= .6 ? 'Strong' : a2 >= .35 ? 'Mild' : 'Weak') : 'None') + '</b>strength</div><div><b>' + (r.hits.length ? 'Opinion' : 'Plain fact') + '</b>kind</div><div><b>' + (r.score > 0 ? '+' : '') + r.score.toFixed(2) + '</b>score</div></div>' + (parts.length > 1 ? '<div class="chips" style="margin-top:8px">' + parts.map(function (x) { return '<span class="tagc" style="color:' + (x.r.mood === 'warm' ? '#7be08a' : x.r.mood === 'sour' ? '#ff7f9e' : '#ffd27a') + '" data-tip="Sentence reading\n' + x.r.mood + ', score ' + x.r.score.toFixed(2) + '">' + esc(x.text.slice(0, 46)) + '</span>'; }).join('') + '</div>' : '') : '';
+    side.innerHTML = r.words ? '<div class="statchips"><div><b>' + (model ? Math.round(s.p * 100) + '%' : s && !s.english ? 'English only' : 'No idea') + '</b>' + (model ? 'chance it is positive' : 'trained reader') + '</div><div><b>' + (r.hits.length ? (a2 >= .6 ? 'Strong' : a2 >= .35 ? 'Mild' : 'Weak') : 'None') + '</b>strength</div><div><b>' + (r.hits.length ? 'Opinion' : 'Plain fact') + '</b>kind</div><div><b>' + (r.score > 0 ? '+' : '') + r.score.toFixed(2) + '</b>word-list score</div></div>' + (parts.length > 1 ? '<div class="chips" style="margin-top:8px">' + parts.map(function (x) { return '<span class="tagc" style="color:' + (x.r.mood === 'warm' ? '#7be08a' : x.r.mood === 'sour' ? '#ff7f9e' : '#ffd27a') + '" data-tip="Sentence reading\n' + x.r.mood + ', score ' + x.r.score.toFixed(2) + '">' + esc(x.text.slice(0, 46)) + '</span>'; }).join('') + '</div>' : '') : '';
   }
   $('b-in').addEventListener('input', reading); reading();
 
@@ -205,7 +205,22 @@
     $('nb-out').innerHTML = !v.trim() ? '<div class="empty">Say something to the clerk.</div>' : (r.known ? '' : '<div class="hint" style="margin-bottom:8px">The clerk has seen none of these words, so this is only a guess from how common each mood is.</div>') + ['1', '0', '-1'].map(function (c) { var p = Math.round(1000 * r.probs[c]) / 10; return '<div class="trow"><span class="name">' + NAME[c] + (r.label === c ? ' &larr;' : '') + '</span><span class="sbar" data-tip="' + NAME[c] + '\n' + p + '% probability"><i style="width:' + p + '%;background:' + NC[c] + '"></i></span><span class="v">' + p + '%</span></div>'; }).join('') + (r.why.length ? '<div class="chips" style="margin-top:8px">' + r.why.map(function (w) { return '<span class="tagc" style="color:' + NC[w.c] + '" data-tip="' + esc(w.word) + '\nleans ' + NAME[w.c].toLowerCase() + '">' + esc(w.word) + '</span>'; }).join('') + '</div>' : '');
   }
   $('nb-in').addEventListener('input', nbRead); nbRead();
-  $('nb-score').innerHTML = F.labelled && NB.tested ? [[NB.accuracy + '%', 'on posts it never saw'], [NB.unseenWording + '%', 'on wordings it never saw'], [NB.lexicon + '%', 'word list alone'], [NB.baseline + '%', 'always guess the commonest']].map(function (x) { return '<div data-tip="' + x[1] + '"><b>' + x[0] + '</b>' + x[1] + '</div>'; }).join('') : '<div style="text-transform:none;letter-spacing:0;font-size:12px">This file has no human mood labels, so there is nothing fair to score the clerk against. It is learning the word list.</div>';
+  $('nb-score').innerHTML = F.labelled && NB.tested ? [[NB.accuracy + '%', 'on posts it never saw'], [NB.unseenWording + '%', 'on wordings it never saw'], [NB.lexicon + '%', 'word list alone'], [NB.baseline + '%', 'always guess the commonest']].map(function (x) { return '<div data-tip="' + x[1] + '"><b>' + x[0] + '</b>' + x[1] + '</div>'; }).join('') : '<div style="text-transform:none;letter-spacing:0;font-size:12px">This file has no human mood labels, so there is nothing fair to score the clerk against. It is only learning what the trained reader said.</div>';
+
+  /* ------------------ how often it is right ------------------ */
+  (function () {
+    var host = $('acc'), M = window.Senti && window.Senti.METRICS, UP = window.MURMUR_UPLOAD || null; if (!host || !M) return;
+    var GOOD = '#7be08a', OLD = '#ffd27a', c = M.tweets.matrix;
+    function row(n, v, col) { return '<div class="trow"><span class="name">' + n + '</span><span class="sbar" data-tip="' + n + '\n' + v + '% correct"><i style="width:' + v + '%;background:' + col + '"></i></span><span class="v">' + v + '%</span></div>'; }
+    var own = '';
+    if (UP && F.labelled) {
+      var yes = 0, n = 0; P.forEach(function (p) { if (!p.mood) return; var s = window.Senti.read(p.text); if (!s.english || !s.known) return; n++; if ((s.p > .5) === (p.mood > 0)) yes++; });
+      own = n >= 30 ? '<div><b>' + K.pct(yes, n) + '%</b>agreement with the labels in your file, across ' + fmt(n) + ' posts</div>' : '';
+    }
+    host.innerHTML = '<div class="acc-grid"><div>' + '<h4>Positive or negative, on real text</h4>' + row('Tweets, trained reader', M.tweets.accuracy, GOOD) + row('Tweets, old word list', M.tweets.old, OLD) + row('Reviews, trained reader', M.reviews.accuracy, GOOD) + row('Reviews, old word list', M.reviews.old, OLD) + '<p class="hint">' + fmt(M.tweets.n) + ' tweets and ' + fmt(M.reviews.n) + ' product, film and restaurant reviews, each labelled by a person. With neutral allowed as a third answer, it scored ' + M.three.accuracy + '% on ' + fmt(M.three.n) + ' tweets, where always picking the commonest answer scores ' + M.three.baseline + '%.</p></div>'
+      + '<div><h4>Where its tweet answers landed</h4><table class="acc-t"><thead><tr><th></th><th>It said positive</th><th>It said negative</th></tr></thead><tbody><tr><th>Really positive</th><td>' + c.tp + '</td><td>' + c.fn + '</td></tr><tr><th>Really negative</th><td>' + c.fp + '</td><td>' + c.tn + '</td></tr></tbody></table><p class="hint">When it says negative it is right ' + M.tweets.negPrecision + '% of the time. When it says positive, ' + M.tweets.posPrecision + '%.</p></div></div>'
+      + '<div class="statchips" style="margin-top:12px">' + (own || '<div style="text-transform:none;letter-spacing:0;font-size:12px">Bring a CSV that has its own mood labels and this plate will also measure the reader on your data.</div>') + '</div>';
+  })();
 
   /* ------------------ strength and subjectivity ------------------ */
   (function () {

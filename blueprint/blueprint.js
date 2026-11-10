@@ -60,7 +60,7 @@
   K.notes($('extra'), [
     { kick: 'Forecasting', fig: 'Holt', unit: '', head: 'smoothing with a no-peek backtest', text: 'The paper cites prediction studies. This room lets you race one.' },
     { kick: 'Cascades', fig: F.tags.length, unit: ' vines', head: 'of who passed what to whom', text: 'Propagation is named in the paper. Here you can watch it branch.' },
-    { kick: 'Feelings', fig: K.EMOTIONS.length - 1, unit: ' kinds', head: 'beyond warm, even and sour', text: 'Attitude is more than polarity, as the paper keeps hinting.' },
+    { kick: 'Measured accuracy', fig: window.Senti && window.Senti.METRICS ? window.Senti.METRICS.tweets.accuracy : '–', unit: '%', head: 'on hand-labelled tweets it never saw', text: 'The trained reader sits a public exam, and the Weather Room shows its marks.' },
     { kick: 'Privacy floor', fig: K.K_MIN, unit: ' people', head: 'is the smallest group ever shown', text: 'The paper asks for protection. This is what it looks like in a chart.' }
   ], ['#8fd0ff', '#a3de76', '#ffd27a', '#ff9f9f']);
   function light() { var id = location.hash.slice(1), el = id && document.getElementById(id); if (!el) return; f.st = null; f.stop = null; draw(); el = document.getElementById(id); el.classList.add('lit'); el.scrollIntoView({ block: 'center' }); setTimeout(function () { el.classList.remove('lit'); }, 2600); }

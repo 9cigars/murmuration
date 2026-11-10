@@ -196,7 +196,7 @@
 
   /* ---------------------------------- page helpers ---------------------------------- */
   if (typeof document !== 'undefined') {
-    var CH = [['listen', 'I', 'Listen'], ['weather', 'II', 'Feel'], ['atlas', 'III', 'Know'], ['swell', 'IV', 'Trend'], ['grapevine', 'V', 'Connect']];
+    var CH = [['listen', 'I', 'Listen'], ['weather', 'II', 'Feel'], ['atlas', 'III', 'Know'], ['swell', 'IV', 'Trend'], ['grapevine', 'V', 'Connect'], ['report', 'R', 'Report']];
     api.$ = function (id) { return document.getElementById(id); };
     api.reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     var feedCache = null; api.loadFeed = function () { return feedCache || (feedCache = buildFeed(root.SAMPLE_AUDIENCE_CSV)); };

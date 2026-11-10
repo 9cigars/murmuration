@@ -89,7 +89,7 @@
   /* ---- stylesheets written into the page ---- */
   var SHEETS = new WeakMap();
   function doStyle(el) {
-    if (el.id === 'mm-theme') return;
+    if (el.id === 'mm-theme' || el.hasAttribute('data-theme-skip')) return;
     var cur = el.textContent, s = SHEETS.get(el);
     if (s && cur === s.m) return;
     if (!/\{/.test(cur)) return;
@@ -102,7 +102,7 @@
   var ATTRS = ['fill', 'stroke', 'stop-color', 'style'], STORE = new WeakMap(), HEAT = '.fgrid .c,.grid-h .c';
   function keep(el, attr, o, m) { var s = STORE.get(el); if (!s) STORE.set(el, s = {}); if (attr === 'style') { var p = s.style || (s.style = { props: {} }); p.o = o; p.m = m; o.split(';').forEach(function (d) { var i = d.indexOf(':'); if (i > 0 && HAS.test(d)) p.props[d.slice(0, i).trim()] = d.slice(i + 1).trim(); }); } else s[attr] = { o: o, m: m }; }
   function doAttr(el, attr) {
-    var v = el.getAttribute(attr); if (!v || !HAS.test(v)) return;
+    var v = el.getAttribute(attr); if (!v || !HAS.test(v) || (el.closest && el.closest('[data-theme-skip]'))) return;
     var s = STORE.get(el), rec = s && s[attr]; if (rec && rec.m === v) return;
     var m = value(v);
     if (attr === 'style' && el.matches && el.matches(HEAT)) m = m.replace(/rgba\((\d+),(\d+),(\d+),([\d.]+)\)/g, function (_, r, g, b, x) { return 'rgba(' + r + ',' + g + ',' + b + ',' + (Math.round(Math.min(.5, x * .55) * 1000) / 1000) + ')'; });

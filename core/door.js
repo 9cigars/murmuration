@@ -139,7 +139,8 @@
     var word = function (x) { x = String(x).trim(); return POS.test(x) ? 'positive' : NEG.test(x) ? 'negative' : NEU.test(x) ? 'neutral' : ''; }, hits = v.filter(function (x) { return word(x); }).length;
     return hits / v.length > .6 ? { known: true, read: word } : { known: false, read: function () { return ''; } };
   }
-  function readMood(text) { var r = Kit.readSentence(text); return r.mood === 'warm' ? 'positive' : r.mood === 'sour' ? 'negative' : 'neutral'; }
+  /* The trained reader when it is loaded. A post it cannot read, because it is not English, is left without a mood rather than guessed. */
+  function readMood(text) { var S = root.Senti, s = S && S.read(text); if (s) return s.label || ''; var r = Kit.readSentence(text); return r.mood === 'warm' ? 'positive' : r.mood === 'sour' ? 'negative' : 'neutral'; }
 
   /* -------------------------------- cleaning -------------------------------- */
   function salted() { var s = Math.floor(Math.random() * 4294967295).toString(36); return function (v) { var a = Kit.hash(s + ':' + v).toString(16), b = Kit.hash(v + ':' + s + ':flock').toString(16); return 'anon-' + (('00000000' + a).slice(-8) + ('00000000' + b).slice(-8)); }; }
@@ -202,7 +203,7 @@
 
     /* rewrite */
     var idx = new Map(); out.forEach(function (o, n) { if (o.rawId && !idx.has(o.rawId)) idx.set(o.rawId, n); });
-    var lastBy = new Map(), result = [], fillMood = 0, fileMood = 0;
+    var lastBy = new Map(), result = [], fillMood = 0, fileMood = 0, unreadMood = 0;
     out.forEach(function (o, n) {
       var row = o.row, refRaw = get(row, 'ref_post_id'), refN = -1, type = kind(get(row, 'interaction'));
       if (refRaw && refRaw !== '0' && refRaw !== '-1' && !/^(nan|null|none)$/i.test(refRaw)) { var hit = idx.get(refRaw); if (hit !== undefined && hit < n) refN = hit; else r.incorrect.refs++; }
@@ -213,7 +214,7 @@
       if (o.rawUser) lastBy.set(o.rawUser, n);
       var rawSent = get(row, 'sentiment'), mood = moodRead.known ? moodRead.read(rawSent) : '';
       if (mood && rawSent !== mood) r.inconsistent.moodLabels++;
-      if (mood) fileMood++; else { mood = readMood(o.text); fillMood++; }
+      if (mood) fileMood++; else { mood = readMood(o.text); fillMood++; if (!mood) unreadMood++; }
       var fr = get(row, 'followers'), fc = count(fr); if (fr && !isFinite(fc)) r.incorrect.followers++;
       var jr = parseDate(get(row, 'joined'), order), pk = get(row, 'platform').toLowerCase();
       result.push({ post_id: 'p-' + (n + 1), platform: platName[pk] || plain(opts.platform, 28) || 'Your file', user_id: hash(o.rawUser || 'row:' + n), timestamp: stamp(o.ts), text: o.text, parent_id: '', language: get(row, 'language').toLowerCase().replace(/[^\p{L}\p{N}_-]/gu, '').slice(0, 8), user_bio: plain(get(row, 'user_bio'), 300), user_location: plain(get(row, 'user_location'), 120), followers: isFinite(fc) ? String(fc) : '', joined: isFinite(jr) ? stamp(jr).slice(0, 10) : '', interaction: type, ref_post_id: refN >= 0 ? 'p-' + (refN + 1) : '', sentiment: mood });
@@ -240,8 +241,10 @@
     if (r.sampled) r.notes.push('Your file was large, so every room reads an evenly spaced sample of ' + Kit.fmt(result.length) + ' rows. Some threads may be cut.');
     if (r.pseudoTime) r.notes.push(hasT ? 'The date column could not be trusted, so the time charts follow row order. Read them as sequence, not calendar.' : 'No date column, so the time charts follow row order. Read them as sequence, not calendar.');
     if (r.noAuthors) r.notes.push('No author column, so every row counts as its own voice.');
-    if (r.moods === 'words') r.notes.push('No usable mood labels, so a word list scored every post. It reads English best.');
-    if (r.moods === 'both') r.notes.push(Kit.fmt(fillMood) + ' posts had no mood label and were scored by the word list.');
+    r.moodsUnread = unreadMood;
+    if (r.moods === 'words') r.notes.push('No usable mood labels, so the trained reader judged each post from its wording. The Weather Room shows how often it is right.');
+    if (r.moods === 'both') r.notes.push(Kit.fmt(fillMood) + ' posts had no mood label and were judged by the trained reader.');
+    if (unreadMood) r.notes.push(Kit.fmt(unreadMood) + ' posts did not look like English, so they were left without a mood instead of being guessed.');
     if (r.topics === 'derived') r.notes.push('Too few shared hashtags, so the commonest words stand in as topics.');
     if (r.topics === 'everything') r.notes.push('No shared hashtags or common words, so everything is filed under one topic.');
     if (r.inferredLinks) r.notes.push(Kit.fmt(r.inferredLinks) + ' conversation links were inferred from @mentions at the start of posts.');
